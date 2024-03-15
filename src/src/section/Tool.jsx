@@ -1,17 +1,17 @@
-function Tool() {
+function Tool({lineClick, rectClick, polyClick, squareClick}) {
   return (
     <>
       <div className="toolbar">
-        <button onClick={() => {}} className="toolbarButton">
+        <button onClick={() => {lineClick()}} className="toolbarButton">
           <img className="toolbarButtonImage" src="line.png" />
         </button>
-        <button onClick={() => {}} className="toolbarButton">
+        <button onClick={() => {rectClick()}} className="toolbarButton">
           <img className="toolbarButtonImage" src="rectangle.png" />
         </button>
-        <button onClick={() => {}} className="toolbarButton">
+        <button onClick={() => {polyClick()}} className="toolbarButton">
           <img className="toolbarButtonImage" src="polygon.png" />
         </button>
-        <button onClick={() => {}} className="toolbarButton">
+        <button onClick={() => {squareClick()}} className="toolbarButton">
           <img className="toolbarButtonImage" src="square.png" />
         </button>
       </div>
