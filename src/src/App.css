@@ -1,0 +1,67 @@
+#root {
+  margin: 0 auto;
+}
+
+.topbar {
+  background-color: #31363F;
+  border-bottom: 1px solid #526D82;
+  width: 100vw;
+  height: 4vh;
+
+  display: flex;
+  justify-content: center;
+}
+
+.topbar-logo {
+  margin: 0;
+  align-self: center;
+  font-weight: 300;
+  font-size: 24px;
+}
+
+.workspace {
+  display: flex;
+  flex-direction: row;
+  height: 96vh;
+  width: 100vw;
+  background-color: blue;
+}
+
+.toolbar {
+  height: 100%;
+  width: 3%;
+  background-color: #31363F;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3%;
+  padding-top: 0.3%;
+}
+
+canvas {
+  height: 100%;
+  width: 80%;
+  background-color: white;
+}
+
+.properties {
+  height: 100%;
+  width: 17%;
+  background-color: #31363F;
+}
+
+.button {
+  margin: 5%;
+  width: 80%;
+  height: 5%;
+}
+
+.button > img {
+  max-height: 70%;
+  max-width: 100%;
+  
+}
+
+
+
+
