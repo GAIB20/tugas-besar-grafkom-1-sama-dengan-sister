@@ -1,22 +1,25 @@
-import { useState } from 'react'
-import './App.css'
-import Head from './section/Head'
-import Tool from './section/Tool'
-import Properties from './section/Properties'
+import "./App.css";
+import Head from "./section/Head";
+import Tool from "./section/Tool";
+import Properties from "./section/Properties";
+import { useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [workingTitle, setWorkingTitle] = useState("Untitled");
+
 
   return (
-    <>
-      <Head/>
-      <div className='workspace'>
-        <Tool/>
-        <canvas></canvas>
-        <Properties/>
+    <div className="screen">
+      <Head title={workingTitle}/>
+      <div className="workspace">
+        <Tool />
+        <div className="canvasContainer">
+          <canvas></canvas>
+        </div>
+        <Properties />
       </div>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
