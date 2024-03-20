@@ -1,8 +1,9 @@
-import createShader from "../init/vertex_shader";
+import createShader from "../init/create_shader";
 import createProgram from "../init/create_program";
+import vertexShader from "../init/vertex_shader";
+import fragmentShader from "../init/fragment_shader";
 
-
-export const drawRectangle = (vertexShader, fragmentShader) => {
+export const drawRectangle = () => {
   var canvas = document.querySelector("#canvas");
   var gl = canvas.getContext("webgl");
   if (!gl) {
@@ -17,6 +18,7 @@ export const drawRectangle = (vertexShader, fragmentShader) => {
     gl.VERTEX_SHADER,
     vertexShaderSource
   );
+
   var fragmentShaderObject = createShader(
     gl,
     gl.FRAGMENT_SHADER,
@@ -29,9 +31,7 @@ export const drawRectangle = (vertexShader, fragmentShader) => {
 
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-  var positions = [
-    0.1, 0.2, 0.8, 0.2, 0.1, 0.3, 0.1, 0.3, 0.8, 0.2, 0.8, 0.3,
-  ];
+  var positions = [0.1, 0.2, 0.8, 0.2, 0.1, 0.3, 0.1, 0.3, 0.8, 0.2, 0.8, 0.3];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
   webglUtils.resizeCanvasToDisplaySize(gl.canvas);
@@ -61,4 +61,4 @@ export const drawRectangle = (vertexShader, fragmentShader) => {
   var primitiveType = gl.TRIANGLES;
   var count = 3;
   gl.drawArrays(primitiveType, offset, count);
-}
+};

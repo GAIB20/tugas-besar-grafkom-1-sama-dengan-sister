@@ -1,4 +1,4 @@
-function createProgram(gl, vertexShader, fragmentShader) {
+const createProgram = (gl, vertexShader, fragmentShader) => {
     var program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);

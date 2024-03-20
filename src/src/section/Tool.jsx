@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 function Tool({ lineClick, rectClick, polyClick, squareClick }) {
   const setLineButtonTitle = (enter) => {
     let elm = document.getElementById("lineButtonTitle");
