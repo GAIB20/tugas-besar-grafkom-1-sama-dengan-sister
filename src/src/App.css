@@ -51,11 +51,16 @@ canvas {
   border: none;
   color: white;
   text-align: center;
+  border-bottom: 2px solid transparent;
+}
+
+.topbar-logo:hover {
   border-bottom: 2px solid white;
 }
 
 .topbar-logo:focus {
   outline: none;
+  border-bottom: 2px solid white;
 }
 
 /* Properties */
@@ -127,8 +132,8 @@ canvas {
 
 .toolbar {
   height: 100%;
-  min-width: 5%;
-  max-width: 5%;
+  min-width: 6%;
+  max-width: 6%;
   background-color: #31363f;
   display: flex;
   flex-direction: column;
@@ -137,7 +142,8 @@ canvas {
 }
 
 .toolbarButton {
-  width: 60%;
+  width: 70%;
+  position: relative;
   cursor: pointer;
   aspect-ratio: 1;
   overflow: hidden;
@@ -151,6 +157,87 @@ canvas {
 .toolbarButtonImage {
   object-fit: cover;
   width: 100%;
+}
+
+.toolbarSection {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.lineButtonTitle {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  background-color: black;
+  opacity: 0;
+  color: white;
+  transition-timing-function: ease-in-out;
+  transition-duration: 0.2s;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.rectangleButtonTitle {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  background-color: black;
+  opacity: 0;
+  color: white;
+  transition-timing-function: ease-in-out;
+  transition-duration: 0.2s;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.squareButtonTitle {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  background-color: black;
+  opacity: 0;
+  color: white;
+  transition-timing-function: ease-in-out;
+  transition-duration: 0.2s;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.polygonButtonTitle {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  min-height: 100%;
+  background-color: black;
+  opacity: 0;
+  color: white;
+  transition-timing-function: ease-in-out;
+  transition-duration: 0.2s;
+  font-weight: bold;
+  font-size: 10px;
 }
 
 /* Canvas */

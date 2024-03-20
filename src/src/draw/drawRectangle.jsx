@@ -1,6 +1,7 @@
 import createShader from "../init/vertex_shader";
 import createProgram from "../init/create_program";
 
+
 export const drawRectangle = (vertexShader, fragmentShader) => {
   var canvas = document.querySelector("#canvas");
   var gl = canvas.getContext("webgl");
