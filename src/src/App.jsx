@@ -34,7 +34,7 @@ function App() {
           squareClick={squareButtonClicked}
         />
         <div className="canvasContainer">
-          <canvas></canvas>
+          <canvas className="canvas"></canvas>
         </div>
         <Properties />
       </div>
