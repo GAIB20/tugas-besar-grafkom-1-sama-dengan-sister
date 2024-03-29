@@ -1,14 +1,15 @@
 import "./App.css";
 import Tool from "./section/Tool";
 import Properties from "./section/Properties";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { drawTriangle } from "./draw/triangle";
 import { drawRectangle } from "./draw/drawRectangle";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
 
   const lineButtonClicked = () => {
-    console.log("Line Button Clicked");
+    drawTriangle();
   };
 
   const rectangleButtonClicked = () => {
@@ -23,17 +24,6 @@ function App() {
     console.log("Square Button Clicked");
     drawRectangle();
   };
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://webglfundamentals.org/webgl/resources/webgl-utils.js";
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
 
   return (
     <div className="screen">

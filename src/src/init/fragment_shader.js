@@ -1,4 +1,4 @@
-const fragmentShader = `
+const fragmentSource = `
 precision mediump float;
 
 void main() {
@@ -6,4 +6,4 @@ void main() {
 }
 `;
 
-export default fragmentShader;
+export default fragmentSource;

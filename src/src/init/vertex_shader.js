@@ -1,4 +1,4 @@
-const vertexShader = `
+const vertexSource = `
 attribute vec4 a_position;
 
 void main() {
@@ -6,5 +6,5 @@ void main() {
 }
 `;
 
-export default vertexShader;
+export default vertexSource;
 

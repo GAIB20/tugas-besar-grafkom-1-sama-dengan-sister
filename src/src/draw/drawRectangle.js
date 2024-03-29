@@ -1,7 +1,9 @@
-import createShader from "../init/create_shader";
-import createProgram from "../init/create_program";
-import vertexShader from "../init/vertex_shader";
-import fragmentShader from "../init/fragment_shader";
+import createShader from "../init/create_shader"
+import createProgram from "../init/create_program"
+import vertexSource from "../init/vertex_shader";
+import fragmentSource from "../init/fragment_shader";
+import * as webglUtils from 'webgl-utils.js';
+
 
 export const drawRectangle = () => {
   var canvas = document.querySelector("#canvas");
@@ -9,9 +11,9 @@ export const drawRectangle = () => {
   if (!gl) {
     return;
   }
-
-  var vertexShaderSource = vertexShader;
-  var fragmentShaderSource = fragmentShader;
+  console.log(gl);
+  var vertexShaderSource = vertexSource;
+  var fragmentShaderSource = fragmentSource;
 
   var vertexShaderObject = createShader(
     gl,
@@ -24,9 +26,10 @@ export const drawRectangle = () => {
     gl.FRAGMENT_SHADER,
     fragmentShaderSource
   );
-
+  console.log("Ini vertex shadeer obj : ", vertexShaderObject);
   var program = createProgram(gl, vertexShaderObject, fragmentShaderObject);
   var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+  console.log(positionAttributeLocation);
   var positionBuffer = gl.createBuffer();
 
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
