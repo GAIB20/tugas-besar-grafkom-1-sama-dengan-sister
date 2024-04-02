@@ -6,6 +6,7 @@ import { drawTriangle } from "./draw/drawTriangle";
 import { drawRectangle } from "./draw/drawRectangle";
 import Transformation from "./utils/transformation";
 import drawLine from "./draw/drawLine";
+import drawSquare from "./draw/drawSquare";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -28,6 +29,7 @@ function App() {
 
   const squareButtonClicked = () => {
     // console.log("Square Button Clicked");
+    drawSquare()
   };
 
   return (
