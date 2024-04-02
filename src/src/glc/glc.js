@@ -98,4 +98,12 @@ export class GLCCommand {
       this.gl.UNSIGNED_SHORT,
       0
     );
+
+  drawLines = () =>
+    this.gl.drawElements(
+      this.gl.LINES,
+      0,
+      this.gl.UNSIGNED_SHORT,
+      0
+    );  
 }

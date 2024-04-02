@@ -24,9 +24,15 @@ export const drawRectangle = () => {
   ];
   const indices = [0, 1, 2, 2, 0, 3];
 
+  var translation = [100, 150];
+  var rotation = [0, 1];
+
+
   renderer.registerNewModel(new ModelType(positions, indices, gl), "rectangle");
   renderer.addInstance("instance1", "rectangle");
   glc.clear(1, 1, 1, 1);
 
   renderer.render();
 };
+
+const reRender = () => {};
