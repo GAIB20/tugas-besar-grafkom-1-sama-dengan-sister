@@ -4,9 +4,8 @@ const SLIDER_STEPS = 0.01;
 const SLIDER_MIN = 0;
 const SLIDER_MAX = 1;
 
-function Properties() {
+const Properties = ({ transformation, isOpen }) => {
   const [propsOpen, setPropsOpen] = useState(true);
-  const [isOpen, setIsOpen] = useState(true);
 
   // TO DO: Change to Default Value
   const [translateXVal, setTranslateXVal] = useState(0);
@@ -19,6 +18,15 @@ function Properties() {
   const [shearXVal, setShearXVal] = useState(0);
   const [shearYVal, setShearYVal] = useState(0);
   const [shearZVal, setShearZVal] = useState(0);
+
+  const updateTransformation = () => {
+    transformation.setTranslation(translateXVal, translateYVal, translateZVal)
+    transformation.setRotation(rotateXVal, rotateYVal, rotateZVal)
+    transformation.setScale(scaleVal)
+    transformation.setShear(shearXVal, shearYVal, shearZVal)
+    transformation.print()
+  }
+
 
   const changePropsState = () => {
     if (propsOpen) {
@@ -64,7 +72,10 @@ function Properties() {
                   id="translateXSlider"
                   step={SLIDER_STEPS}
                   defaultValue={translateXVal}
-                  onChange={(e) => setTranslateXVal(e.target.value)}
+                  onChange={(e) => {
+                    setTranslateXVal(e.target.value)
+                    updateTransformation()
+                  }}
                 />
               </div>
               <div className="slidecontainer">
@@ -80,7 +91,10 @@ function Properties() {
                   id="translateYSlider"
                   step={SLIDER_STEPS}
                   defaultValue={translateYVal}
-                  onChange={(e) => setTranslateYVal(e.target.value)}
+                  onChange={(e) => {
+                    setTranslateYVal(e.target.value) 
+                    updateTransformation()
+                  }}
                 />
               </div>
               <div className="slidecontainer">
@@ -96,7 +110,10 @@ function Properties() {
                   id="translateZSlider"
                   step={SLIDER_STEPS}
                   defaultValue={translateZVal}
-                  onChange={(e) => setTranslateZVal(e.target.value)}
+                  onChange={(e) => {
+                    setTranslateZVal(e.target.value) 
+                    updateTransformation()
+                  }}
                 />
               </div>
             </div>
@@ -116,7 +133,10 @@ function Properties() {
                   id="rotateXSlider"
                   step={SLIDER_STEPS}
                   defaultValue={rotateXVal}
-                  onChange={(e) => setRotateXVal(e.target.value)}
+                  onChange={(e) => {
+                    setRotateXVal(e.target.value)
+                    updateTransformation()
+                  }}
                 />
               </div>
               <div className="slidecontainer">
@@ -132,7 +152,10 @@ function Properties() {
                   id="rotateYSlider"
                   step={SLIDER_STEPS}
                   defaultValue={rotateYVal}
-                  onChange={(e) => setRotateYVal(e.target.value)}
+                  onChange={(e) => {
+                    setRotateYVal(e.target.value)
+                    updateTransformation()
+                  }}
                 />
               </div>
               <div className="slidecontainer">
@@ -148,7 +171,10 @@ function Properties() {
                   id="rotateZSlider"
                   step={SLIDER_STEPS}
                   defaultValue={rotateZVal}
-                  onChange={(e) => setRotateZVal(e.target.value)}
+                  onChange={(e) => {
+                    setRotateZVal(e.target.value)
+                    updateTransformation()
+                  }}
                 />
               </div>
             </div>
@@ -168,7 +194,10 @@ function Properties() {
                   id="scaleSlider"
                   step={SLIDER_STEPS}
                   defaultValue={rotateXVal}
-                  onChange={(e) => setScaleVal(e.target.value)}
+                  onChange={(e) => {
+                    setScaleVal(e.target.value)
+                    updateTransformation()
+                  }}
                 />
               </div>
             </div>
@@ -188,7 +217,10 @@ function Properties() {
                   id="shearXSlider"
                   step={SLIDER_STEPS}
                   defaultValue={shearXVal}
-                  onChange={(e) => setShearXVal(e.target.value)}
+                  onChange={(e) => {
+                    setShearXVal(e.target.value)
+                    updateTransformation()
+                  }}
                 />
               </div>
               <div className="slidecontainer">
@@ -204,7 +236,10 @@ function Properties() {
                   id="shearYSlider"
                   step={SLIDER_STEPS}
                   defaultValue={shearYVal}
-                  onChange={(e) => setShearYVal(e.target.value)}
+                  onChange={(e) => {
+                    setShearYVal(e.target.value)
+                    updateTransformation()
+                  }}
                 />
               </div>
               <div className="slidecontainer">
@@ -220,7 +255,10 @@ function Properties() {
                   id="shearZSlider"
                   step={SLIDER_STEPS}
                   defaultValue={shearZVal}
-                  onChange={(e) => setShearZVal(e.target.value)}
+                  onChange={(e) => {
+                    setShearZVal(e.target.value)
+                    updateTransformation()
+                  }}
                 />
               </div>
             </div>
@@ -239,6 +277,6 @@ function Properties() {
       </div>
     </>
   );
-}
+};
 
 export default Properties;

@@ -1,6 +1,6 @@
 export class GLCCommand {
   constructor(gl) {
-    console.log("Ini gl di param :", gl);
+    // console.log("Ini gl di param :", gl);
     this.gl = gl;
   }
 
@@ -100,10 +100,5 @@ export class GLCCommand {
     );
 
   drawLines = () =>
-    this.gl.drawElements(
-      this.gl.LINES,
-      0,
-      this.gl.UNSIGNED_SHORT,
-      0
-    );  
+    this.gl.drawElements(this.gl.LINES, 0, this.gl.UNSIGNED_SHORT, 0);
 }

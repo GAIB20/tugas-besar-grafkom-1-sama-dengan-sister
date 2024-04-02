@@ -4,9 +4,12 @@ import Properties from "./section/Properties";
 import { useState } from "react";
 import { drawTriangle } from "./draw/drawTriangle";
 import { drawRectangle } from "./draw/drawRectangle";
+import Transformation from "./utils/transformation";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
+  const [isPropertiesOpen, setIsPropertiesOpen] = useState(true)
+  const transformation = new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   const lineButtonClicked = () => {
     // console.log("Line Button Clicked");
@@ -45,7 +48,7 @@ function App() {
         <div className="canvasContainer">
           <canvas className="canvas" id="canvas"></canvas>
         </div>
-        <Properties />
+        <Properties transformation={transformation} isOpen={isPropertiesOpen}/>
       </div>
     </div>
   );
