@@ -5,6 +5,7 @@ import { useState } from "react";
 import { drawTriangle } from "./draw/drawTriangle";
 import { drawRectangle } from "./draw/drawRectangle";
 import Transformation from "./utils/transformation";
+import drawLine from "./draw/drawLine";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -12,8 +13,7 @@ function App() {
   const transformation = new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   const lineButtonClicked = () => {
-    // console.log("Line Button Clicked");
-    drawTriangle();
+    drawLine();
   };
 
   const rectangleButtonClicked = () => {
@@ -22,6 +22,7 @@ function App() {
   };
 
   const polygonButtonClicked = () => {
+    drawTriangle()
     // console.log("Poly Button Clicked");
   };
 

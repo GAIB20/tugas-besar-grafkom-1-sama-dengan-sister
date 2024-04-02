@@ -1,30 +1,72 @@
-import { GLCCommand } from "../glc/glc";
-import { ModelType } from "../models/modelType";
-import Renderer from "../render/render";
+import WebGL from "../gl/webgl";
+import fragmentSource from "../init/fragment_shader";
+import vertexSource from "../init/vertex_shader";
 import * as webglUtils from "webgl-utils.js";
+
+function createShader(gl, type, source) {
+  const shader = gl.createShader(type);
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    console.error("ERROR compiling shader!", gl.getShaderInfoLog(shader));
+    gl.deleteShader(shader);
+    return null;
+  }
+  return shader;
+}
+
+function createProgram(gl, vertexShader, fragmentShader) {
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error("ERROR linking program!", gl.getProgramInfoLog(program));
+    gl.deleteProgram(program);
+    return null;
+  }
+  return program;
+}
 
 export const drawTriangle = () => {
   const canvas = document.querySelector("canvas");
   if (!canvas) {
-    console.log("Something wrong when checking canvas");
+    console.log("Canvas not found");
     return;
   }
-
   const gl = canvas.getContext("webgl");
   if (!gl) {
-    console.log("Something went wrong when checking context");
+    console.error("WebGL not supported");
     return;
   }
-  const glc = new GLCCommand(gl)
-  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-  const renderer = new Renderer(gl);
+  webglUtils.resizeCanvasToDisplaySize(canvas);
 
-  var positions = [0, 0.5, 0, -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0];
-  const indices = [0, 1, 2];
+  const webgl = new WebGL(gl);
+  const vertexShader = webgl.createShader(gl.VERTEX_SHADER, vertexSource);
+  const fragmentShader = webgl.createShader(gl.FRAGMENT_SHADER, fragmentSource);
+  webgl.createProgram(vertexShader, fragmentShader);
+  webgl.attribLocation()
+  webgl.createAndBindBuffer();
 
-  renderer.registerNewModel(new ModelType(positions, indices, gl), "triangle");
-  renderer.addInstance("instance1", "triangle");
-  glc.clear(1, 1, 1, 1);
+  const positions = [0.0, 0.5, -0.5, -0.5, 0.5, -0.5];
 
-  renderer.render();
+  webgl.bufferData(positions);
+
+  webgl.setViewPort();
+  webgl.clear();
+  webgl.useProgramAndEnableVertex();
+
+  webgl.bindBuffer();
+  const size = 2; 
+  const type = webgl.gl.FLOAT;
+  const normalize = false;
+  const stride = 0;
+  const offset = 0; 
+  webgl.vertexAttribPointer(size, type, normalize, stride, offset);
+
+  const primitiveType = webgl.gl.TRIANGLES;
+  const count = 3; // Draw 3 vertices
+  webgl.draw(primitiveType, count);
 };
+
+export default drawTriangle;
