@@ -2,27 +2,28 @@ import "./App.css";
 import Tool from "./section/Tool";
 import Properties from "./section/Properties";
 import { useState } from "react";
-import { drawTriangle } from "./draw/triangle";
+import { drawTriangle } from "./draw/drawTriangle";
 import { drawRectangle } from "./draw/drawRectangle";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
 
   const lineButtonClicked = () => {
+    // console.log("Line Button Clicked");
     drawTriangle();
   };
 
   const rectangleButtonClicked = () => {
-    console.log("Rect Button Clicked");
+    // console.log("Rect Button Clicked");
+    drawRectangle();
   };
 
   const polygonButtonClicked = () => {
-    console.log("Poly Button Clicked");
+    // console.log("Poly Button Clicked");
   };
 
   const squareButtonClicked = () => {
-    console.log("Square Button Clicked");
-    drawRectangle();
+    // console.log("Square Button Clicked");
   };
 
   return (
