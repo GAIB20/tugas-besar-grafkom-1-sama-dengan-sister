@@ -2,11 +2,7 @@ import "./App.css";
 import Tool from "./section/Tool";
 import Properties from "./section/Properties";
 import { useState, useEffect } from "react";
-import { drawTriangle } from "./draw/drawTriangle";
-import { drawRectangle } from "./draw/drawRectangle";
 import Transformation from "./utils/transformation";
-import drawLine from "./draw/drawLine";
-import drawSquare from "./draw/drawSquare";
 import { Point } from "./model/point";
 import { createShader, createProgram } from "./shader";
 import { canvasX, canvasY } from "./utils/misc";
@@ -87,16 +83,11 @@ function App() {
 
     // Tell WebGL how to convert from clip space to pixels
     gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
-    setTransformation(new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
     setGl(gl);
     setPositionAttributeLocation(positionAttributeLocation);
     setColorAttribLocation(colorAttributeLocation);
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
-
-  useEffect(() => {
-    console.log("Berubah");
-  }, [transformation]);
 
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
