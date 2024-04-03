@@ -11,11 +11,11 @@ import { Point } from "./model/point";
 import {
   createShader,
   createProgram,
-  vertexShaderSource,
-  fragmentShaderSource,
 } from "./shader";
 import { canvasX, canvasY } from "./utils/misc";
-import * as webglUtils from "webgl-utils.js"
+import * as webglUtils from "webgl-utils.js";
+import { Shape } from "./constant/shape";
+import { fragmentShaderSource, vertexShaderSource } from "./constant/shader-source";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -27,8 +27,10 @@ function App() {
   const [positionAttributeLocation, setPositionAttributeLocation] = useState();
   const [colorAttributeLocation, setColorAttribLocation] = useState();
   const [points, setPoints] = useState([]);
+  const [shape, setShape] = useState();
 
   useEffect(() => {
+    // Inisialisasi Web Gl
     const canvas = document.querySelector("canvas");
     const gl = canvas.getContext("webgl");
     if (!gl) {
@@ -42,7 +44,6 @@ function App() {
       fragmentShaderSource
     );
 
-    // Link the two shaders above into a program
     var program = createProgram(gl, vertexShader, fragmentShader);
 
     var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
@@ -85,19 +86,17 @@ function App() {
     setGl(gl);
     setPositionAttributeLocation(positionAttributeLocation);
     setColorAttribLocation(colorAttributeLocation);
-    webglUtils.resizeCanvasToDisplaySize(canvas)
+    webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
   const renderCornerPoint = () => {
-    console.log("ni points : ", points);
-    const totalPoints = points.length-1;
+    const totalPoints = points.length - 1;
     for (var i = 0; i < totalPoints; i++) {
-      let x1 = points[i].x
-      let y1 = points[i].y
-      let x2 =points[i+1].x
-      let y2 = points[i+1].y
+      let x1 = points[i].x;
+      let y1 = points[i].y;
+      let x2 = points[i + 1].x;
+      let y2 = points[i + 1].y;
       let vertices = [x1, y1, x2, y1, x1, y2, x2, y2];
-      console.log("Ini vertices : ", vertices);
       render(gl.TRIANGLE_STRIP, vertices, [0, 0, 0, 1]);
     }
   };
@@ -108,37 +107,37 @@ function App() {
     var y = canvasY(canvas, event.clientY);
 
     if (!isDrawing) {
+      // Kasus kalau dia baru mulai gambar
       setIsDrawing(true);
       const originPoint = new Point(x, y);
       setOriginPoint(originPoint);
       setPoints([originPoint]); // Pastikan ini adalah array
     } else {
+      // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
-      const distance =
-        Math.abs(originPoint.x - finalPoint.x) >
-        Math.abs(originPoint.y - finalPoint.y)
-          ? Math.abs(originPoint.x - finalPoint.x)
-          : Math.abs(originPoint.y - finalPoint.y);
-      finalPoint.x =
-        originPoint.x > finalPoint.x
-          ? originPoint - distance
-          : originPoint + distance;
-      finalPoint.y =
-        originPoint.y > finalPoint.y
-          ? originPoint - distance
-          : originPoint + distance;
-      const verticesSquare = [
-        originPoint.x,
-        originPoint.y,
-        originPoint.x,
-        finalPoint.y,
-        finalPoint.x,
-        originPoint.y,
-        finalPoint.x,
-        finalPoint.y,
-      ];
-      setPoints((oldPoints) => [...oldPoints, finalPoint]);
-      renderCornerPoint()
+      switch (shape) {
+        case Shape.Square:
+          const distance =
+            Math.abs(originPoint.x - finalPoint.x) >
+            Math.abs(originPoint.y - finalPoint.y)
+              ? Math.abs(originPoint.x - finalPoint.x)
+              : Math.abs(originPoint.y - finalPoint.y);
+          finalPoint.x =
+            originPoint.x > finalPoint.x
+              ? originPoint - distance
+              : originPoint + distance;
+          finalPoint.y =
+            originPoint.y > finalPoint.y
+              ? originPoint - distance
+              : originPoint + distance;
+          setPoints((oldPoints) => [...oldPoints, finalPoint]);
+          renderCornerPoint();
+          break;
+
+        default:
+          break;
+      }
+
       setIsDrawing(false);
     }
   };
@@ -149,21 +148,28 @@ function App() {
     if (isDrawing) {
       let x2 = canvasX(canvas, event.clientX);
       let y2 = canvasY(canvas, event.clientY);
-      const x1 = originPoint.x;
-      const y1 = originPoint.y;
-      const distance =
-        Math.abs(x1 - x2) > Math.abs(y1 - y2)
-          ? Math.abs(x1 - x2)
-          : Math.abs(y1 - y2);
-      x2 = x1 > x2 ? x1 - distance : x1 + distance;
-      y2 = y1 > y2 ? y1 - distance : y1 + distance;
-      const verticesSquare = [x1, y1, x1, y2, x2, y1, x2, y2];
-      render(gl.TRIANGLE_STRIP, verticesSquare, [
-        ...colorRgb,
-        ...colorRgb,
-        ...colorRgb,
-        ...colorRgb,
-      ]);
+      switch (shape) {
+        case Shape.Square:
+          const x1 = originPoint.x;
+          const y1 = originPoint.y;
+          const distance =
+            Math.abs(x1 - x2) > Math.abs(y1 - y2)
+              ? Math.abs(x1 - x2)
+              : Math.abs(y1 - y2);
+          x2 = x1 > x2 ? x1 - distance : x1 + distance;
+          y2 = y1 > y2 ? y1 - distance : y1 + distance;
+          const verticesSquare = [x1, y1, x1, y2, x2, y1, x2, y2];
+          render(gl.TRIANGLE_STRIP, verticesSquare, [
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+          ]);
+          break;
+
+        default:
+          break;
+      }
     }
   };
 
@@ -184,22 +190,23 @@ function App() {
   const transformation = new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   const lineButtonClicked = () => {
-    drawLine();
+    setShape(Shape.Line);
   };
 
   const rectangleButtonClicked = () => {
     // console.log("Rect Button Clicked");
-    drawRectangle();
+    setShape(Shape.Rectangle);
   };
 
   const polygonButtonClicked = () => {
-    drawTriangle();
+    setShape(Shape.Polygon);
     // console.log("Poly Button Clicked");
   };
 
   const squareButtonClicked = () => {
     // console.log("Square Button Clicked");
     // setIsDrawing(true)
+    setShape(Shape.Square);
   };
 
   return (
