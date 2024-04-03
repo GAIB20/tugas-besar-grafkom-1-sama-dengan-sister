@@ -31,7 +31,7 @@ function App() {
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
   const [selectedShapeId, setSelectedShapeId] = useState();
-  const [transformation, setTransformation] = useState();
+  // const [transformation, setTransformation] = useState();
 
   useEffect(() => {
     // Inisialisasi Web Gl
@@ -94,10 +94,9 @@ function App() {
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
-
-  useEffect(()=>{
-    console.log("Berubah")
-  },[transformation])
+  useEffect(() => {
+    console.log("Berubah");
+  }, [transformation]);
 
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
@@ -139,7 +138,7 @@ function App() {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
       switch (currentShapeType) {
-        case Shape.Square:
+        case Shape.Square: {
           const square = new Square(
             originPoint,
             finalPoint,
@@ -150,6 +149,7 @@ function App() {
           setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           break;
+        }
 
         default:
           break;
@@ -170,8 +170,7 @@ function App() {
       const finalPoint = new Point(x2, y2);
 
       switch (currentShapeType) {
-        case Shape.Square:
-          // Dia ga punya id karena ini cuma temporary square (belom fix)
+        case Shape.Square: {
           const square = new Square(originPoint, finalPoint, [
             ...colorRgb,
             ...colorRgb,
@@ -180,6 +179,8 @@ function App() {
           ]);
           square.render(gl, positionAttributeLocation, colorAttributeLocation);
           break;
+        }
+        // Dia ga punya id karena ini cuma temporary square (belom fix)
 
         default:
           break;
@@ -203,6 +204,18 @@ function App() {
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(type, 0, vertices.length / 2);
   };
+
+  const transformation = new Transformation(
+    0.5,
+    0.4,
+    0.3,
+    0.2,
+    1,
+    0.8,
+    0.6,
+    0.3
+  );
+  transformation.print();
 
   const lineButtonClicked = () => {
     setCurrentType(Shape.Line);
