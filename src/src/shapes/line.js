@@ -1,8 +1,10 @@
-export class Line {
+import { Shape } from "../constant/shape";
+import { DrawableObject } from "./object";
+
+export class Line extends DrawableObject {
   // p1 ---- p2
-  // |        |
-  // p2 ---- p4
-  constructor(origin, final, color) {
+  constructor(origin, final, color, id) {
+    super(id, Shape.Line, color)
     this.color = color
     this.vertices = [origin];
     this.vertices.push(final);

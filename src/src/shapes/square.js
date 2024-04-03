@@ -1,15 +1,14 @@
+import { Shape } from "../constant/shape";
 import { Point } from "../model/point";
+import { DrawableObject } from "./object";
 
-export class Square {
+export class Square extends DrawableObject {
   // p1 ---- p3
   // |        |
   // p2 ---- p4
   constructor(origin, final, color, id) {
-    this.color = color;
+    super(id, Shape.Square, color)
     this.vertices = [origin];
-    if (id) {
-      this.id = id;
-    }
     const distance =
       Math.abs(origin.x - final.x) > Math.abs(origin.y - final.y)
         ? Math.abs(origin.x - final.x)
@@ -51,9 +50,5 @@ export class Square {
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
-  }
-
-  getName() {
-    return "Square " + this.id;
   }
 }
