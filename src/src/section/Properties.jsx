@@ -114,48 +114,6 @@ const Properties = ({
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Rotate X &nbsp; &nbsp; {transformation.rx}</p>{" "}
-                </b>
-                <input
-                  type="range"
-                  min={SLIDER_MIN}
-                  max={SLIDER_MAX}
-                  className="slider"
-                  id="rotateXSlider"
-                  step={SLIDER_STEPS}
-                  defaultValue={transformation.rx}
-                  onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      rx: e.target.value,
-                    }));
-                  }}
-                />
-              </div>
-              <div className="slidecontainer">
-                <b>
-                  {" "}
-                  <p> Rotate Y &nbsp; &nbsp; {transformation.ry}</p>{" "}
-                </b>
-                <input
-                  type="range"
-                  min={SLIDER_MIN}
-                  max={SLIDER_MAX}
-                  className="slider"
-                  id="rotateYSlider"
-                  step={SLIDER_STEPS}
-                  defaultValue={transformation.ry}
-                  onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      ry: e.target.value,
-                    }));
-                  }}
-                />
-              </div>
-              <div className="slidecontainer">
-                <b>
-                  {" "}
                   <p> Rotate Z &nbsp; &nbsp; {transformation.rz}</p>{" "}
                 </b>
                 <input

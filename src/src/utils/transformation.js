@@ -1,22 +1,18 @@
-import { Point } from "../model/point";
 import Matrix from "./matrix";
-import { TransformationMatrix } from "./transformation-matrix";
 
 const TRANSLATION_MULTIPLIER = 1000;
-const ROTATION_MULTIPLIER = 180;
+const ROTATION_MULTIPLIER = 360;
 const SCALE_MULTIPLIER = 5;
-const SHEAR_MULTIPLIER = 0.1;
+const SHEAR_MULTIPLIER = 1;
 
 const degToRad = (deg) => {
   return deg * (Math.PI / 180);
 };
 
 class Transformation {
-  constructor(x, y, rx, ry, rz, sx, sy, shx, shy) {
+  constructor(x, y, rz, sx, sy, shx, shy) {
     this.x = x;
     this.y = y;
-    this.rx = rx;
-    this.ry = ry;
     this.rz = rz;
     this.sx = sx;
     this.sy = sy;
@@ -33,15 +29,11 @@ class Transformation {
     this.transformationMatrix = new Matrix(4, 4);
     this.transformationMatrix.makeIdentityMatrix();
     var translationMatrix = this.generateTranslationMatrix(this.x, this.y);
-    var rotationXMatrix = this.generateRotationXMatrix(this.rx);
-    var rotationYMatrix = this.generateRotationYMatrix(this.ry);
     var rotationZMatrix = this.generateRotationZMatrix(this.rz);
     var scaleMatrix = this.generateScaleMatrix(this.sx, this.sy);
     var shearMatrix = this.generateShearMatrix(this.shx, this.shy);
 
     this.transformationMatrix.multiplyMatrix(translationMatrix);
-    this.transformationMatrix.multiplyMatrix(rotationXMatrix);
-    this.transformationMatrix.multiplyMatrix(rotationYMatrix);
     this.transformationMatrix.multiplyMatrix(rotationZMatrix);
     this.transformationMatrix.multiplyMatrix(scaleMatrix);
     this.transformationMatrix.multiplyMatrix(shearMatrix);
@@ -64,28 +56,6 @@ class Transformation {
   //   const translatedMatrix = this.translationMatrix.multiplyMatrix(position);
   //   return new Point(translatedMatrix[0], translatedMatrix[1]);
   // };
-
-  generateRotationXMatrix(deg) {
-    const rad = degToRad(deg * ROTATION_MULTIPLIER);
-    const firstRow = [1, 0, 0, 0];
-    const secondRow = [0, Math.cos(rad), -Math.sin(rad), 0];
-    const thirdRow = [0, Math.sin(rad), Math.cos(rad),0];
-    const fourthRow = [0, 0, 0, 1];
-    var matrix = new Matrix(4, 4);
-    matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
-    return matrix;
-  }
-
-  generateRotationYMatrix(deg) {
-    const rad = degToRad(deg * ROTATION_MULTIPLIER);
-    const firstRow = [Math.cos(rad), 0, Math.sin(rad), 0];
-    const secondRow = [0, 1, 0, 0];
-    const thirdRow = [-Math.sin(rad), 0, Math.cos(rad), 0];
-    const fourthRow = [0, 0, 0, 1];
-    var matrix = new Matrix(4, 4);
-    matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
-    return matrix;
-  }
 
   generateRotationZMatrix(deg) {
     const rad = degToRad(deg * ROTATION_MULTIPLIER);
@@ -130,12 +100,10 @@ class Transformation {
   };
 
   getRotation = () => {
-    return [this.rx, this.ry, this.rz];
+    return this.rz;
   };
 
-  setRotation = (rx, ry, rz) => {
-    this.rx = rx;
-    this.ry = ry;
+  setRotation = (rz) => {
     this.rz = rz;
   };
 
@@ -159,9 +127,32 @@ class Transformation {
 
   print = () => {
     console.log("Translation x, y: ", this.x, this.y);
-    console.log("Rotation rx, ry: ", this.rx, this.ry);
+    console.log("Rotation rz: ", this.rz);
     console.log("Scale sx sy: ", this.sx, this.sy);
     console.log("Shear shx, shy: ", this.shx, this.shy);
+  };
+
+  getAllData = () => {
+    return {
+      x: this.x,
+      y: this.y,
+      rz: this.rz,
+      sx: this.sx,
+      sy: this.sy,
+      shx: this.shx,
+      shy: this.shy,
+    };
+  };
+
+  difference = (tr) => {
+    var allData = tr.getAllData();
+    this.x = allData.x - this.x;
+    this.y = allData.y - this.y;
+    this.rz = allData.rz - this.rz;
+    this.sx = allData.sx - this.sx;
+    this.sy = allData.sy - this.sy;
+    this.shx = allData.shx - this.shx;
+    this.shy = allData.shy - this.shy;
   };
 }
 

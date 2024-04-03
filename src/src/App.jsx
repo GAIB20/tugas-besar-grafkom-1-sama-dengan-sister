@@ -13,10 +13,11 @@ import {
 } from "./constant/shader-source";
 import { Square } from "./shapes/square";
 import { Line } from "./shapes/line";
+import Transformation from "./utils/transformation";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
-  const [isPropertiesOpen, setIsPropertiesOpen] = useState(true);
+  const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [originPoint, setOriginPoint] = useState();
   const [colorRgb, setColorRgb] = useState([0, 0, 0, 1]);
@@ -26,19 +27,9 @@ function App() {
   const [points, setPoints] = useState([]);
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
-  console.log(shapes)
   const [selectedShapeId, setSelectedShapeId] = useState();
-  const [transformation, setTransformation] = useState({
-    x: 0,
-    y: 0,
-    rx: 0,
-    ry: 0,
-    rz: 0,
-    sx: 0,
-    sy: 0,
-    shx: 0,
-    shy: 0,
-  });
+  const [transformation, setTransformation] = useState(null);
+
 
   useEffect(() => {
     // Inisialisasi Web Gl
@@ -101,9 +92,29 @@ function App() {
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
+  // Change Transformation Data to Shape Configuration
+  useEffect(() => {
+    if (selectedShapeId) {
+      const selectedShape = shapes[selectedShapeId - 1];
+
+      if (selectedShape) {
+        setIsPropertiesOpen(true);
+        var transformationConfig = selectedShape
+          .getTransformation()
+          .getAllData();
+
+        setTransformation(transformationConfig);
+      }
+    } else {
+      setIsPropertiesOpen(false);
+    }
+  }, [selectedShapeId]);
+
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId - 1];
+
     if (selectedShape) {
+      // Update the transformation data to the one that the shape holds
       selectedShape.updateShapes(transformation);
       redrawCanvas();
     }
@@ -145,7 +156,7 @@ function App() {
       const originPoint = new Point(x, y);
       setOriginPoint(originPoint);
       setPoints([originPoint]); // Pastikan ini adalah array
-      console.log(originPoint);
+      // console.log(originPoint);
     } else {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
@@ -155,7 +166,8 @@ function App() {
             originPoint,
             finalPoint,
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            shapes.length + 1
+            shapes.length + 1,
+            new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0)
           );
           setSelectedShapeId(shapes.length + 1);
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
@@ -164,7 +176,6 @@ function App() {
           break;
         }
         case Shape.Line: {
-          console.log("MASUKKK");
           const line = new Line(originPoint, finalPoint, [
             ...colorRgb,
             ...colorRgb,

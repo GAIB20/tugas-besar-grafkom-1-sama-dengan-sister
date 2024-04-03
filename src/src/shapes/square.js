@@ -8,9 +8,9 @@ export class Square extends DrawableObject {
   // p1 ---- p3
   // |        |
   // p2 ---- p4
-  constructor(origin, final, color, id) {
+  constructor(origin, final, color, id, transformation) {
     super(id, Shape.Square, color);
-    this.vertices = [origin];
+
     const distance =
       Math.abs(origin.x - final.x) > Math.abs(origin.y - final.y)
         ? Math.abs(origin.x - final.x)
@@ -18,16 +18,27 @@ export class Square extends DrawableObject {
     const newX = origin.x > final.x ? origin.x - distance : origin.x + distance;
     const newY = origin.y > final.y ? origin.y - distance : origin.y + distance;
     final.updatePoint(newX, newY);
+
     const p2 = new Point(origin.x, final.y);
     const p3 = new Point(final.x, origin.y);
+
     this.p1 = origin;
     this.p2 = p2;
     this.p3 = p3;
     this.p4 = final;
+
+    this.vertices = [origin];
     this.vertices.push(p2);
     this.vertices.push(p3);
     this.vertices.push(final);
+
+    this.transformation = transformation
+    console.log(this.transformation)
   }
+
+  getTransformation = () => {
+    return this.transformation;
+  };
 
   convertPointToCoordinates = () => {
     const results = [];
@@ -58,11 +69,9 @@ export class Square extends DrawableObject {
   }
 
   updateShapes(transformationInput) {
-    const transformation = new Transformation(
+    const newTransformation = new Transformation(
       transformationInput.x,
       transformationInput.y,
-      transformationInput.rx,
-      transformationInput.ry,
       transformationInput.rz,
       transformationInput.sx,
       transformationInput.sy,
@@ -70,36 +79,16 @@ export class Square extends DrawableObject {
       transformationInput.shy
     );
 
-    console.log(this.vertices);
+    this.transformation.difference(newTransformation)
 
-    var transformationMatrix = transformation.calculateTransformationMatrix();
-    transformationMatrix.printMatrix();
+    var transformationMatrix = this.transformation.calculateTransformationMatrix();
+    // transformationMatrix.printMatrix();
 
     var shapeMatrix = new Matrix(4, 4);
-    var tempVertices0 = [
-      this.vertices[0].x,
-      this.vertices[0].y,
-      0,
-      1,
-    ];
-    var tempVertices1 = [
-      this.vertices[1].x,
-      this.vertices[1].y,
-      0,
-      1,
-    ];
-    var tempVertices2 = [
-      this.vertices[2].x,
-      this.vertices[2].y,
-      0,
-      1,
-    ];
-    var tempVertices3 = [
-      this.vertices[3].x,
-      this.vertices[3].y,
-      0,
-      1,
-    ];
+    var tempVertices0 = [this.p1.x, this.p1.y, 0, 1];
+    var tempVertices1 = [this.p2.x, this.p2.y, 0, 1];
+    var tempVertices2 = [this.p3.x, this.p3.y, 0, 1];
+    var tempVertices3 = [this.p4.x, this.p4.y, 0, 1];
     var tempMatrix = [
       tempVertices0,
       tempVertices1,
@@ -121,12 +110,7 @@ export class Square extends DrawableObject {
       this.vertices[i].y = resultMatrix[1][i];
     }
 
-    // console.log(this.vertices);
-
-    // this.vertices[0] = transformation.translate(this.p1);
-    // this.vertices[1] = transformation.translate(this.p2);
-    // this.vertices[2] = transformation.translate(this.p3);
-    // this.vertices[3] = transformation.translate(this.p4);
+    this.transformation = newTransformation
   }
 
   getName() {
