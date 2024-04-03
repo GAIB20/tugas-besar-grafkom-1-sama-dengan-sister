@@ -15,8 +15,8 @@ class Transformation {
   }
 
   generateTranslationMatrix(tx, ty) {
-    const firstRow = [1, 0, tx*30];
-    const secondRow = [0, 1, ty*30];
+    const firstRow = [1, 0, tx];
+    const secondRow = [0, 1, ty];
     const thirdRow = [0, 0, 1];
     return new TransformationMatrix(firstRow, secondRow, thirdRow);
   }

@@ -18,7 +18,6 @@ import Transformation from "./utils/transformation";
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(true);
-  const [tick, setTick] = useState(true);
   const [isDrawing, setIsDrawing] = useState(false);
   const [originPoint, setOriginPoint] = useState();
   const [colorRgb, setColorRgb] = useState([0, 0, 0, 1]);
@@ -29,18 +28,17 @@ function App() {
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
   const [selectedShapeId, setSelectedShapeId] = useState();
-  const [selectedShape, setSelectedShape] = useState();
-  const [transformation, setTransformation] = useState(new Transformation(
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-  ));
-  var ClickedObject = null
+  const [transformation, setTransformation] = useState({
+    x: 0,
+    y: 0,
+    rx: 0,
+    ry: 0,
+    sx: 0,
+    sy: 0,
+    shx: 0,
+    shy: 0,
+  });
+  var ClickedObject = null;
   // const [transformation, setTransformation] = useState();
 
   useEffect(() => {
@@ -104,36 +102,15 @@ function App() {
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
-  useEffect(() => {
-    // This code will run whenever shapes state changes
-    setSelectedShapeId(shapes.length - 1);
-  }, [shapes]); // Watch for changes in shapes state
 
   useEffect(() => {
-    // This code will run whenever shapes state changes
-    for (let i = 0; i < shapes.length; i++) {
-      if (shapes[i].getID() == selectedShapeId) {
-        setSelectedShape(shapes[i]);
-        break;
-      }
-    }
-  }, [selectedShapeId]); // Watch for changes in shapes state
+    const selectedShape = shapes[selectedShapeId ];
 
-  useEffect(() => {
-    // This code will run whenever shapes state changes
-    setSelectedShapeId(shapes.length - 1);
-  }, [shapes]); // Watch for changes in shapes state
-
-  useEffect(() => {
-    console.log(selectedShape);
     if (selectedShape) {
-      console.log(selectedShape.transformation.x);
-      transformation.x = selectedShape.transformation.x
-      transformation.y = selectedShape.transformation.y
+      selectedShape.updateShapes(transformation);
+      redrawCanvas();
     }
-    setTick(!tick);
-  }, [selectedShape]); // Watch for changes in shapes state
-
+  }, [transformation]); // Watch for changes in shapes state
 
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
@@ -183,20 +160,20 @@ function App() {
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             shapes.length
           );
-          setSelectedShapeId(shapes.length + 1)
+          setSelectedShapeId(shapes.length);
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           break;
         }
         case Shape.Line: {
-          const line = new Line(originPoint, finalPoint, [
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-          ], shapes.length);
-          // square.render(gl, positionAttributeLocation, colorAttributeLocation);
+          const line = new Line(
+            originPoint,
+            finalPoint,
+            [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+            shapes.length
+          );
+          setSelectedShapeId(shapes.length);
           setShapes((oldShapes) => [...oldShapes, line]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           break;
@@ -231,7 +208,7 @@ function App() {
         }
         // Dia ga punya id karena ini cuma temporary square (belom fix)
 
-        case Shape.Line:{
+        case Shape.Line: {
           const line = new Line(originPoint, finalPoint, [
             ...colorRgb,
             ...colorRgb,
@@ -239,9 +216,9 @@ function App() {
             ...colorRgb,
           ]);
           line.render(gl, positionAttributeLocation, colorAttributeLocation);
-          break
+          break;
         }
-          
+
         default:
           break;
       }
@@ -265,21 +242,6 @@ function App() {
     gl.drawArrays(type, 0, vertices.length / 2);
   };
 
-  const redrawTransformation = (transformation) => {
-    console.log(transformation)
-    var target;
-    // This code will run whenever shapes state changes
-    for (let i = 0; i < shapes.length; i++) {
-      if (shapes[i].getID() == selectedShapeId) {
-        target = shapes[i];
-        break;
-      }
-    }
-
-    target.update(transformation);
-
-    redrawCanvas()
-  }
   // transformation.print();
 
   const lineButtonClicked = () => {
@@ -326,13 +288,12 @@ function App() {
           <canvas className="canvas" id="canvas"></canvas>
         </div>
         <Properties
-          tick = {tick}
           selectedShapeId={selectedShapeId}
           transformation={transformation}
+          setTransformation={setTransformation}
           isOpen={isPropertiesOpen}
           shapes={shapes}
           setSelectedShapeId={setSelectedShapeId}
-          setTransformation={redrawTransformation}
         />
       </div>
     </div>

@@ -5,20 +5,12 @@ import Transformation from "../utils/transformation";
 export class Line extends DrawableObject {
   // p1 ---- p2
   constructor(origin, final, color, id) {
-    super(id, Shape.Line, color)
-    this.color = color
+    super(id, Shape.Line, color);
+    this.color = color;
+    this.origin = origin
+    this.final = final
     this.vertices = [origin];
     this.vertices.push(final);
-    this.transformation = new Transformation(
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    );
   }
 
   convertPointToCoordinates = () => {
@@ -30,13 +22,20 @@ export class Line extends DrawableObject {
     return results;
   };
 
-  update = (newTransformation) => {
-    for(let i = 0; i < this.vertices.length; i++) {
-      this.vertices[i].x += (parseFloat(newTransformation.x) - this.transformation.x);
-      this.vertices[i].y += (parseFloat(newTransformation.y) - this.transformation.y);
-    }
-    this.transformation.setTranslation(parseFloat(newTransformation.x), parseFloat(newTransformation.y))
-  }
+  updateShapes = (transformationInput) => {
+    const transformation = new Transformation(
+      transformationInput.x,
+      transformationInput.y,
+      transformationInput.rx,
+      transformationInput.ry,
+      transformationInput.sx,
+      transformationInput.sy,
+      transformationInput.shx,
+      transformationInput.shy
+    );
+    this.vertices[0] = transformation.translate(this.origin);
+    this.vertices[1] = transformation.translate(this.final);
+  };
 
   render(gl, positionAttributeLocation, colorAttributeLocation) {
     var buffer = gl.createBuffer();
@@ -48,7 +47,11 @@ export class Line extends DrawableObject {
 
     var colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.color), gl.STATIC_DRAW);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array(this.color),
+      gl.STATIC_DRAW
+    );
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(gl.LINE_STRIP, 0, points.length / 2);
