@@ -8,14 +8,15 @@ import Transformation from "./utils/transformation";
 import drawLine from "./draw/drawLine";
 import drawSquare from "./draw/drawSquare";
 import { Point } from "./model/point";
-import {
-  createShader,
-  createProgram,
-} from "./shader";
+import { createShader, createProgram } from "./shader";
 import { canvasX, canvasY } from "./utils/misc";
 import * as webglUtils from "webgl-utils.js";
 import { Shape } from "./constant/shape";
-import { fragmentShaderSource, vertexShaderSource } from "./constant/shader-source";
+import {
+  fragmentShaderSource,
+  vertexShaderSource,
+} from "./constant/shader-source";
+import { Square } from "./shapes/square";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -27,7 +28,8 @@ function App() {
   const [positionAttributeLocation, setPositionAttributeLocation] = useState();
   const [colorAttributeLocation, setColorAttribLocation] = useState();
   const [points, setPoints] = useState([]);
-  const [shape, setShape] = useState();
+  const [currentShapeType, setCurrentShapeType] = useState();
+  const [shapes, setShapes] = useState([]);
 
   useEffect(() => {
     // Inisialisasi Web Gl
@@ -89,14 +91,30 @@ function App() {
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
+  const redrawCanvas = () => {
+    for (let i = 0; i < shapes.length; i++) {
+      const currentShape = shapes[i];
+      currentShape.render(
+        gl,
+        positionAttributeLocation,
+        colorAttributeLocation
+      );
+    }
+  };
+
   const renderCornerPoint = () => {
-    const totalPoints = points.length - 1;
-    for (var i = 0; i < totalPoints; i++) {
+    const totalPoints = points.length;
+    console.log("Ini points : ", points);
+    console.log("masuk rendercorner", totalPoints);
+    for (var i = 0; i < totalPoints - 1; i++) {
+      console.log("Masuk ke loop");
       let x1 = points[i].x;
       let y1 = points[i].y;
       let x2 = points[i + 1].x;
       let y2 = points[i + 1].y;
       let vertices = [x1, y1, x2, y1, x1, y2, x2, y2];
+      console.log(vertices);
+
       render(gl.TRIANGLE_STRIP, vertices, [0, 0, 0, 1]);
     }
   };
@@ -115,56 +133,46 @@ function App() {
     } else {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
-      switch (shape) {
+      switch (currentShapeType) {
         case Shape.Square:
-          const distance =
-            Math.abs(originPoint.x - finalPoint.x) >
-            Math.abs(originPoint.y - finalPoint.y)
-              ? Math.abs(originPoint.x - finalPoint.x)
-              : Math.abs(originPoint.y - finalPoint.y);
-          finalPoint.x =
-            originPoint.x > finalPoint.x
-              ? originPoint - distance
-              : originPoint + distance;
-          finalPoint.y =
-            originPoint.y > finalPoint.y
-              ? originPoint - distance
-              : originPoint + distance;
+          const square = new Square(originPoint, finalPoint, [
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+          ]);
+          // square.render(gl, positionAttributeLocation, colorAttributeLocation);
+          setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
-          renderCornerPoint();
           break;
 
         default:
           break;
       }
-
+      setOriginPoint(undefined);
+      setCurrentShapeType(undefined);
+      // redrawCanvas();
       setIsDrawing(false);
     }
   };
 
   const handleMouseMove = (event) => {
     const canvas = document.querySelector("canvas");
-
+    redrawCanvas();
     if (isDrawing) {
       let x2 = canvasX(canvas, event.clientX);
       let y2 = canvasY(canvas, event.clientY);
-      switch (shape) {
+      const finalPoint = new Point(x2, y2);
+
+      switch (currentShapeType) {
         case Shape.Square:
-          const x1 = originPoint.x;
-          const y1 = originPoint.y;
-          const distance =
-            Math.abs(x1 - x2) > Math.abs(y1 - y2)
-              ? Math.abs(x1 - x2)
-              : Math.abs(y1 - y2);
-          x2 = x1 > x2 ? x1 - distance : x1 + distance;
-          y2 = y1 > y2 ? y1 - distance : y1 + distance;
-          const verticesSquare = [x1, y1, x1, y2, x2, y1, x2, y2];
-          render(gl.TRIANGLE_STRIP, verticesSquare, [
+          const square = new Square(originPoint, finalPoint, [
             ...colorRgb,
             ...colorRgb,
             ...colorRgb,
             ...colorRgb,
           ]);
+          square.render(gl, positionAttributeLocation, colorAttributeLocation);
           break;
 
         default:
@@ -174,6 +182,8 @@ function App() {
   };
 
   const render = (type, vertices, color) => {
+    console.log("Ini vertices di render : ", vertices);
+
     var buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -190,23 +200,23 @@ function App() {
   const transformation = new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   const lineButtonClicked = () => {
-    setShape(Shape.Line);
+    setCurrentType(Shape.Line);
   };
 
   const rectangleButtonClicked = () => {
     // console.log("Rect Button Clicked");
-    setShape(Shape.Rectangle);
+    setCurrentShapeType(Shape.Rectangle);
   };
 
   const polygonButtonClicked = () => {
-    setShape(Shape.Polygon);
+    setCurrentShapeType(Shape.Polygon);
     // console.log("Poly Button Clicked");
   };
 
   const squareButtonClicked = () => {
     // console.log("Square Button Clicked");
     // setIsDrawing(true)
-    setShape(Shape.Square);
+    setCurrentShapeType(Shape.Square);
   };
 
   return (
