@@ -8,4 +8,8 @@ export class DrawableObject {
     getName() {
       return this.type + " " + this.id;
     }
+    
+    getID() {
+      return this.id;
+    }
 }

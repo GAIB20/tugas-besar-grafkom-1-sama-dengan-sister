@@ -5,10 +5,10 @@ const SLIDER_MIN = -1;
 const SLIDER_MAX = 1;
 
 const Properties = ({
+  selectedShapeId,
   transformation,
   isOpen,
   shapes,
-  selectedShapeId,
   setSelectedShapeId,
   setTransformation,
 }) => {
@@ -48,12 +48,14 @@ const Properties = ({
               <p className="sectionTitle"> Instances </p>
               <select
                 className="dropdown"
+                value={selectedShapeId}
                 onChange={(e) => {
                   setSelectedShapeId(e.target.value);
                 }}
-                value={selectedShapeId}
               >
+                {" "}
                 {shapes?.map((shape) => {
+                  // console.log(shape.id);
                   return (
                     <option value={shape.id} key={shape.id}>
                       {shape.getName()}
@@ -167,7 +169,7 @@ const Properties = ({
                   min={SLIDER_MIN}
                   max={SLIDER_MAX}
                   className="slider"
-                  id="scaleSlider"
+                  id="scaleXSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.sx}
                   onChange={(e) => {
@@ -188,7 +190,7 @@ const Properties = ({
                   min={SLIDER_MIN}
                   max={SLIDER_MAX}
                   className="slider"
-                  id="scaleSlider"
+                  id="scaleYSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.sy}
                   onChange={(e) => {
@@ -201,7 +203,7 @@ const Properties = ({
               </div>
             </div>
 
-            <div className="sectionContainer">
+            <div className="sectionContainer" id="shear">
               <p className="sectionTitle"> Shear </p>
               <div className="slidecontainer">
                 <b>

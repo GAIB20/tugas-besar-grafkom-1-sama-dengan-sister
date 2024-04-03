@@ -118,7 +118,7 @@ function App() {
       selectedShape.updateShapes(transformation);
       redrawCanvas();
     }
-  }, [transformation]);
+  }, [transformation]); // Watch for changes in shapes state
 
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
@@ -176,13 +176,13 @@ function App() {
           break;
         }
         case Shape.Line: {
-          const line = new Line(originPoint, finalPoint, [
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-          ]);
-          // square.render(gl, positionAttributeLocation, colorAttributeLocation);
+          const line = new Line(
+            originPoint,
+            finalPoint,
+            [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+            shapes.length
+          );
+          setSelectedShapeId(shapes.length);
           setShapes((oldShapes) => [...oldShapes, line]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           break;
@@ -191,7 +191,6 @@ function App() {
           break;
       }
       setOriginPoint(undefined);
-      setCurrentShapeType(undefined);
       // redrawCanvas();
       setIsDrawing(false);
     }
@@ -252,6 +251,8 @@ function App() {
     gl.drawArrays(type, 0, vertices.length / 2);
   };
 
+  // transformation.print();
+
   const lineButtonClicked = () => {
     setCurrentShapeType(Shape.Line);
   };
@@ -296,12 +297,12 @@ function App() {
           <canvas className="canvas" id="canvas"></canvas>
         </div>
         <Properties
+          selectedShapeId={selectedShapeId}
           transformation={transformation}
+          setTransformation={setTransformation}
           isOpen={isPropertiesOpen}
           shapes={shapes}
           setSelectedShapeId={setSelectedShapeId}
-          setTransformation={setTransformation}
-          selectedShapeId={selectedShapeId}
         />
       </div>
     </div>
