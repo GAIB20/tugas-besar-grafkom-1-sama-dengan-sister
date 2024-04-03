@@ -1,8 +1,4 @@
 class Matrix {
-  // this.mat
-  // this.rows
-  // this.cols
-
   constructor(rows, cols) {
     this.rows = rows;
     this.cols = cols;

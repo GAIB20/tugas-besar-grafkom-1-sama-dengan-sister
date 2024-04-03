@@ -2,7 +2,6 @@ import "./App.css";
 import Tool from "./section/Tool";
 import Properties from "./section/Properties";
 import { useState, useEffect } from "react";
-import Transformation from "./utils/transformation";
 import { Point } from "./model/point";
 import { createShader, createProgram } from "./shader";
 import { canvasX, canvasY } from "./utils/misc";
@@ -27,12 +26,22 @@ function App() {
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
   const [selectedShapeId, setSelectedShapeId] = useState();
-  // const [transformation, setTransformation] = useState();
+  const [transformation, setTransformation] = useState({
+    x: 0,
+    y: 0,
+    rx: 0,
+    ry: 0,
+    sx: 0,
+    sy: 0,
+    shx: 0,
+    shy: 0,
+  });
 
   useEffect(() => {
     // Inisialisasi Web Gl
     const canvas = document.querySelector("canvas");
     const gl = canvas.getContext("webgl");
+
     if (!gl) {
       console.error("GL doesnt exist");
       return;
@@ -89,6 +98,17 @@ function App() {
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
+  useEffect(() => {
+    console.log("Ini shapes : ", shapes, selectedShapeId)
+    const selectedShape = shapes[selectedShapeId - 1];
+    console.log(selectedShapeId)
+    if (selectedShape) {
+      console.log("Ini selectedShape", selectedShape);
+      selectedShape.updateShapes(transformation);
+      redrawCanvas();
+    }
+  }, [transformation]);
+
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
       const currentShape = shapes[i];
@@ -100,19 +120,19 @@ function App() {
     }
   };
 
-  const renderCornerPoint = () => {
-    const totalPoints = points.length;
-    for (var i = 0; i < totalPoints - 1; i++) {
-      let x1 = points[i].x;
-      let y1 = points[i].y;
-      let x2 = points[i + 1].x;
-      let y2 = points[i + 1].y;
-      let vertices = [x1, y1, x2, y1, x1, y2, x2, y2];
-      console.log(vertices);
+  // const renderCornerPoint = () => {
+  //   const totalPoints = points.length;
+  //   for (var i = 0; i < totalPoints - 1; i++) {
+  //     let x1 = points[i].x;
+  //     let y1 = points[i].y;
+  //     let x2 = points[i + 1].x;
+  //     let y2 = points[i + 1].y;
+  //     let vertices = [x1, y1, x2, y1, x1, y2, x2, y2];
+  //     console.log(vertices);
 
-      render(gl.TRIANGLE_STRIP, vertices, [0, 0, 0, 1]);
-    }
-  };
+  //     render(gl.TRIANGLE_STRIP, vertices, [0, 0, 0, 1]);
+  //   }
+  // };
 
   const handleMouseDown = (event) => {
     const canvas = document.querySelector("canvas");
@@ -196,20 +216,8 @@ function App() {
     gl.drawArrays(type, 0, vertices.length / 2);
   };
 
-  const transformation = new Transformation(
-    0.5,
-    0.4,
-    0.3,
-    0.2,
-    1,
-    0.8,
-    0.6,
-    0.3
-  );
-  transformation.print();
-
   const lineButtonClicked = () => {
-    setCurrentType(Shape.Line);
+    setCurrentShapeType(Shape.Line);
   };
 
   const rectangleButtonClicked = () => {
@@ -256,6 +264,7 @@ function App() {
           isOpen={isPropertiesOpen}
           shapes={shapes}
           setSelectedShapeId={setSelectedShapeId}
+          setTransformation={setTransformation}
         />
       </div>
     </div>
