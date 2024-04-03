@@ -4,7 +4,8 @@ export class Square {
   // p1 ---- p3
   // |        |
   // p2 ---- p4
-  constructor(origin, final) {
+  constructor(origin, final, color) {
+    this.color = color
     this.vertices = [origin];
     const distance =
       Math.abs(origin.x - final.x) > Math.abs(origin.y - final.y)
@@ -20,7 +21,16 @@ export class Square {
     this.vertices.push(final);
   }
 
-  render(gl, positionAttributeLocation, color, colorAttributeLocation) {
+  convertPointToCoordinates = () => {
+    const results = [];
+    for (let i = 0; i < this.vertices.length; i++) {
+      results.push(this.vertices[i].x);
+      results.push(this.vertices[i].y);
+    }
+    return results;
+  };
+
+  render(gl, positionAttributeLocation, colorAttributeLocation) {
     var buffer = gl.createBuffer();
     const points = this.convertPointToCoordinates();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -30,18 +40,9 @@ export class Square {
 
     var colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.color), gl.STATIC_DRAW);
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
   }
-
-  convertPointToCoordinates = () => {
-    const results = [];
-    for (let i = 0; i < this.vertices.length; i++) {
-      results.push(this.vertices[i].x);
-      results.push(this.vertices[i].y);
-    }
-    return results;
-  };
 }

@@ -28,7 +28,8 @@ function App() {
   const [positionAttributeLocation, setPositionAttributeLocation] = useState();
   const [colorAttributeLocation, setColorAttribLocation] = useState();
   const [points, setPoints] = useState([]);
-  const [shape, setShape] = useState();
+  const [currentShapeType, setCurrentShapeType] = useState();
+  const [shapes, setShapes] = useState([]);
 
   useEffect(() => {
     // Inisialisasi Web Gl
@@ -90,6 +91,17 @@ function App() {
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
+  const redrawCanvas = () => {
+    for (let i = 0; i < shapes.length; i++) {
+      const currentShape = shapes[i];
+      currentShape.render(
+        gl,
+        positionAttributeLocation,
+        colorAttributeLocation
+      );
+    }
+  };
+
   const renderCornerPoint = () => {
     const totalPoints = points.length;
     console.log("Ini points : ", points);
@@ -121,43 +133,46 @@ function App() {
     } else {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
-      switch (shape) {
+      switch (currentShapeType) {
         case Shape.Square:
-          const square = new Square(originPoint, finalPoint);
-          square.render(
-            gl,
-            positionAttributeLocation,
-            [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            colorAttributeLocation
-          );
+          const square = new Square(originPoint, finalPoint, [
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+          ]);
+          // square.render(gl, positionAttributeLocation, colorAttributeLocation);
+          setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           break;
 
         default:
           break;
       }
-
+      setOriginPoint(undefined);
+      setCurrentShapeType(undefined);
+      // redrawCanvas();
       setIsDrawing(false);
     }
   };
 
   const handleMouseMove = (event) => {
     const canvas = document.querySelector("canvas");
-
+    redrawCanvas();
     if (isDrawing) {
       let x2 = canvasX(canvas, event.clientX);
       let y2 = canvasY(canvas, event.clientY);
       const finalPoint = new Point(x2, y2);
 
-      switch (shape) {
+      switch (currentShapeType) {
         case Shape.Square:
-          const square = new Square(originPoint, finalPoint);
-          square.render(
-            gl,
-            positionAttributeLocation,
-            [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            colorAttributeLocation
-          );
+          const square = new Square(originPoint, finalPoint, [
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+          ]);
+          square.render(gl, positionAttributeLocation, colorAttributeLocation);
           break;
 
         default:
@@ -185,23 +200,23 @@ function App() {
   const transformation = new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   const lineButtonClicked = () => {
-    setShape(Shape.Line);
+    setCurrentType(Shape.Line);
   };
 
   const rectangleButtonClicked = () => {
     // console.log("Rect Button Clicked");
-    setShape(Shape.Rectangle);
+    setCurrentShapeType(Shape.Rectangle);
   };
 
   const polygonButtonClicked = () => {
-    setShape(Shape.Polygon);
+    setCurrentShapeType(Shape.Polygon);
     // console.log("Poly Button Clicked");
   };
 
   const squareButtonClicked = () => {
     // console.log("Square Button Clicked");
     // setIsDrawing(true)
-    setShape(Shape.Square);
+    setCurrentShapeType(Shape.Square);
   };
 
   return (
