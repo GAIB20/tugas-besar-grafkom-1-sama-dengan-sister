@@ -1,5 +1,6 @@
 import { Shape } from "../constant/shape";
 import { DrawableObject } from "./object";
+import Transformation from "../utils/transformation";
 
 export class Line extends DrawableObject {
   // p1 ---- p2
@@ -8,6 +9,16 @@ export class Line extends DrawableObject {
     this.color = color
     this.vertices = [origin];
     this.vertices.push(final);
+    this.transformation = new Transformation(
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    );
   }
 
   convertPointToCoordinates = () => {
@@ -18,6 +29,14 @@ export class Line extends DrawableObject {
     }
     return results;
   };
+
+  update = (newTransformation) => {
+    for(let i = 0; i < this.vertices.length; i++) {
+      this.vertices[i].x += (parseFloat(newTransformation.x) - this.transformation.x);
+      this.vertices[i].y += (parseFloat(newTransformation.y) - this.transformation.y);
+    }
+    this.transformation.setTranslation(parseFloat(newTransformation.x), parseFloat(newTransformation.y))
+  }
 
   render(gl, positionAttributeLocation, colorAttributeLocation) {
     var buffer = gl.createBuffer();

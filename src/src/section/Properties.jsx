@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const SLIDER_STEPS = 0.01;
-const SLIDER_MIN = 0;
-const SLIDER_MAX = 1;
+const SLIDER_STEPS = 1;
+const SLIDER_MIN = -90;
+const SLIDER_MAX = 90;
 
-const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTransformation }) => {
+const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, setSelectedShapeId, setTransformation }) => {
   const [propsOpen, setPropsOpen] = useState(true);
 
   var translation = transformation.getTranslation()
@@ -22,12 +22,35 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
   const [shearXVal, setShearXVal] = useState(shear[0]);
   const [shearYVal, setShearYVal] = useState(shear[1]);
 
+  useEffect(() => {
+    // This code will run whenever shapes state changes
+    console.log(transformation.x);
+    document.getElementById("selectedObjectId").value = selectedShapeId;
+    document.getElementById("translateXSlider").value = transformation.x;
+    document.getElementById("translateYSlider").value = transformation.y;
+    document.getElementById("rotateXSlider").value = transformation.rx;
+    document.getElementById("rotateYSlider").value = transformation.ry;
+    document.getElementById("scaleXSlider").value = transformation.sx;
+    document.getElementById("scaleYSlider").value = transformation.sy;
+    document.getElementById("shearXSlider").value = transformation.shx;
+    document.getElementById("shearYSlider").value = transformation.shy;
+    setTranslateXVal(transformation.x);
+    setTranslateYVal(transformation.y);
+    setRotateXVal(transformation.rx);
+    setRotateYVal(transformation.ry);
+    setScaleXVal(transformation.sx);
+    setScaleYVal(transformation.sy);
+    setShearXVal(transformation.shx);
+    setShearYVal(transformation.shy)
+  }, [tick]); // Watch for changes in shapes state
+
   const updateTransformation = () => {
     transformation.setTranslation(translateXVal, translateYVal)
     transformation.setRotation(rotateXVal, rotateYVal)
     transformation.setScale(scaleXVal, scaleYVal)
     transformation.setShear(shearXVal, shearYVal)
-    transformation.print()
+    setTransformation(transformation)
+    // transformation.print()
   }
 
 
@@ -62,9 +85,9 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
         {isOpen && (
           <div className="propertiesContentContainer">
             <div className="sectionContainer">
-              <select onChange={(e) => setSelectedShapeId(e.target.value)}>
+              <select onChange={(e) => setSelectedShapeId(e.target.value)} id="selectedObjectId">
                 {shapes?.map((shape) => {
-                  console.log(shape.id);
+                  // console.log(shape.id);
                   return (
                     <option value={shape?.id ?? ""} key={shape?.id ?? ""}>
                       {shape.getName()}
@@ -167,7 +190,7 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
                   min={SLIDER_MIN}
                   max={SLIDER_MAX}
                   className="slider"
-                  id="scaleSlider"
+                  id="scaleXSlider"
                   step={SLIDER_STEPS}
                   defaultValue={rotateXVal}
                   onChange={(e) => {
@@ -186,7 +209,7 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
                   min={SLIDER_MIN}
                   max={SLIDER_MAX}
                   className="slider"
-                  id="scaleSlider"
+                  id="scaleYSlider"
                   step={SLIDER_STEPS}
                   defaultValue={rotateXVal}
                   onChange={(e) => {
@@ -197,7 +220,7 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
               </div>
             </div>
 
-            <div className="sectionContainer">
+            <div className="sectionContainer" id="shear">
               <p className="sectionTitle"> Shear </p>
               <div className="slidecontainer">
                 <b>

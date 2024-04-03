@@ -18,6 +18,7 @@ import { Line } from "./shapes/line";
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(true);
+  const [tick, setTick] = useState(true);
   const [isDrawing, setIsDrawing] = useState(false);
   const [originPoint, setOriginPoint] = useState();
   const [colorRgb, setColorRgb] = useState([0, 0, 0, 1]);
@@ -28,6 +29,18 @@ function App() {
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
   const [selectedShapeId, setSelectedShapeId] = useState();
+  const [selectedShape, setSelectedShape] = useState();
+  const [transformation, setTransformation] = useState(new Transformation(
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ));
+  var ClickedObject = null
   // const [transformation, setTransformation] = useState();
 
   useEffect(() => {
@@ -90,6 +103,37 @@ function App() {
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
+  useEffect(() => {
+    // This code will run whenever shapes state changes
+    setSelectedShapeId(shapes.length - 1);
+  }, [shapes]); // Watch for changes in shapes state
+
+  useEffect(() => {
+    // This code will run whenever shapes state changes
+    for (let i = 0; i < shapes.length; i++) {
+      if (shapes[i].getID() == selectedShapeId) {
+        setSelectedShape(shapes[i]);
+        break;
+      }
+    }
+  }, [selectedShapeId]); // Watch for changes in shapes state
+
+  useEffect(() => {
+    // This code will run whenever shapes state changes
+    setSelectedShapeId(shapes.length - 1);
+  }, [shapes]); // Watch for changes in shapes state
+
+  useEffect(() => {
+    console.log(selectedShape);
+    if (selectedShape) {
+      console.log(selectedShape.transformation.x);
+      transformation.x = selectedShape.transformation.x
+      transformation.y = selectedShape.transformation.y
+    }
+    setTick(!tick);
+  }, [selectedShape]); // Watch for changes in shapes state
+
+
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
       const currentShape = shapes[i];
@@ -136,7 +180,7 @@ function App() {
             originPoint,
             finalPoint,
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            shapes.length + 1
+            shapes.length
           );
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, square]);
@@ -144,13 +188,12 @@ function App() {
           break;
         }
         case Shape.Line: {
-          console.log("MASUKKK")
           const line = new Line(originPoint, finalPoint, [
             ...colorRgb,
             ...colorRgb,
             ...colorRgb,
             ...colorRgb,
-          ]);
+          ], shapes.length);
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, line]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
@@ -160,7 +203,6 @@ function App() {
           break;
       }
       setOriginPoint(undefined);
-      setCurrentShapeType(undefined);
       // redrawCanvas();
       setIsDrawing(false);
     }
@@ -219,17 +261,22 @@ function App() {
     gl.drawArrays(type, 0, vertices.length / 2);
   };
 
-  const transformation = new Transformation(
-    0.5,
-    0.4,
-    0.3,
-    0.2,
-    1,
-    0.8,
-    0.6,
-    0.3
-  );
-  transformation.print();
+  const redrawTransformation = (transformation) => {
+    console.log(transformation)
+    var target;
+    // This code will run whenever shapes state changes
+    for (let i = 0; i < shapes.length; i++) {
+      if (shapes[i].getID() == selectedShapeId) {
+        target = shapes[i];
+        break;
+      }
+    }
+
+    target.update(transformation);
+
+    redrawCanvas()
+  }
+  // transformation.print();
 
   const lineButtonClicked = () => {
     setCurrentShapeType(Shape.Line);
@@ -275,10 +322,13 @@ function App() {
           <canvas className="canvas" id="canvas"></canvas>
         </div>
         <Properties
+          tick = {tick}
+          selectedShapeId={selectedShapeId}
           transformation={transformation}
           isOpen={isPropertiesOpen}
           shapes={shapes}
           setSelectedShapeId={setSelectedShapeId}
+          setTransformation={redrawTransformation}
         />
       </div>
     </div>
