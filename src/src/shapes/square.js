@@ -1,5 +1,6 @@
 import { Shape } from "../constant/shape";
 import { Point } from "../model/point";
+import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
 
 export class Square extends DrawableObject {
@@ -7,7 +8,7 @@ export class Square extends DrawableObject {
   // |        |
   // p2 ---- p4
   constructor(origin, final, color, id) {
-    super(id, Shape.Square, color)
+    super(id, Shape.Square, color);
     this.vertices = [origin];
     const distance =
       Math.abs(origin.x - final.x) > Math.abs(origin.y - final.y)
@@ -18,6 +19,10 @@ export class Square extends DrawableObject {
     final.updatePoint(newX, newY);
     const p2 = new Point(origin.x, final.y);
     const p3 = new Point(final.x, origin.y);
+    this.p1 = origin;
+    this.p2 = p2;
+    this.p3 = p3;
+    this.p4 = final;
     this.vertices.push(p2);
     this.vertices.push(p3);
     this.vertices.push(final);
@@ -26,8 +31,7 @@ export class Square extends DrawableObject {
   convertPointToCoordinates = () => {
     const results = [];
     for (let i = 0; i < this.vertices.length; i++) {
-      results.push(this.vertices[i].x);
-      results.push(this.vertices[i].y);
+      results.push(this.vertices[i].x, this.vertices[i].y);
     }
     return results;
   };
@@ -50,5 +54,26 @@ export class Square extends DrawableObject {
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
+  }
+
+  updateShapes(transformationInput) {
+    const transformation = new Transformation(
+      transformationInput.x,
+      transformationInput.y,
+      transformationInput.rx,
+      transformationInput.ry,
+      transformationInput.sx,
+      transformationInput.sy,
+      transformationInput.shx,
+      transformationInput.shy
+    );
+    this.vertices[0] = transformation.translate(this.p1);
+    this.vertices[1] = transformation.translate(this.p2);
+    this.vertices[2] = transformation.translate(this.p3);
+    this.vertices[3] = transformation.translate(this.p4);
+  }
+
+  getName() {
+    return "Square " + this.id;
   }
 }

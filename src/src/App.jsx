@@ -2,7 +2,6 @@ import "./App.css";
 import Tool from "./section/Tool";
 import Properties from "./section/Properties";
 import { useState, useEffect } from "react";
-import Transformation from "./utils/transformation";
 import { Point } from "./model/point";
 import { createShader, createProgram } from "./shader";
 import { canvasX, canvasY } from "./utils/misc";
@@ -47,6 +46,7 @@ function App() {
     // Inisialisasi Web Gl
     const canvas = document.querySelector("canvas");
     const gl = canvas.getContext("webgl");
+
     if (!gl) {
       console.error("GL doesnt exist");
       return;
@@ -145,19 +145,19 @@ function App() {
     }
   };
 
-  const renderCornerPoint = () => {
-    const totalPoints = points.length;
-    for (var i = 0; i < totalPoints - 1; i++) {
-      let x1 = points[i].x;
-      let y1 = points[i].y;
-      let x2 = points[i + 1].x;
-      let y2 = points[i + 1].y;
-      let vertices = [x1, y1, x2, y1, x1, y2, x2, y2];
-      console.log(vertices);
+  // const renderCornerPoint = () => {
+  //   const totalPoints = points.length;
+  //   for (var i = 0; i < totalPoints - 1; i++) {
+  //     let x1 = points[i].x;
+  //     let y1 = points[i].y;
+  //     let x2 = points[i + 1].x;
+  //     let y2 = points[i + 1].y;
+  //     let vertices = [x1, y1, x2, y1, x1, y2, x2, y2];
+  //     console.log(vertices);
 
-      render(gl.TRIANGLE_STRIP, vertices, [0, 0, 0, 1]);
-    }
-  };
+  //     render(gl.TRIANGLE_STRIP, vertices, [0, 0, 0, 1]);
+  //   }
+  // };
 
   const handleMouseDown = (event) => {
     const canvas = document.querySelector("canvas");
@@ -170,7 +170,7 @@ function App() {
       const originPoint = new Point(x, y);
       setOriginPoint(originPoint);
       setPoints([originPoint]); // Pastikan ini adalah array
-      console.log(originPoint)
+      console.log(originPoint);
     } else {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
@@ -182,6 +182,7 @@ function App() {
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             shapes.length
           );
+          setSelectedShapeId(shapes.length + 1)
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
@@ -229,15 +230,17 @@ function App() {
         }
         // Dia ga punya id karena ini cuma temporary square (belom fix)
 
-        case Shape.Line:
+        case Shape.Line:{
           const line = new Line(originPoint, finalPoint, [
             ...colorRgb,
             ...colorRgb,
             ...colorRgb,
             ...colorRgb,
-          ])
-          line.render(gl, positionAttributeLocation, colorAttributeLocation)
-
+          ]);
+          line.render(gl, positionAttributeLocation, colorAttributeLocation);
+          break
+        }
+          
         default:
           break;
       }

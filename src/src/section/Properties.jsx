@@ -54,6 +54,16 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
   }
 
 
+const Properties = ({
+  transformation,
+  isOpen,
+  shapes,
+  selectedShapeId,
+  setSelectedShapeId,
+  setTransformation,
+}) => {
+  const [propsOpen, setPropsOpen] = useState(true);
+
   const changePropsState = () => {
     if (propsOpen) {
       document.getElementById("properties").style.display = "none";
@@ -89,7 +99,7 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
                 {shapes?.map((shape) => {
                   // console.log(shape.id);
                   return (
-                    <option value={shape?.id ?? ""} key={shape?.id ?? ""}>
+                    <option value={shape.id} key={shape.id}>
                       {shape.getName()}
                     </option>
                   );
@@ -99,7 +109,7 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Translate X &nbsp; &nbsp; {translateXVal}</p>{" "}
+                  <p> Translate X &nbsp; &nbsp; {transformation.x}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -108,17 +118,19 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
                   className="slider"
                   id="translateXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={translateXVal}
+                  defaultValue={transformation.x}
                   onChange={(e) => {
-                    setTranslateXVal(e.target.value);
-                    updateTransformation();
+                    setTransformation((old) => ({
+                      ...old,
+                      x: e.target.value,
+                    }));
                   }}
                 />
               </div>
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Translate Y &nbsp; &nbsp; {translateYVal}</p>{" "}
+                  <p> Translate Y &nbsp; &nbsp; {transformation.y}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -127,10 +139,12 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
                   className="slider"
                   id="translateYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={translateYVal}
+                  defaultValue={transformation.y}
                   onChange={(e) => {
-                    setTranslateYVal(e.target.value);
-                    updateTransformation();
+                    setTransformation((old) => ({
+                      ...old,
+                      y: e.target.value,
+                    }));
                   }}
                 />
               </div>
@@ -141,7 +155,7 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Rotate X &nbsp; &nbsp; {rotateXVal}</p>{" "}
+                  <p> Rotate X &nbsp; &nbsp; {transformation.rx}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -150,17 +164,19 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
                   className="slider"
                   id="rotateXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={rotateXVal}
+                  defaultValue={transformation.rx}
                   onChange={(e) => {
-                    setRotateXVal(e.target.value);
-                    updateTransformation();
+                    setTransformation((old) => ({
+                      ...old,
+                      rx: e.target.value,
+                    }));
                   }}
                 />
               </div>
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Rotate Y &nbsp; &nbsp; {rotateYVal}</p>{" "}
+                  <p> Rotate Y &nbsp; &nbsp; {transformation.ry}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -169,10 +185,12 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
                   className="slider"
                   id="rotateYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={rotateYVal}
+                  defaultValue={transformation.ry}
                   onChange={(e) => {
-                    setRotateYVal(e.target.value);
-                    updateTransformation();
+                    setTransformation((old) => ({
+                      ...old,
+                      ry: e.target.value,
+                    }));
                   }}
                 />
               </div>
@@ -183,7 +201,7 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Scale X &nbsp; &nbsp; {scaleXVal}</p>{" "}
+                  <p> Scale X &nbsp; &nbsp; {transformation.sx}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -192,17 +210,19 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
                   className="slider"
                   id="scaleXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={rotateXVal}
+                  defaultValue={transformation.sx}
                   onChange={(e) => {
-                    setScaleXVal(e.target.value)
-                    updateTransformation()
+                    setTransformation((old) => ({
+                      ...old,
+                      sx: e.target.value,
+                    }));
                   }}
                 />
               </div>
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Scale Y &nbsp; &nbsp; {scaleYVal}</p>{" "}
+                  <p> Scale Y &nbsp; &nbsp; {transformation.sy}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -211,10 +231,12 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
                   className="slider"
                   id="scaleYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={rotateXVal}
+                  defaultValue={transformation.sy}
                   onChange={(e) => {
-                    setScaleYVal(e.target.value)
-                    updateTransformation()
+                    setTransformation((old) => ({
+                      ...old,
+                      sy: e.target.value,
+                    }));
                   }}
                 />
               </div>
@@ -225,7 +247,7 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Shear X &nbsp; &nbsp; {shearXVal}</p>{" "}
+                  <p> Shear X &nbsp; &nbsp; {transformation.shx}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -234,17 +256,19 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
                   className="slider"
                   id="shearXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={shearXVal}
+                  defaultValue={transformation.shx}
                   onChange={(e) => {
-                    setShearXVal(e.target.value);
-                    updateTransformation();
+                    setTransformation((old) => ({
+                      ...old,
+                      shx: e.target.value,
+                    }));
                   }}
                 />
               </div>
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Shear Y &nbsp; &nbsp; {shearYVal}</p>{" "}
+                  <p> Shear Y &nbsp; &nbsp; {transformation.shy}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -253,15 +277,16 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
                   className="slider"
                   id="shearYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={shearYVal}
+                  defaultValue={transformation.shy}
                   onChange={(e) => {
-                    setShearYVal(e.target.value);
-                    updateTransformation();
+                    setTransformation((old) => ({
+                      ...old,
+                      shy: e.target.value,
+                    }));
                   }}
                 />
               </div>
             </div>
-
           </div>
         )}
       </div>
@@ -276,5 +301,6 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
     </>
   );
 };
+}
 
 export default Properties;
