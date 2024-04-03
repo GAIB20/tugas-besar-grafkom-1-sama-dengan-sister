@@ -17,6 +17,7 @@ import {
   vertexShaderSource,
 } from "./constant/shader-source";
 import { Square } from "./shapes/square";
+import { Line } from "./shapes/line";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -130,6 +131,7 @@ function App() {
       const originPoint = new Point(x, y);
       setOriginPoint(originPoint);
       setPoints([originPoint]); // Pastikan ini adalah array
+      console.log(originPoint)
     } else {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
@@ -143,6 +145,18 @@ function App() {
           ]);
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, square]);
+          setPoints((oldPoints) => [...oldPoints, finalPoint]);
+          break;
+        case Shape.Line:
+          console.log("MASUKKK")
+          const line = new Line(originPoint, finalPoint, [
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+          ]);
+          // square.render(gl, positionAttributeLocation, colorAttributeLocation);
+          setShapes((oldShapes) => [...oldShapes, line]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           break;
 
@@ -175,6 +189,15 @@ function App() {
           square.render(gl, positionAttributeLocation, colorAttributeLocation);
           break;
 
+        case Shape.Line:
+          const line = new Line(originPoint, finalPoint, [
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+          ])
+          line.render(gl, positionAttributeLocation, colorAttributeLocation)
+
         default:
           break;
       }
@@ -200,7 +223,7 @@ function App() {
   const transformation = new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   const lineButtonClicked = () => {
-    setCurrentType(Shape.Line);
+    setCurrentShapeType(Shape.Line);
   };
 
   const rectangleButtonClicked = () => {

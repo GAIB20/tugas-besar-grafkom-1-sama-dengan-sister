@@ -60,10 +60,10 @@ const Properties = ({ transformation, isOpen }) => {
             <div className="sectionContainer">
               <p className="sectionTitle"> Translation </p>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Translate X &nbsp; &nbsp; {translateXVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -79,10 +79,10 @@ const Properties = ({ transformation, isOpen }) => {
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Translate Y &nbsp; &nbsp; {translateYVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -98,10 +98,10 @@ const Properties = ({ transformation, isOpen }) => {
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Translate Z &nbsp; &nbsp; {translateZVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -121,10 +121,10 @@ const Properties = ({ transformation, isOpen }) => {
             <div className="sectionContainer">
               <p className="sectionTitle"> Rotation </p>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Rotate X &nbsp; &nbsp; {rotateXVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -140,10 +140,10 @@ const Properties = ({ transformation, isOpen }) => {
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Rotate Y &nbsp; &nbsp; {rotateYVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -159,10 +159,10 @@ const Properties = ({ transformation, isOpen }) => {
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Rotate Z &nbsp; &nbsp; {rotateZVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -182,10 +182,10 @@ const Properties = ({ transformation, isOpen }) => {
             <div className="sectionContainer">
               <p className="sectionTitle"> Scale </p>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Rotate &nbsp; &nbsp; {scaleVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -205,10 +205,10 @@ const Properties = ({ transformation, isOpen }) => {
             <div className="sectionContainer">
               <p className="sectionTitle"> Shear </p>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Shear X &nbsp; &nbsp; {shearXVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -224,10 +224,10 @@ const Properties = ({ transformation, isOpen }) => {
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Shear Y &nbsp; &nbsp; {shearYVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -243,10 +243,10 @@ const Properties = ({ transformation, isOpen }) => {
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Shear Z &nbsp; &nbsp; {shearZVal}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
