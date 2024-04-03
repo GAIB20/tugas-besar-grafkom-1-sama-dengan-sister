@@ -1,16 +1,15 @@
+import { Shape } from "../constant/shape";
 import { Point } from "../model/point";
 import Transformation from "../utils/transformation";
+import { DrawableObject } from "./object";
 
-export class Square {
+export class Square extends DrawableObject {
   // p1 ---- p3
   // |        |
   // p2 ---- p4
   constructor(origin, final, color, id) {
-    this.color = color;
+    super(id, Shape.Square, color);
     this.vertices = [origin];
-    if (id) {
-      this.id = id;
-    }
     const distance =
       Math.abs(origin.x - final.x) > Math.abs(origin.y - final.y)
         ? Math.abs(origin.x - final.x)

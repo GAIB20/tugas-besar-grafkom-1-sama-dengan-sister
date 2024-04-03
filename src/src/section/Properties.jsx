@@ -8,6 +8,7 @@ const Properties = ({
   transformation,
   isOpen,
   shapes,
+  selectedShapeId,
   setSelectedShapeId,
   setTransformation,
 }) => {
@@ -46,9 +47,9 @@ const Properties = ({
             <div className="sectionContainer">
               <select
                 onChange={(e) => {
-                  console.log("ini target", e.target.value);
                   setSelectedShapeId(e.target.value);
                 }}
+                value={selectedShapeId}
               >
                 {shapes?.map((shape) => {
                   return (
@@ -60,10 +61,10 @@ const Properties = ({
               </select>
               <p className="sectionTitle"> Translation </p>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Translate X &nbsp; &nbsp; {transformation.x}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -81,10 +82,10 @@ const Properties = ({
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Translate Y &nbsp; &nbsp; {transformation.y}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -106,10 +107,10 @@ const Properties = ({
             <div className="sectionContainer">
               <p className="sectionTitle"> Rotation </p>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Rotate X &nbsp; &nbsp; {transformation.rx}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -127,10 +128,10 @@ const Properties = ({
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Rotate Y &nbsp; &nbsp; {transformation.ry}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -152,10 +153,10 @@ const Properties = ({
             <div className="sectionContainer">
               <p className="sectionTitle"> Scale </p>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Scale X &nbsp; &nbsp; {transformation.sx}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -173,10 +174,10 @@ const Properties = ({
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Scale Y &nbsp; &nbsp; {transformation.sy}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -198,10 +199,10 @@ const Properties = ({
             <div className="sectionContainer">
               <p className="sectionTitle"> Shear </p>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Shear X &nbsp; &nbsp; {transformation.shx}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -219,10 +220,10 @@ const Properties = ({
                 />
               </div>
               <div className="slidecontainer">
-                <bold>
+                <b>
                   {" "}
                   <p> Shear Y &nbsp; &nbsp; {transformation.shy}</p>{" "}
-                </bold>
+                </b>
                 <input
                   type="range"
                   min={SLIDER_MIN}

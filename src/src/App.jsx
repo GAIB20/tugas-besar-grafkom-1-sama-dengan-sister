@@ -12,6 +12,7 @@ import {
   vertexShaderSource,
 } from "./constant/shader-source";
 import { Square } from "./shapes/square";
+import { Line } from "./shapes/line";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -99,11 +100,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log("Ini shapes : ", shapes, selectedShapeId)
     const selectedShape = shapes[selectedShapeId - 1];
-    console.log(selectedShapeId)
     if (selectedShape) {
-      console.log("Ini selectedShape", selectedShape);
       selectedShape.updateShapes(transformation);
       redrawCanvas();
     }
@@ -145,6 +143,7 @@ function App() {
       const originPoint = new Point(x, y);
       setOriginPoint(originPoint);
       setPoints([originPoint]); // Pastikan ini adalah array
+      console.log(originPoint);
     } else {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
@@ -156,12 +155,25 @@ function App() {
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             shapes.length + 1
           );
+          setSelectedShapeId(shapes.length + 1)
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           break;
         }
-
+        case Shape.Line: {
+          console.log("MASUKKK");
+          const line = new Line(originPoint, finalPoint, [
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+          ]);
+          // square.render(gl, positionAttributeLocation, colorAttributeLocation);
+          setShapes((oldShapes) => [...oldShapes, line]);
+          setPoints((oldPoints) => [...oldPoints, finalPoint]);
+          break;
+        }
         default:
           break;
       }
@@ -193,6 +205,17 @@ function App() {
         }
         // Dia ga punya id karena ini cuma temporary square (belom fix)
 
+        case Shape.Line:{
+          const line = new Line(originPoint, finalPoint, [
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+          ]);
+          line.render(gl, positionAttributeLocation, colorAttributeLocation);
+          break
+        }
+          
         default:
           break;
       }
@@ -265,6 +288,7 @@ function App() {
           shapes={shapes}
           setSelectedShapeId={setSelectedShapeId}
           setTransformation={setTransformation}
+          selectedShapeId={selectedShapeId}
         />
       </div>
     </div>
