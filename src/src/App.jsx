@@ -26,6 +26,7 @@ function App() {
   const [points, setPoints] = useState([]);
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
+  console.log(shapes)
   const [selectedShapeId, setSelectedShapeId] = useState();
   const [transformation, setTransformation] = useState({
     x: 0,
@@ -156,7 +157,7 @@ function App() {
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             shapes.length + 1
           );
-          setSelectedShapeId(shapes.length + 1)
+          setSelectedShapeId(shapes.length + 1);
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
@@ -206,7 +207,7 @@ function App() {
         }
         // Dia ga punya id karena ini cuma temporary square (belom fix)
 
-        case Shape.Line:{
+        case Shape.Line: {
           const line = new Line(originPoint, finalPoint, [
             ...colorRgb,
             ...colorRgb,
@@ -214,9 +215,9 @@ function App() {
             ...colorRgb,
           ]);
           line.render(gl, positionAttributeLocation, colorAttributeLocation);
-          break
+          break;
         }
-          
+
         default:
           break;
       }

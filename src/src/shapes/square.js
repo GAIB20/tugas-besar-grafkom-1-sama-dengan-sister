@@ -1,6 +1,6 @@
 import { Shape } from "../constant/shape";
 import { Point } from "../model/point";
-import Matrix from "../utils/matrix";
+import Matrix, { multiplyMatrices } from "../utils/matrix";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
 
@@ -69,11 +69,59 @@ export class Square extends DrawableObject {
       transformationInput.shx,
       transformationInput.shy
     );
+
     console.log(this.vertices);
-    transformation.print();
 
     var transformationMatrix = transformation.calculateTransformationMatrix();
     transformationMatrix.printMatrix();
+
+    var shapeMatrix = new Matrix(4, 4);
+    var tempVertices0 = [
+      this.vertices[0].x,
+      this.vertices[0].y,
+      0,
+      1,
+    ];
+    var tempVertices1 = [
+      this.vertices[1].x,
+      this.vertices[1].y,
+      0,
+      1,
+    ];
+    var tempVertices2 = [
+      this.vertices[2].x,
+      this.vertices[2].y,
+      0,
+      1,
+    ];
+    var tempVertices3 = [
+      this.vertices[3].x,
+      this.vertices[3].y,
+      0,
+      1,
+    ];
+    var tempMatrix = [
+      tempVertices0,
+      tempVertices1,
+      tempVertices2,
+      tempVertices3,
+    ];
+
+    shapeMatrix.insertMatrix(tempMatrix);
+    shapeMatrix.transpose();
+
+    var resultMatrix = multiplyMatrices(
+      transformationMatrix.getMatrix(),
+      shapeMatrix.getMatrix()
+    );
+    console.log(resultMatrix);
+
+    for (let i = 0; i < 4; i++) {
+      this.vertices[i].x = resultMatrix[0][i];
+      this.vertices[i].y = resultMatrix[1][i];
+    }
+
+    // console.log(this.vertices);
 
     // this.vertices[0] = transformation.translate(this.p1);
     // this.vertices[1] = transformation.translate(this.p2);

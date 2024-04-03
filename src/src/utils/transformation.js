@@ -5,7 +5,7 @@ import { TransformationMatrix } from "./transformation-matrix";
 const TRANSLATION_MULTIPLIER = 1000;
 const ROTATION_MULTIPLIER = 180;
 const SCALE_MULTIPLIER = 5;
-const SHEAR_MULTIPLIER = 3;
+const SHEAR_MULTIPLIER = 0.1;
 
 const degToRad = (deg) => {
   return deg * (Math.PI / 180);
@@ -30,7 +30,7 @@ class Transformation {
   }
 
   calculateTransformationMatrix() {
-    this.transformationMatrix = new Matrix(3, 3);
+    this.transformationMatrix = new Matrix(4, 4);
     this.transformationMatrix.makeIdentityMatrix();
     var translationMatrix = this.generateTranslationMatrix(this.x, this.y);
     var rotationXMatrix = this.generateRotationXMatrix(this.rx);
@@ -50,11 +50,12 @@ class Transformation {
   }
 
   generateTranslationMatrix(tx, ty) {
-    const firstRow = [1, 0, tx * TRANSLATION_MULTIPLIER];
-    const secondRow = [0, 1, ty * TRANSLATION_MULTIPLIER];
-    const thirdRow = [0, 0, 1];
-    var matrix = new Matrix(3, 3);
-    matrix.insertMatrix([firstRow, secondRow, thirdRow]);
+    const firstRow = [1, 0, 0, tx * TRANSLATION_MULTIPLIER];
+    const secondRow = [0, 1, 0, ty * TRANSLATION_MULTIPLIER];
+    const thirdRow = [0, 0, 1, 0];
+    const fourthRow = [0, 0, 0, 1];
+    var matrix = new Matrix(4, 4);
+    matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
     return matrix;
   }
 
@@ -66,51 +67,56 @@ class Transformation {
 
   generateRotationXMatrix(deg) {
     const rad = degToRad(deg * ROTATION_MULTIPLIER);
-    const firstRow = [1, 0, 0];
-    const secondRow = [0, Math.cos(rad), -Math.sin(rad)];
-    const thirdRow = [0, Math.sin(rad), Math.cos(rad)];
-    var matrix = new Matrix(3, 3);
-    matrix.insertMatrix([firstRow, secondRow, thirdRow]);
+    const firstRow = [1, 0, 0, 0];
+    const secondRow = [0, Math.cos(rad), -Math.sin(rad), 0];
+    const thirdRow = [0, Math.sin(rad), Math.cos(rad),0];
+    const fourthRow = [0, 0, 0, 1];
+    var matrix = new Matrix(4, 4);
+    matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
     return matrix;
   }
 
   generateRotationYMatrix(deg) {
     const rad = degToRad(deg * ROTATION_MULTIPLIER);
-    const firstRow = [Math.cos(rad), 0, Math.sin(rad)];
-    const secondRow = [0, 1, 0];
-    const thirdRow = [-Math.sin(rad), 0, Math.cos(rad)];
-    var matrix = new Matrix(3, 3);
-    matrix.insertMatrix([firstRow, secondRow, thirdRow]);
+    const firstRow = [Math.cos(rad), 0, Math.sin(rad), 0];
+    const secondRow = [0, 1, 0, 0];
+    const thirdRow = [-Math.sin(rad), 0, Math.cos(rad), 0];
+    const fourthRow = [0, 0, 0, 1];
+    var matrix = new Matrix(4, 4);
+    matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
     return matrix;
   }
 
   generateRotationZMatrix(deg) {
     const rad = degToRad(deg * ROTATION_MULTIPLIER);
-    const firstRow = [Math.cos(rad), -Math.sin(rad), 0];
-    const secondRow = [Math.sin(rad), Math.cos(rad), 0];
-    const thirdRow = [0, 0, 1];
-    var matrix = new Matrix(3, 3);
-    matrix.insertMatrix([firstRow, secondRow, thirdRow]);
+    const firstRow = [Math.cos(rad), -Math.sin(rad), 0, 0];
+    const secondRow = [Math.sin(rad), Math.cos(rad), 0, 0];
+    const thirdRow = [0, 0, 1, 0];
+    const fourthRow = [0, 0, 0, 1];
+    var matrix = new Matrix(4, 4);
+    matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
     return matrix;
   }
 
   generateScaleMatrix(sx, sy) {
     const sxExponent = SCALE_MULTIPLIER ** sx;
     const syExponent = SCALE_MULTIPLIER ** sy;
-    const firstRow = [sxExponent, 0, 0];
-    const secondRow = [0, syExponent, 0];
-    const thirdRow = [0, 0, 1];
-    var matrix = new Matrix(3, 3);
-    matrix.insertMatrix([firstRow, secondRow, thirdRow]);
+    const firstRow = [sxExponent, 0, 0, 0];
+    const secondRow = [0, syExponent, 0, 0];
+    const thirdRow = [0, 0, 1, 0];
+    const fourthRow = [0, 0, 0, 1];
+    var matrix = new Matrix(4, 4);
+    matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
     return matrix;
   }
 
   generateShearMatrix(shx, shy) {
-    const firstRow = [1, shy * SHEAR_MULTIPLIER, 0];
-    const secondRow = [shx * SHEAR_MULTIPLIER, 1, 0];
-    const thirdRow = [0, 0, 1];
-    var matrix = new Matrix(3, 3);
-    matrix.insertMatrix([firstRow, secondRow, thirdRow]);
+    const firstRow = [1, shy * SHEAR_MULTIPLIER, 0, 0];
+    const secondRow = [shx * SHEAR_MULTIPLIER, 1, 0, 0];
+    const thirdRow = [0, 0, 1, 0];
+    const fourthRow = [0, 0, 0, 1];
+    var matrix = new Matrix(4, 4);
+    matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
     return matrix;
   }
 

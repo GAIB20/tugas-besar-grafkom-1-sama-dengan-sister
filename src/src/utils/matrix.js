@@ -63,14 +63,14 @@ class Matrix {
     this.rows = tempC;
     this.cols = tempR;
 
-    var temp = this.mat;
-
+    var temp = [];
     for (let i = 0; i < this.rows; i++) {
-      this.mat[i] = [];
+      temp[i] = [];
       for (let j = 0; j < this.cols; j++) {
-        this.mat[i][j] = temp[j][i];
+        temp[i][j] = this.mat[j][i];
       }
     }
+    this.mat = temp;
   };
 
   concatRow = (m) => {
@@ -108,8 +108,8 @@ class Matrix {
 
   multiplyMatrix = (m) => {
     // M adalah tipe bentukan Matrix
-    if (this.cols != m.getRows()){
-      console.log("Cannot be multiplied")
+    if (this.cols != m.getRows()) {
+      console.log("Cannot be multiplied");
     } else {
       var tempMat = m.getMatrix();
       var result = [];
@@ -135,3 +135,23 @@ class Matrix {
 }
 
 export default Matrix;
+
+export function multiplyMatrices(matrix1, matrix2) {
+  if (matrix1[0].length !== matrix2.length) {
+    console.error("Matrix dimensions are not compatible for multiplication.");
+    return;
+  }
+
+  var result = [];
+  for (var i = 0; i < matrix1.length; i++) {
+    result[i] = [];
+    for (var j = 0; j < matrix2[0].length; j++) {
+      var sum = 0;
+      for (var k = 0; k < matrix1[0].length; k++) {
+        sum += matrix1[i][k] * matrix2[k][j];
+      }
+      result[i][j] = sum;
+    }
+  }
+  return result;
+}
