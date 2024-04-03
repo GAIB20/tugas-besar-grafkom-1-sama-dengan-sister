@@ -13,6 +13,7 @@ import {
 } from "./constant/shader-source";
 import { Square } from "./shapes/square";
 import { Line } from "./shapes/line";
+import Transformation from "./utils/transformation";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");

@@ -54,16 +54,6 @@ const Properties = ({ tick, selectedShapeId, transformation, isOpen, shapes, set
   }
 
 
-const Properties = ({
-  transformation,
-  isOpen,
-  shapes,
-  selectedShapeId,
-  setSelectedShapeId,
-  setTransformation,
-}) => {
-  const [propsOpen, setPropsOpen] = useState(true);
-
   const changePropsState = () => {
     if (propsOpen) {
       document.getElementById("properties").style.display = "none";
@@ -99,7 +89,7 @@ const Properties = ({
                 {shapes?.map((shape) => {
                   // console.log(shape.id);
                   return (
-                    <option value={shape.id} key={shape.id}>
+                    <option value={shape?.id ?? ""} key={shape?.id ?? ""}>
                       {shape.getName()}
                     </option>
                   );
@@ -109,7 +99,7 @@ const Properties = ({
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Translate X &nbsp; &nbsp; {transformation.x}</p>{" "}
+                  <p> Translate X &nbsp; &nbsp; {translateXVal}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -118,19 +108,17 @@ const Properties = ({
                   className="slider"
                   id="translateXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.x}
+                  defaultValue={translateXVal}
                   onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      x: e.target.value,
-                    }));
+                    setTranslateXVal(e.target.value);
+                    updateTransformation();
                   }}
                 />
               </div>
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Translate Y &nbsp; &nbsp; {transformation.y}</p>{" "}
+                  <p> Translate Y &nbsp; &nbsp; {translateYVal}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -139,12 +127,10 @@ const Properties = ({
                   className="slider"
                   id="translateYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.y}
+                  defaultValue={translateYVal}
                   onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      y: e.target.value,
-                    }));
+                    setTranslateYVal(e.target.value);
+                    updateTransformation();
                   }}
                 />
               </div>
@@ -155,7 +141,7 @@ const Properties = ({
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Rotate X &nbsp; &nbsp; {transformation.rx}</p>{" "}
+                  <p> Rotate X &nbsp; &nbsp; {rotateXVal}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -164,19 +150,17 @@ const Properties = ({
                   className="slider"
                   id="rotateXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.rx}
+                  defaultValue={rotateXVal}
                   onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      rx: e.target.value,
-                    }));
+                    setRotateXVal(e.target.value);
+                    updateTransformation();
                   }}
                 />
               </div>
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Rotate Y &nbsp; &nbsp; {transformation.ry}</p>{" "}
+                  <p> Rotate Y &nbsp; &nbsp; {rotateYVal}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -185,12 +169,10 @@ const Properties = ({
                   className="slider"
                   id="rotateYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.ry}
+                  defaultValue={rotateYVal}
                   onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      ry: e.target.value,
-                    }));
+                    setRotateYVal(e.target.value);
+                    updateTransformation();
                   }}
                 />
               </div>
@@ -201,7 +183,7 @@ const Properties = ({
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Scale X &nbsp; &nbsp; {transformation.sx}</p>{" "}
+                  <p> Scale X &nbsp; &nbsp; {scaleXVal}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -210,19 +192,17 @@ const Properties = ({
                   className="slider"
                   id="scaleXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.sx}
+                  defaultValue={rotateXVal}
                   onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      sx: e.target.value,
-                    }));
+                    setScaleXVal(e.target.value)
+                    updateTransformation()
                   }}
                 />
               </div>
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Scale Y &nbsp; &nbsp; {transformation.sy}</p>{" "}
+                  <p> Scale Y &nbsp; &nbsp; {scaleYVal}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -231,12 +211,10 @@ const Properties = ({
                   className="slider"
                   id="scaleYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.sy}
+                  defaultValue={rotateXVal}
                   onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      sy: e.target.value,
-                    }));
+                    setScaleYVal(e.target.value)
+                    updateTransformation()
                   }}
                 />
               </div>
@@ -247,7 +225,7 @@ const Properties = ({
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Shear X &nbsp; &nbsp; {transformation.shx}</p>{" "}
+                  <p> Shear X &nbsp; &nbsp; {shearXVal}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -256,19 +234,17 @@ const Properties = ({
                   className="slider"
                   id="shearXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.shx}
+                  defaultValue={shearXVal}
                   onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      shx: e.target.value,
-                    }));
+                    setShearXVal(e.target.value);
+                    updateTransformation();
                   }}
                 />
               </div>
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Shear Y &nbsp; &nbsp; {transformation.shy}</p>{" "}
+                  <p> Shear Y &nbsp; &nbsp; {shearYVal}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -277,16 +253,15 @@ const Properties = ({
                   className="slider"
                   id="shearYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.shy}
+                  defaultValue={shearYVal}
                   onChange={(e) => {
-                    setTransformation((old) => ({
-                      ...old,
-                      shy: e.target.value,
-                    }));
+                    setShearYVal(e.target.value);
+                    updateTransformation();
                   }}
                 />
               </div>
             </div>
+
           </div>
         )}
       </div>
@@ -301,6 +276,5 @@ const Properties = ({
     </>
   );
 };
-}
 
 export default Properties;
