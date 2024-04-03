@@ -197,7 +197,9 @@ function App() {
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(type, 0, vertices.length / 2);
   };
-  const transformation = new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+  const transformation = new Transformation(0.5, 0.4, 0.3, 0.2, 1, 0.8, 0.6, 0.3);
+  transformation.print();
 
   const lineButtonClicked = () => {
     setCurrentType(Shape.Line);
