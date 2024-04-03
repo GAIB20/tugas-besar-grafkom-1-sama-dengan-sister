@@ -33,7 +33,6 @@ export class Square extends DrawableObject {
     this.vertices.push(final);
 
     this.transformation = transformation
-    console.log(this.transformation)
   }
 
   getTransformation = () => {
@@ -73,6 +72,7 @@ export class Square extends DrawableObject {
       transformationInput.x,
       transformationInput.y,
       transformationInput.rz,
+      transformationInput.rvz,
       transformationInput.sx,
       transformationInput.sy,
       transformationInput.shx,

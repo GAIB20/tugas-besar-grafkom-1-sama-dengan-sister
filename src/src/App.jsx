@@ -167,7 +167,7 @@ function App() {
             finalPoint,
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             shapes.length + 1,
-            new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0)
+            new Transformation(0,0,0,0,0,0,0,0)
           );
           setSelectedShapeId(shapes.length + 1);
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);

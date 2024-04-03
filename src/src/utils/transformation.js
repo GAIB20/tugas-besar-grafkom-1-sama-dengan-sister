@@ -10,10 +10,11 @@ const degToRad = (deg) => {
 };
 
 class Transformation {
-  constructor(x, y, rz, sx, sy, shx, shy) {
+  constructor(x, y, rz, rvz, sx, sy, shx, shy) {
     this.x = x;
     this.y = y;
     this.rz = rz;
+    this.rvz = rvz;
     this.sx = sx;
     this.sy = sy;
     this.shx = shx;
@@ -29,12 +30,12 @@ class Transformation {
     this.transformationMatrix = new Matrix(4, 4);
     this.transformationMatrix.makeIdentityMatrix();
     var translationMatrix = this.generateTranslationMatrix(this.x, this.y);
-    var rotationZMatrix = this.generateRotationZMatrix(this.rz);
+    var revolveZMatrix = this.generateRevolveZMatrix(this.rvz);
     var scaleMatrix = this.generateScaleMatrix(this.sx, this.sy);
     var shearMatrix = this.generateShearMatrix(this.shx, this.shy);
 
     this.transformationMatrix.multiplyMatrix(translationMatrix);
-    this.transformationMatrix.multiplyMatrix(rotationZMatrix);
+    this.transformationMatrix.multiplyMatrix(revolveZMatrix);
     this.transformationMatrix.multiplyMatrix(scaleMatrix);
     this.transformationMatrix.multiplyMatrix(shearMatrix);
 
@@ -57,7 +58,7 @@ class Transformation {
   //   return new Point(translatedMatrix[0], translatedMatrix[1]);
   // };
 
-  generateRotationZMatrix(deg) {
+  generateRevolveZMatrix(deg) {
     const rad = degToRad(deg * ROTATION_MULTIPLIER);
     const firstRow = [Math.cos(rad), -Math.sin(rad), 0, 0];
     const secondRow = [Math.sin(rad), Math.cos(rad), 0, 0];
@@ -100,11 +101,12 @@ class Transformation {
   };
 
   getRotation = () => {
-    return this.rz;
+    return [this.rz, this.rvz];
   };
 
-  setRotation = (rz) => {
+  setRotation = (rz, rvz) => {
     this.rz = rz;
+    this.rvz = rvz;
   };
 
   getScale = () => {
@@ -127,7 +129,7 @@ class Transformation {
 
   print = () => {
     console.log("Translation x, y: ", this.x, this.y);
-    console.log("Rotation rz: ", this.rz);
+    console.log("Rotation rz, rvz: ", this.rz, this.rvz);
     console.log("Scale sx sy: ", this.sx, this.sy);
     console.log("Shear shx, shy: ", this.shx, this.shy);
   };
@@ -137,6 +139,7 @@ class Transformation {
       x: this.x,
       y: this.y,
       rz: this.rz,
+      rvz:  this.rvz,
       sx: this.sx,
       sy: this.sy,
       shx: this.shx,
@@ -149,6 +152,7 @@ class Transformation {
     this.x = allData.x - this.x;
     this.y = allData.y - this.y;
     this.rz = allData.rz - this.rz;
+    this.rvz = allData.rvz - this.rvz;
     this.sx = allData.sx - this.sx;
     this.sy = allData.sy - this.sy;
     this.shx = allData.shx - this.shx;

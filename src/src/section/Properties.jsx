@@ -121,13 +121,34 @@ const Properties = ({
                   min={SLIDER_MIN}
                   max={SLIDER_MAX}
                   className="slider"
-                  id="rotateYSlider"
+                  id="rotateZSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.rz}
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,
                       rz: e.target.value,
+                    }));
+                  }}
+                />
+              </div>
+              <div className="slidecontainer">
+                <b>
+                  {" "}
+                  <p> Revolve Z &nbsp; &nbsp; {transformation.rvz}</p>{" "}
+                </b>
+                <input
+                  type="range"
+                  min={SLIDER_MIN}
+                  max={SLIDER_MAX}
+                  className="slider"
+                  id="revolveZSlider"
+                  step={SLIDER_STEPS}
+                  defaultValue={transformation.rvz}
+                  onChange={(e) => {
+                    setTransformation((old) => ({
+                      ...old,
+                      rvz: e.target.value,
                     }));
                   }}
                 />
