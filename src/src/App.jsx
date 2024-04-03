@@ -32,6 +32,7 @@ function App() {
     y: 0,
     rx: 0,
     ry: 0,
+    rz: 0,
     sx: 0,
     sy: 0,
     shx: 0,

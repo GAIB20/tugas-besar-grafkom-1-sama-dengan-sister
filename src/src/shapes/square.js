@@ -1,5 +1,6 @@
 import { Shape } from "../constant/shape";
 import { Point } from "../model/point";
+import Matrix from "../utils/matrix";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
 
@@ -62,15 +63,22 @@ export class Square extends DrawableObject {
       transformationInput.y,
       transformationInput.rx,
       transformationInput.ry,
+      transformationInput.rz,
       transformationInput.sx,
       transformationInput.sy,
       transformationInput.shx,
       transformationInput.shy
     );
-    this.vertices[0] = transformation.translate(this.p1);
-    this.vertices[1] = transformation.translate(this.p2);
-    this.vertices[2] = transformation.translate(this.p3);
-    this.vertices[3] = transformation.translate(this.p4);
+    console.log(this.vertices);
+    transformation.print();
+
+    var transformationMatrix = transformation.calculateTransformationMatrix();
+    transformationMatrix.printMatrix();
+
+    // this.vertices[0] = transformation.translate(this.p1);
+    // this.vertices[1] = transformation.translate(this.p2);
+    // this.vertices[2] = transformation.translate(this.p3);
+    // this.vertices[3] = transformation.translate(this.p4);
   }
 
   getName() {

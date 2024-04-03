@@ -153,6 +153,27 @@ const Properties = ({
                   }}
                 />
               </div>
+              <div className="slidecontainer">
+                <b>
+                  {" "}
+                  <p> Rotate Z &nbsp; &nbsp; {transformation.rz}</p>{" "}
+                </b>
+                <input
+                  type="range"
+                  min={SLIDER_MIN}
+                  max={SLIDER_MAX}
+                  className="slider"
+                  id="rotateYSlider"
+                  step={SLIDER_STEPS}
+                  defaultValue={transformation.rz}
+                  onChange={(e) => {
+                    setTransformation((old) => ({
+                      ...old,
+                      rz: e.target.value,
+                    }));
+                  }}
+                />
+              </div>
             </div>
 
             <div className="sectionContainer">
