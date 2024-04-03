@@ -1,60 +1,56 @@
 class Transformation {
-  constructor(x, y, z, rx, ry, rz, s, shx, shy, shz) {
+  constructor(x, y, rx, ry, sx, sy, shx, shy) {
     this.x = x;
     this.y = y;
-    this.z = z;
     this.rx = rx;
     this.ry = ry;
-    this.rz = rz;
-    this.s = s;
+    this.sx = sx;
+    this.sy = sy;
     this.shx = shx;
     this.shy = shy;
-    this.shz = shz;
   }
 
   getTranslation = () => {
-    return [this.x, this.y, this.z];
+    return [this.x, this.y];
   };
 
-  setTranslation = (x, y, z) => {
+  setTranslation = (x, y) => {
     this.x = x;
     this.y = y;
-    this.z = z;
   };
 
   getRotation = () => {
-    return [this.rx, this.ry, this.rz];
+    return [this.rx, this.ry];
   };
 
-  setRotation = (rx, ry, rz) => {
+  setRotation = (rx, ry) => {
     this.rx = rx;
     this.ry = ry;
-    this.rz = rz;
   };
 
   getScale = () => {
-    return this.s;
+    return [this.sx, this.sy];
   };
 
-  setScale = (s) => {
-    this.s = s;
+  setScale = (sx, sy) => {
+    this.sx = sx;
+    this.sy = sy;
   };
 
   getShear = () => {
-    return [this.shx, this.shy, this.shz];
+    return [this.shx, this.shy];
   };
 
-  setShear = (shx, shy, shz) => {
+  setShear = (shx, shy) => {
     this.shx = shx;
     this.shy = shy;
-    this.shz = shz;
   };
 
   print = () => {
-    console.log("Translation x, y, z: ", this.x, this.y, this.z);
-    console.log("Rotation rx, ry, rz: ", this.rx, this.ry, this.rz);
-    console.log("Scale: ", this.s);
-    console.log("Shear shx, shy, shz: ", this.shx, this.shy, this.shz);
+    console.log("Translation x, y: ", this.x, this.y);
+    console.log("Rotation rx, ry: ", this.rx, this.ry);
+    console.log("Scale sx sy: ", this.sx, this.sy);
+    console.log("Shear shx, shy: ", this.sh, this.sh, this.sh);
   };
 }
 

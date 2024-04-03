@@ -2,11 +2,7 @@ import "./App.css";
 import Tool from "./section/Tool";
 import Properties from "./section/Properties";
 import { useState, useEffect } from "react";
-import { drawTriangle } from "./draw/drawTriangle";
-import { drawRectangle } from "./draw/drawRectangle";
 import Transformation from "./utils/transformation";
-import drawLine from "./draw/drawLine";
-import drawSquare from "./draw/drawSquare";
 import { Point } from "./model/point";
 import { createShader, createProgram } from "./shader";
 import { canvasX, canvasY } from "./utils/misc";
@@ -31,6 +27,8 @@ function App() {
   const [points, setPoints] = useState([]);
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
+  const [selectedShapeId, setSelectedShapeId] = useState();
+  // const [transformation, setTransformation] = useState();
 
   useEffect(() => {
     // Inisialisasi Web Gl
@@ -105,10 +103,7 @@ function App() {
 
   const renderCornerPoint = () => {
     const totalPoints = points.length;
-    console.log("Ini points : ", points);
-    console.log("masuk rendercorner", totalPoints);
     for (var i = 0; i < totalPoints - 1; i++) {
-      console.log("Masuk ke loop");
       let x1 = points[i].x;
       let y1 = points[i].y;
       let x2 = points[i + 1].x;
@@ -136,18 +131,19 @@ function App() {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
       switch (currentShapeType) {
-        case Shape.Square:
-          const square = new Square(originPoint, finalPoint, [
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-          ]);
+        case Shape.Square: {
+          const square = new Square(
+            originPoint,
+            finalPoint,
+            [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+            shapes.length + 1
+          );
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           break;
-        case Shape.Line:
+        }
+        case Shape.Line: {
           console.log("MASUKKK")
           const line = new Line(originPoint, finalPoint, [
             ...colorRgb,
@@ -159,7 +155,7 @@ function App() {
           setShapes((oldShapes) => [...oldShapes, line]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           break;
-
+        }
         default:
           break;
       }
@@ -179,7 +175,7 @@ function App() {
       const finalPoint = new Point(x2, y2);
 
       switch (currentShapeType) {
-        case Shape.Square:
+        case Shape.Square: {
           const square = new Square(originPoint, finalPoint, [
             ...colorRgb,
             ...colorRgb,
@@ -188,6 +184,8 @@ function App() {
           ]);
           square.render(gl, positionAttributeLocation, colorAttributeLocation);
           break;
+        }
+        // Dia ga punya id karena ini cuma temporary square (belom fix)
 
         case Shape.Line:
           const line = new Line(originPoint, finalPoint, [
@@ -220,7 +218,18 @@ function App() {
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(type, 0, vertices.length / 2);
   };
-  const transformation = new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+  const transformation = new Transformation(
+    0.5,
+    0.4,
+    0.3,
+    0.2,
+    1,
+    0.8,
+    0.6,
+    0.3
+  );
+  transformation.print();
 
   const lineButtonClicked = () => {
     setCurrentShapeType(Shape.Line);
@@ -265,7 +274,12 @@ function App() {
         >
           <canvas className="canvas" id="canvas"></canvas>
         </div>
-        <Properties transformation={transformation} isOpen={isPropertiesOpen} />
+        <Properties
+          transformation={transformation}
+          isOpen={isPropertiesOpen}
+          shapes={shapes}
+          setSelectedShapeId={setSelectedShapeId}
+        />
       </div>
     </div>
   );
