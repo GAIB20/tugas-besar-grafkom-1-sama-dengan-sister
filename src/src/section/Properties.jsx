@@ -111,28 +111,6 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
                   }}
                 />
               </div>
-<<<<<<< HEAD
-              <div className="slidecontainer">
-                <bold>
-                  {" "}
-                  <p> Translate Z &nbsp; &nbsp; {translateZVal}</p>{" "}
-                </bold>
-                <input
-                  type="range"
-                  min={SLIDER_MIN}
-                  max={SLIDER_MAX}
-                  className="slider"
-                  id="translateZSlider"
-                  step={SLIDER_STEPS}
-                  defaultValue={translateZVal}
-                  onChange={(e) => {
-                    setTranslateZVal(e.target.value);
-                    updateTransformation();
-                  }}
-                />
-              </div>
-=======
->>>>>>> main
             </div>
 
             <div className="sectionContainer">
@@ -175,28 +153,6 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
                   }}
                 />
               </div>
-<<<<<<< HEAD
-              <div className="slidecontainer">
-                <bold>
-                  {" "}
-                  <p> Rotate Z &nbsp; &nbsp; {rotateZVal}</p>{" "}
-                </bold>
-                <input
-                  type="range"
-                  min={SLIDER_MIN}
-                  max={SLIDER_MAX}
-                  className="slider"
-                  id="rotateZSlider"
-                  step={SLIDER_STEPS}
-                  defaultValue={rotateZVal}
-                  onChange={(e) => {
-                    setRotateZVal(e.target.value);
-                    updateTransformation();
-                  }}
-                />
-              </div>
-=======
->>>>>>> main
             </div>
 
             <div className="sectionContainer">
@@ -215,10 +171,6 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
                   step={SLIDER_STEPS}
                   defaultValue={rotateXVal}
                   onChange={(e) => {
-<<<<<<< HEAD
-                    setScaleVal(e.target.value);
-                    updateTransformation();
-=======
                     setScaleXVal(e.target.value)
                     updateTransformation()
                   }}
@@ -240,7 +192,6 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
                   onChange={(e) => {
                     setScaleYVal(e.target.value)
                     updateTransformation()
->>>>>>> main
                   }}
                 />
               </div>
@@ -286,31 +237,8 @@ const Properties = ({ transformation, isOpen, shapes, setSelectedShapeId, setTra
                   }}
                 />
               </div>
-<<<<<<< HEAD
-              <div className="slidecontainer">
-                <bold>
-                  {" "}
-                  <p> Shear Z &nbsp; &nbsp; {shearZVal}</p>{" "}
-                </bold>
-                <input
-                  type="range"
-                  min={SLIDER_MIN}
-                  max={SLIDER_MAX}
-                  className="slider"
-                  id="shearZSlider"
-                  step={SLIDER_STEPS}
-                  defaultValue={shearZVal}
-                  onChange={(e) => {
-                    setShearZVal(e.target.value);
-                    updateTransformation();
-                  }}
-                />
-              </div>
-            </div>
-=======
             </div>
 
->>>>>>> main
           </div>
         )}
       </div>
