@@ -1,6 +1,8 @@
 import { Point } from "../model/point";
 import { TransformationMatrix } from "./transformation-matrix";
 
+const TRANSLATION_SCALE = 1000;
+
 class Transformation {
   constructor(x, y, rx, ry, sx, sy, shx, shy) {
     this.x = x;
@@ -11,12 +13,15 @@ class Transformation {
     this.sy = sy;
     this.shx = shx;
     this.shy = shy;
-    this.translationMatrix = this.generateTranslationMatrix(Number(x), Number(y));
+    this.translationMatrix = this.generateTranslationMatrix(
+      Number(x),
+      Number(y)
+    );
   }
 
   generateTranslationMatrix(tx, ty) {
-    const firstRow = [1, 0, tx*30];
-    const secondRow = [0, 1, ty*30];
+    const firstRow = [1, 0, tx * TRANSLATION_SCALE];
+    const secondRow = [0, 1, ty * TRANSLATION_SCALE];
     const thirdRow = [0, 0, 1];
     return new TransformationMatrix(firstRow, secondRow, thirdRow);
   }

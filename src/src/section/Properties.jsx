@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const SLIDER_STEPS = 0.01;
-const SLIDER_MIN = 0;
+const SLIDER_MIN = -1;
 const SLIDER_MAX = 1;
 
 const Properties = ({
@@ -45,7 +45,9 @@ const Properties = ({
         {isOpen && (
           <div className="propertiesContentContainer">
             <div className="sectionContainer">
+              <p className="sectionTitle"> Instances </p>
               <select
+                className="dropdown"
                 onChange={(e) => {
                   setSelectedShapeId(e.target.value);
                 }}
@@ -59,6 +61,9 @@ const Properties = ({
                   );
                 })}
               </select>
+            </div>
+
+            <div className="sectionContainer">
               <p className="sectionTitle"> Translation </p>
               <div className="slidecontainer">
                 <b>
