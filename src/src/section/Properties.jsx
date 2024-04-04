@@ -21,6 +21,9 @@ const Properties = ({
   setSelectedPointId,
   currentColor,
   setCurrentColor,
+  redrawCanvas,
+  input, 
+  setInput
 }) => {
   const [propsOpen, setPropsOpen] = useState(true);
 
@@ -91,16 +94,19 @@ const Properties = ({
                 })}
               </select>
               <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"center"}}>
-                  <div style={{ minHeight:"20px", minWidth: "45%", backgroundColor:"#000000", borderRadius: "5px"}}>
+                  <div style={{ minHeight:"20px", minWidth: "45%", backgroundColor:"#"+currentColor?.toHex(), borderRadius: "5px"}}>
                   </div>
                   <input
                     type="text"
                     id="colorInput"
                     className="colorInput"
-                    defaultValue={"#" + currentColor.toHex()}
+                    value={input}
                     onChange={(e) => {
-                      // setCurrentColor(e.target.value)
-                      console.log(currentColor)
+                      setInput(e.target.value);
+                      if (/^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/.test(e.target.value)) {
+                        shapes[selectedShapeId].vertices[selectedPointId].color.updateHex(e.target.value);
+                        redrawCanvas();
+                      }
                     }}
                   />
                 </div>

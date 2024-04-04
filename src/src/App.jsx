@@ -35,6 +35,7 @@ function App() {
   const [selectedPointId, setSelectedPointId] = useState(null);
   const [transformation, setTransformation] = useState(null);
   const [squareSide, setSquareSide] = useState();
+  const [input, setInput] = useState("");
   const [rectangleSize, setRectangleSize] = useState({
     width: 0,
     length: 0,
@@ -130,6 +131,7 @@ function App() {
   useEffect(() => {
     if (selectedPointId !== null) {
       setCurrentColor(shapes[selectedShapeId].vertices[selectedPointId].color);
+      setInput("#"+shapes[selectedShapeId].vertices[selectedPointId].color.toHex());
     } 
   }, [selectedPointId]);
   
@@ -191,6 +193,7 @@ function App() {
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
       const currentShape = shapes[i];
+      console.log(currentShape);
       currentShape.render(
         gl,
         positionAttributeLocation,
@@ -229,8 +232,7 @@ function App() {
             canvasCenter: canvasCenter,
             fromFile: false,
           });
-          console.log(square);
-          setSquareSide(Math.floor(square.distance));
+          // setSquareSide(Math.floor(square.distance));
           setShapes((oldShapes) => [...oldShapes, square]);
           break;
         }
@@ -378,6 +380,9 @@ function App() {
           setSelectedPointId={setSelectedPointId}
           currentColor={currentColor}
           setCurrentColor={setCurrentColor}
+          redrawCanvas={redrawCanvas}
+          input={input}
+          setInput={setInput}
         />
       </div>
     </div>
