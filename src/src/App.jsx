@@ -159,6 +159,7 @@ function App() {
             shapes.length,
             new Transformation(0, 0, 0, 0, 0, 0, 0, 0)
           );
+          setSquareSide(Math.floor(square.distance));
           setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
           setSelectedShapeId(shapes.length);

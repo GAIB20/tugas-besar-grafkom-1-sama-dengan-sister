@@ -264,8 +264,8 @@ const Properties = ({
                       <p>
                         {" "}
                         {shapes[selectedShapeId].getName() +
-                          "Size : " +
-                          shapes[selectedShapeId].distance}
+                          " Size : " +
+                          squareSide}
                       </p>{" "}
                     </b>
                     <input
