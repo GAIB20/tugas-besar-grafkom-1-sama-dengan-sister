@@ -30,6 +30,10 @@ function App() {
   const [selectedShapeId, setSelectedShapeId] = useState();
   const [transformation, setTransformation] = useState(null);
   const [squareSide, setSquareSide] = useState();
+  const [rectangleSize, setRectangleSize] = useState({
+    width: 0,
+    length: 0,
+  });
 
   useEffect(() => {
     // Inisialisasi Web Gl
@@ -111,19 +115,31 @@ function App() {
     const selectedShape = shapes[selectedShapeId];
 
     if (selectedShape) {
+      console.log("Masuk ke transformation");
       // Update the transformation data to the one that the shape holds
       selectedShape.transformShades(transformation);
       redrawCanvas();
     }
-  }, [transformation]); // Watch for changes in shapes state
+  }, [transformation]);
 
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
+    console.log("Ini selected shape : ", selectedShape);
     if (selectedShape) {
+      console.log("Masuk ke sini");
       selectedShape.updateShapes(squareSide);
       redrawCanvas();
     }
   }, [squareSide]);
+
+  useEffect(() => {
+    const selectedShape = shapes[selectedShapeId];
+    console.log("Ini selected shape : ", selectedShape);
+    if(selectedShape){
+      selectedShape.updateShapes(rectangleSize)
+      redrawCanvas()
+    }
+  }, [rectangleSize]);
 
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
@@ -176,6 +192,7 @@ function App() {
           break;
         }
         case Shape.Rectangle: {
+          console.log("Ini origin dan final", originPoint, finalPoint);
           const rectangle = new Rectangle(
             originPoint,
             finalPoint,
@@ -183,13 +200,13 @@ function App() {
             shapes.length,
             new Transformation(0, 0, 0, 0, 0, 0, 0, 0)
           );
-          rectangle.render(
-            gl,
-            positionAttributeLocation,
-            colorAttributeLocation
-          );
-          setShapes((oldShapes) => [...oldShapes, rectangle])
-          setSelectedShapeId(shapes.length)
+          console.log("INi rectangle : ", rectangle);
+          setRectangleSize({
+            width: Math.floor(rectangle.width),
+            length: Math.floor(rectangle.length),
+          });
+          setShapes((oldShapes) => [...oldShapes, rectangle]);
+          setSelectedShapeId(shapes.length);
           break;
         }
         default:
@@ -302,6 +319,8 @@ function App() {
           setSelectedShapeId={setSelectedShapeId}
           squareSide={squareSide}
           setSquareSide={setSquareSide}
+          rectangleSize={rectangleSize}
+          setRectangleSize={setRectangleSize}
         />
       </div>
     </div>

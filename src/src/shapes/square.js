@@ -122,10 +122,10 @@ export class Square extends DrawableObject {
     const halfSize = newSize / 2;
 
     // Posisikan ulang titik sudut
-    this.p1 = new Point(centerX - halfSize, centerY + halfSize);
-    this.p2 = new Point(centerX - halfSize, centerY - halfSize);
-    this.p3 = new Point(centerX + halfSize, centerY + halfSize);
-    this.p4 = new Point(centerX + halfSize, centerY - halfSize);
+    this.p1 = new Point(centerX - halfSize, centerY - halfSize);
+    this.p2 = new Point(centerX - halfSize, centerY + halfSize);
+    this.p3 = new Point(centerX + halfSize, centerY - halfSize);
+    this.p4 = new Point(centerX + halfSize, centerY + halfSize);
 
     // Memperbarui vertices dan distance
     this.vertices = [this.p1, this.p2, this.p3, this.p4];

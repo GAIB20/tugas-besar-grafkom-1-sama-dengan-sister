@@ -14,6 +14,8 @@ const Properties = ({
   setTransformation,
   squareSide,
   setSquareSide,
+  rectangleSize,
+  setRectangleSize,
 }) => {
   const [propsOpen, setPropsOpen] = useState(true);
 
@@ -278,6 +280,55 @@ const Properties = ({
                         setSquareSide(Number(e.target.value));
                       }}
                     />
+                  </>
+                )}
+                {shapes[selectedShapeId].getType() === Shape.Rectangle && (
+                  <>
+                    <b>
+                      {" "}
+                      <p>
+                        {" "}
+                        {shapes[selectedShapeId].getName() +
+                          " Width : " +
+                          rectangleSize.width}
+                      </p>{" "}
+                      <input
+                        type="range"
+                        min={0}
+                        max={500}
+                        className="slider"
+                        id="shearYSlider"
+                        step={SLIDER_STEPS}
+                        value={rectangleSize.width}
+                        onChange={(e) => {
+                          setRectangleSize((oldSize) => ({
+                            ...oldSize,
+                            width: Number(e.target.value),
+                          }));
+                        }}
+                      />
+                      <p>
+                        {" "}
+                        {shapes[selectedShapeId].getName() +
+                          " Length : " +
+                          rectangleSize.length}
+                      </p>{" "}
+                      <input
+                        type="range"
+                        min={0}
+                        max={500}
+                        className="slider"
+                        id="shearYSlider"
+                        step={SLIDER_STEPS}
+                        value={rectangleSize.length}
+                        onChange={(e) => {
+                          setRectangleSize((oldSize) => ({
+                            ...oldSize,
+                            length: Number(e.target.value),
+                          }));
+                        }}
+                      />
+                    </b>
                   </>
                 )}
               </div>
