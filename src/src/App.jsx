@@ -30,7 +30,6 @@ function App() {
   const [selectedShapeId, setSelectedShapeId] = useState();
   const [transformation, setTransformation] = useState(null);
 
-
   useEffect(() => {
     // Inisialisasi Web Gl
     const canvas = document.querySelector("canvas");
@@ -94,15 +93,17 @@ function App() {
 
   // Change Transformation Data to Shape Configuration
   useEffect(() => {
-    if (selectedShapeId) {
-      const selectedShape = shapes[selectedShapeId - 1];
-
-      if (selectedShape) {
+    console.log("Masuk ke sini", selectedShapeId);
+    if (selectedShapeId !== null) {
+      console.log("Masuk ke selectedshapeid");
+      const selectedShape = shapes[selectedShapeId];
+      console.log(selectedShape, selectedShapeId);
+      if (selectedShape != null) {
         setIsPropertiesOpen(true);
         var transformationConfig = selectedShape
           .getTransformation()
           .getAllData();
-
+        console.log("Ini transformation config : ", transformationConfig);
         setTransformation(transformationConfig);
       }
     } else {
@@ -111,7 +112,7 @@ function App() {
   }, [selectedShapeId]);
 
   useEffect(() => {
-    const selectedShape = shapes[selectedShapeId - 1];
+    const selectedShape = shapes[selectedShapeId];
 
     if (selectedShape) {
       // Update the transformation data to the one that the shape holds
@@ -131,19 +132,6 @@ function App() {
     }
   };
 
-  // const renderCornerPoint = () => {
-  //   const totalPoints = points.length;
-  //   for (var i = 0; i < totalPoints - 1; i++) {
-  //     let x1 = points[i].x;
-  //     let y1 = points[i].y;
-  //     let x2 = points[i + 1].x;
-  //     let y2 = points[i + 1].y;
-  //     let vertices = [x1, y1, x2, y1, x1, y2, x2, y2];
-  //     console.log(vertices);
-
-  //     render(gl.TRIANGLE_STRIP, vertices, [0, 0, 0, 1]);
-  //   }
-  // };
 
   const handleMouseDown = (event) => {
     const canvas = document.querySelector("canvas");
@@ -166,10 +154,10 @@ function App() {
             originPoint,
             finalPoint,
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            shapes.length + 1,
-            new Transformation(0,0,0,0,0,0,0,0)
+            shapes.length,
+            new Transformation(0, 0, 0, 0, 0, 0, 0, 0)
           );
-          setSelectedShapeId(shapes.length + 1);
+          setSelectedShapeId(shapes.length);
           // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
@@ -234,24 +222,6 @@ function App() {
     }
   };
 
-  const render = (type, vertices, color) => {
-    console.log("Ini vertices di render : ", vertices);
-
-    var buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(positionAttributeLocation);
-
-    var colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(colorAttributeLocation);
-    gl.drawArrays(type, 0, vertices.length / 2);
-  };
-
-  // transformation.print();
 
   const lineButtonClicked = () => {
     setCurrentShapeType(Shape.Line);
@@ -268,8 +238,6 @@ function App() {
   };
 
   const squareButtonClicked = () => {
-    // console.log("Square Button Clicked");
-    // setIsDrawing(true)
     setCurrentShapeType(Shape.Square);
   };
 

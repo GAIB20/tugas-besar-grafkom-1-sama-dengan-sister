@@ -49,9 +49,7 @@ const Properties = ({
               <select
                 className="dropdown"
                 value={selectedShapeId}
-                onChange={(e) => {
-                  setSelectedShapeId(e.target.value);
-                }}
+                onChange={(e) => setSelectedShapeId(Number(e.target.value))}
               >
                 {" "}
                 {shapes?.map((shape) => {
@@ -80,6 +78,8 @@ const Properties = ({
                   id="translateXSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.x}
+                  value={transformation.x} 
+
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,
@@ -101,6 +101,7 @@ const Properties = ({
                   id="translateYSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.y}
+                  value={transformation.y}
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,
@@ -126,6 +127,7 @@ const Properties = ({
                   id="rotateZSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.rz}
+                  value={transformation.rz}
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,
@@ -147,6 +149,7 @@ const Properties = ({
                   id="revolveZSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.rvz}
+                  value={transformation.rvz}
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,
@@ -172,6 +175,7 @@ const Properties = ({
                   id="scaleXSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.sx}
+                  value={transformation.sx}
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,
@@ -193,6 +197,7 @@ const Properties = ({
                   id="scaleYSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.sy}
+                  value={transformation.sy}
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,
@@ -218,6 +223,7 @@ const Properties = ({
                   id="shearXSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.shx}
+                  value={transformation.shx}
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,
@@ -238,6 +244,7 @@ const Properties = ({
                   className="slider"
                   id="shearYSlider"
                   step={SLIDER_STEPS}
+                  value={transformation.shy}
                   defaultValue={transformation.shy}
                   onChange={(e) => {
                     setTransformation((old) => ({
