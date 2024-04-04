@@ -19,22 +19,45 @@ class Transformation {
     this.sy = sy;
     this.shx = shx;
     this.shy = shy;
-
-    // this.translationMatrix = this.generateTranslationMatrix(
-    //   Number(x),
-    //   Number(y)
-    // );
   }
 
-  calculateTransformationMatrix() {
+  calculateTransformationMatrix(
+    centerX,
+    centerY,
+    centerXCanvas,
+    centerYCanvas
+  ) {
     this.transformationMatrix = new Matrix(4, 4);
     this.transformationMatrix.makeIdentityMatrix();
-    var translationMatrix = this.generateTranslationMatrix(this.x, this.y);
-    var revolveZMatrix = this.generateRevolveZMatrix(this.rvz);
-    var scaleMatrix = this.generateScaleMatrix(this.sx, this.sy);
-    var shearMatrix = this.generateShearMatrix(this.shx, this.shy);
+    var translationMatrix = this.generateTranslationMatrix(
+      this.x * TRANSLATION_MULTIPLIER,
+      this.y * TRANSLATION_MULTIPLIER
+    );
+    var rotateZMatrix = this.generateRelativeRotateZMatrix(
+      this.rz,
+      centerX,
+      centerY
+    );
+    var revolveZMatrix = this.generateRevolveZCenterMatrix(
+      this.rvz,
+      centerXCanvas,
+      centerYCanvas
+    );
+    var scaleMatrix = this.generateRelativeScaleMatrix(
+      this.sx,
+      this.sy,
+      centerX,
+      centerY
+    );
+    var shearMatrix = this.generateRelativeShearMatrix(
+      this.shx,
+      this.shy,
+      centerX,
+      centerY
+    );
 
     this.transformationMatrix.multiplyMatrix(translationMatrix);
+    this.transformationMatrix.multiplyMatrix(rotateZMatrix);
     this.transformationMatrix.multiplyMatrix(revolveZMatrix);
     this.transformationMatrix.multiplyMatrix(scaleMatrix);
     this.transformationMatrix.multiplyMatrix(shearMatrix);
@@ -43,8 +66,8 @@ class Transformation {
   }
 
   generateTranslationMatrix(tx, ty) {
-    const firstRow = [1, 0, 0, tx * TRANSLATION_MULTIPLIER];
-    const secondRow = [0, 1, 0, ty * TRANSLATION_MULTIPLIER];
+    const firstRow = [1, 0, 0, tx];
+    const secondRow = [0, 1, 0, ty];
     const thirdRow = [0, 0, 1, 0];
     const fourthRow = [0, 0, 0, 1];
     var matrix = new Matrix(4, 4);
@@ -58,7 +81,7 @@ class Transformation {
   //   return new Point(translatedMatrix[0], translatedMatrix[1]);
   // };
 
-  generateRevolveZMatrix(deg) {
+  generateRotationZMatrix(deg) {
     const rad = degToRad(deg * ROTATION_MULTIPLIER);
     const firstRow = [Math.cos(rad), -Math.sin(rad), 0, 0];
     const secondRow = [Math.sin(rad), Math.cos(rad), 0, 0];
@@ -67,6 +90,30 @@ class Transformation {
     var matrix = new Matrix(4, 4);
     matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
     return matrix;
+  }
+
+  generateRelativeRotateZMatrix(deg, centerX, centerY) {
+    const initTranslateMat = this.generateTranslationMatrix(-centerX, -centerY);
+    const rotateMat = this.generateRotationZMatrix(deg);
+    const lateTranslateMat = this.generateTranslationMatrix(centerX, centerY);
+    rotateMat.multiplyMatrix(initTranslateMat);
+    lateTranslateMat.multiplyMatrix(rotateMat);
+    return lateTranslateMat;
+  }
+
+  generateRevolveZCenterMatrix(deg, centerXCanvas, centerYCanvas) {
+    const initTranslateMat = this.generateTranslationMatrix(
+      -centerXCanvas,
+      -centerYCanvas
+    );
+    const rotateMat = this.generateRotationZMatrix(deg);
+    const lateTranslateMat = this.generateTranslationMatrix(
+      centerXCanvas,
+      centerYCanvas
+    );
+    rotateMat.multiplyMatrix(initTranslateMat);
+    lateTranslateMat.multiplyMatrix(rotateMat);
+    return lateTranslateMat;
   }
 
   generateScaleMatrix(sx, sy) {
@@ -81,6 +128,15 @@ class Transformation {
     return matrix;
   }
 
+  generateRelativeScaleMatrix(sx, sy, centerX, centerY) {
+    const initTranslateMat = this.generateTranslationMatrix(-centerX, -centerY);
+    const rotateMat = this.generateScaleMatrix(sx, sy);
+    const lateTranslateMat = this.generateTranslationMatrix(centerX, centerY);
+    rotateMat.multiplyMatrix(initTranslateMat);
+    lateTranslateMat.multiplyMatrix(rotateMat);
+    return lateTranslateMat;
+  }
+
   generateShearMatrix(shx, shy) {
     const firstRow = [1, shy * SHEAR_MULTIPLIER, 0, 0];
     const secondRow = [shx * SHEAR_MULTIPLIER, 1, 0, 0];
@@ -89,6 +145,15 @@ class Transformation {
     var matrix = new Matrix(4, 4);
     matrix.insertMatrix([firstRow, secondRow, thirdRow, fourthRow]);
     return matrix;
+  }
+
+  generateRelativeShearMatrix(shx, shy, centerX, centerY) {
+    const initTranslateMat = this.generateTranslationMatrix(-centerX, -centerY);
+    const rotateMat = this.generateShearMatrix(shx, shy);
+    const lateTranslateMat = this.generateTranslationMatrix(centerX, centerY);
+    rotateMat.multiplyMatrix(initTranslateMat);
+    lateTranslateMat.multiplyMatrix(rotateMat);
+    return lateTranslateMat;
   }
 
   getTranslation = () => {
@@ -139,7 +204,7 @@ class Transformation {
       x: this.x,
       y: this.y,
       rz: this.rz,
-      rvz:  this.rvz,
+      rvz: this.rvz,
       sx: this.sx,
       sy: this.sy,
       shx: this.shx,

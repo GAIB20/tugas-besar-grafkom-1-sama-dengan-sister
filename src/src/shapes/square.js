@@ -8,7 +8,7 @@ export class Square extends DrawableObject {
   // p1 ---- p3
   // |        |
   // p2 ---- p4
-  constructor(origin, final, color, id, transformation) {
+  constructor(origin, final, color, id, transformation, canvasCenter) {
     super(id, Shape.Square, color);
 
     const distance =
@@ -34,6 +34,7 @@ export class Square extends DrawableObject {
     this.vertices.push(final);
 
     this.transformation = transformation;
+    this.canvasCenter = canvasCenter
   }
 
   getTransformation = () => {
@@ -69,6 +70,9 @@ export class Square extends DrawableObject {
   }
 
   transformShades(transformationInput) {
+    const centerX = (this.p1.x + this.p4.x) / 2;
+    const centerY = (this.p1.y + this.p4.y) / 2;
+
     const newTransformation = new Transformation(
       transformationInput.x,
       transformationInput.y,
@@ -82,9 +86,8 @@ export class Square extends DrawableObject {
 
     this.transformation.difference(newTransformation);
 
-    var transformationMatrix =
-      this.transformation.calculateTransformationMatrix();
-    // transformationMatrix.printMatrix();
+    var transformationMatrix = this.transformation.calculateTransformationMatrix(centerX, centerY, this.canvasCenter[0], this.canvasCenter[1]);
+
 
     var shapeMatrix = new Matrix(4, 4);
     var tempVertices0 = [this.p1.x, this.p1.y, 0, 1];
