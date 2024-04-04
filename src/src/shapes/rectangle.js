@@ -116,7 +116,6 @@ export class Rectangle extends DrawableObject {
     // Setengah dari width dan length baru
     const halfNewWidth = newWidth / 2;
     const halfNewLength = newLength / 2;
-
     // Tetapkan ulang titik sudut berdasarkan titik tengah dan setengah dari width dan length baru
     this.p1 = new Point(centerX - halfNewLength, centerY - halfNewWidth);
     this.p2 = new Point(centerX + halfNewLength, centerY - halfNewWidth);
@@ -127,9 +126,23 @@ export class Rectangle extends DrawableObject {
 
     this.width = newWidth;
     this.length = newLength;
+    this.transformation = new Transformation(
+      this.transformation.tx,
+      this.transformation.ty,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    );
   }
 
   getName() {
     return "Rectangle " + this.id;
+  }
+
+  getPoints() {
+    return [this.p1, this.p2, this.p3, this.p4];
   }
 }

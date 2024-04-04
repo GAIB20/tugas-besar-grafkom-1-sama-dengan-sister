@@ -7,8 +7,8 @@ export class Line extends DrawableObject {
   constructor(origin, final, color, id) {
     super(id, Shape.Line, color);
     this.color = color;
-    this.origin = origin
-    this.final = final
+    this.origin = origin;
+    this.final = final;
     this.vertices = [origin];
     this.vertices.push(final);
   }
@@ -57,8 +57,12 @@ export class Line extends DrawableObject {
     gl.drawArrays(gl.LINE_STRIP, 0, points.length / 2);
   }
 
-  updateShapes(newSize){
+  updateShapes(newSize) {
     // TO DO : Update size line
-    console.log(newSize)
+    console.log(newSize);
+  }
+
+  getPoints() {
+    return [this.origin, this.final];
   }
 }

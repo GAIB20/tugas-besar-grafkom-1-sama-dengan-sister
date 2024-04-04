@@ -1,4 +1,10 @@
-function Tool({ lineClick, rectClick, polyClick, squareClick }) {
+function Tool({
+  lineClick,
+  rectClick,
+  polyClick,
+  squareClick,
+  handleSaveModels,
+}) {
   const setLineButtonTitle = (enter) => {
     let elm = document.getElementById("lineButtonTitle");
     if (enter) {
@@ -38,7 +44,7 @@ function Tool({ lineClick, rectClick, polyClick, squareClick }) {
   };
 
   return (
-    <>
+    <div className="toolbar-container">
       <div className="toolbar">
         <button
           onClick={() => {
@@ -114,8 +120,12 @@ function Tool({ lineClick, rectClick, polyClick, squareClick }) {
             Polygon{" "}
           </div>
         </button>
+        <div className="button-container">
+          <button onClick={handleSaveModels}>Save</button>
+          <button>Load</button>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 

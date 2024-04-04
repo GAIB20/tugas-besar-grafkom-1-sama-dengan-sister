@@ -143,4 +143,8 @@ export class Square extends DrawableObject {
   getName() {
     return "Square " + this.id;
   }
+
+  getPoints() {
+    return [this.p1, this.p2, this.p3, this.p4];
+  }
 }

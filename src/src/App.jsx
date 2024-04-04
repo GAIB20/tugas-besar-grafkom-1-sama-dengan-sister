@@ -15,6 +15,7 @@ import { Square } from "./shapes/square";
 import { Line } from "./shapes/line";
 import Transformation from "./utils/transformation";
 import { Rectangle } from "./shapes/rectangle";
+import { downloadModel, saveModels } from "./file/save";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -34,6 +35,20 @@ function App() {
     width: 0,
     length: 0,
   });
+
+  const handleSaveModels = () => {
+    console.log("Save models clicked");
+    console.log("Shapes yang mau di save : ",shapes)
+    downloadModel(shapes)
+    // const items = []
+    // for(let i =0; i < shapes.length; i++){
+    //   const item = {
+    //     id : shapes[i].id,
+    //   }
+    //   console.log("Ini items : ", shapes[i])
+    //   items.push(item)
+    // }
+  };
 
   useEffect(() => {
     // Inisialisasi Web Gl
@@ -115,8 +130,6 @@ function App() {
     const selectedShape = shapes[selectedShapeId];
 
     if (selectedShape) {
-      console.log("Masuk ke transformation");
-      // Update the transformation data to the one that the shape holds
       selectedShape.transformShades(transformation);
       redrawCanvas();
     }
@@ -124,20 +137,35 @@ function App() {
 
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
-    console.log("Ini selected shape : ", selectedShape);
     if (selectedShape) {
-      console.log("Masuk ke sini");
       selectedShape.updateShapes(squareSide);
       redrawCanvas();
+      setTransformation((oldTransformation) => ({
+        ...oldTransformation,
+        rz: 0,
+        rvz: 0,
+        sx: 0,
+        sy: 0,
+        shx: 0,
+        shy: 0,
+      }));
     }
   }, [squareSide]);
 
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
-    console.log("Ini selected shape : ", selectedShape);
-    if(selectedShape){
-      selectedShape.updateShapes(rectangleSize)
-      redrawCanvas()
+    if (selectedShape && selectedShape.p1.x) {
+      selectedShape.updateShapes(rectangleSize);
+      setTransformation((oldTransformation) => ({
+        ...oldTransformation,
+        rz: 0,
+        rvz: 0,
+        sx: 0,
+        sy: 0,
+        shx: 0,
+        shy: 0,
+      }));
+      redrawCanvas();
     }
   }, [rectangleSize]);
 
@@ -157,9 +185,11 @@ function App() {
     var x = canvasX(canvas, event.clientX);
     var y = canvasY(canvas, event.clientY);
 
-    var rect = canvas.getBoundingClientRect()
-    const canvasCenter = [(rect.right - rect.left)/2, (rect.bottom - rect.top)/2]
-  
+    var rect = canvas.getBoundingClientRect();
+    const canvasCenter = [
+      (rect.right - rect.left) / 2,
+      (rect.bottom - rect.top) / 2,
+    ];
 
     if (!isDrawing) {
       // Kasus kalau dia baru mulai gambar
@@ -199,7 +229,6 @@ function App() {
           break;
         }
         case Shape.Rectangle: {
-          console.log("Ini origin dan final", originPoint, finalPoint);
           const rectangle = new Rectangle(
             originPoint,
             finalPoint,
@@ -208,13 +237,10 @@ function App() {
             new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
             canvasCenter
           );
-          console.log("INi rectangle : ", rectangle);
-          setRectangleSize({
-            width: Math.floor(rectangle.width),
-            length: Math.floor(rectangle.length),
-          });
+
           setShapes((oldShapes) => [...oldShapes, rectangle]);
           setSelectedShapeId(shapes.length);
+          redrawCanvas();
           break;
         }
         default:
@@ -310,6 +336,7 @@ function App() {
           rectClick={rectangleButtonClicked}
           polyClick={polygonButtonClicked}
           squareClick={squareButtonClicked}
+          handleSaveModels={handleSaveModels}
         />
         <div
           className="canvasContainer"
@@ -336,4 +363,3 @@ function App() {
 }
 
 export default App;
-
