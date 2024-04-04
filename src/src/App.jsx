@@ -122,6 +122,8 @@ function App() {
     const selectedShape = shapes[selectedShapeId];
 
     if (selectedShape) {
+      console.log("Masuk ke transformation");
+      // Update the transformation data to the one that the shape holds
       selectedShape.transformShades(transformation);
       redrawCanvas();
     }
@@ -146,18 +148,10 @@ function App() {
 
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
-    if (selectedShape && selectedShape.p1.x) {
-      selectedShape.updateShapes(rectangleSize);
-      setTransformation((oldTransformation) => ({
-        ...oldTransformation,
-        rz: 0,
-        rvz: 0,
-        sx: 0,
-        sy: 0,
-        shx: 0,
-        shy: 0,
-      }));
-      redrawCanvas();
+    console.log("Ini selected shape : ", selectedShape);
+    if(selectedShape){
+      selectedShape.updateShapes(rectangleSize)
+      redrawCanvas()
     }
   }, [rectangleSize]);
 

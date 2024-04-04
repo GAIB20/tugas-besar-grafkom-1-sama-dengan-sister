@@ -1,17 +1,25 @@
 import { Shape } from "../constant/shape";
 import { DrawableObject } from "./object";
 import Transformation from "../utils/transformation";
+import Matrix, { multiplyMatrices } from "../utils/matrix";
 
 export class Line extends DrawableObject {
   // p1 ---- p2
-  constructor(origin, final, color, id) {
+  constructor(origin, final, color, id, transformation, canvasCenter) {
     super(id, Shape.Line, color);
     this.color = color;
     this.origin = origin;
     this.final = final;
     this.vertices = [origin];
     this.vertices.push(final);
+
+    this.transformation = transformation;
+    this.canvasCenter = canvasCenter;
   }
+
+  getTransformation = () => {
+    return this.transformation;
+  };
 
   convertPointToCoordinates = () => {
     const results = [];
@@ -23,18 +31,51 @@ export class Line extends DrawableObject {
   };
 
   transformShades = (transformationInput) => {
-    const transformation = new Transformation(
+    const newTransformation = new Transformation(
       transformationInput.x,
       transformationInput.y,
-      transformationInput.rx,
-      transformationInput.ry,
+      transformationInput.rz,
+      transformationInput.rvz,
       transformationInput.sx,
       transformationInput.sy,
       transformationInput.shx,
       transformationInput.shy
     );
-    this.vertices[0] = transformation.translate(this.origin);
-    this.vertices[1] = transformation.translate(this.final);
+    const centerX = (this.origin.x + this.final.x) / 2;
+    const centerY = (this.origin.y + this.final.y) / 2;
+
+    this.transformation.difference(newTransformation);
+
+    var transformationMatrix =
+      this.transformation.calculateTransformationMatrix(
+        centerX,
+        centerY,
+        this.canvasCenter[0],
+        this.canvasCenter[1]
+      );
+
+    var shapeMatrix = new Matrix(2, 4);
+    var tempVertices0 = [this.origin.x, this.origin.y, 0, 1];
+    var tempVertices1 = [this.final.x, this.final.y, 0, 1];
+    var tempMatrix = [tempVertices0, tempVertices1];
+
+    shapeMatrix.insertMatrix(tempMatrix);
+    shapeMatrix.transpose();
+
+    var resultMatrix = multiplyMatrices(
+      transformationMatrix.getMatrix(),
+      shapeMatrix.getMatrix()
+    );
+
+    for (let i = 0; i < 2; i++){
+      this.vertices[i].x = resultMatrix[0][i];
+      this.vertices[i].y = resultMatrix[1][i];
+    }
+
+    this.transformation = newTransformation;
+
+    // this.vertices[0] = transformation.translate(this.origin);
+    // this.vertices[1] = transformation.translate(this.final);
   };
 
   render(gl, positionAttributeLocation, colorAttributeLocation) {
