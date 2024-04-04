@@ -157,6 +157,10 @@ function App() {
     var x = canvasX(canvas, event.clientX);
     var y = canvasY(canvas, event.clientY);
 
+    var rect = canvas.getBoundingClientRect()
+    const canvasCenter = [(rect.right - rect.left)/2, (rect.bottom - rect.top)/2]
+  
+
     if (!isDrawing) {
       // Kasus kalau dia baru mulai gambar
       setIsDrawing(true);
@@ -172,7 +176,8 @@ function App() {
             finalPoint,
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             shapes.length,
-            new Transformation(0, 0, 0, 0, 0, 0, 0, 0)
+            new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+            canvasCenter
           );
           setSquareSide(Math.floor(square.distance));
           setShapes((oldShapes) => [...oldShapes, square]);
@@ -184,7 +189,9 @@ function App() {
             originPoint,
             finalPoint,
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            shapes.length
+            shapes.length,
+            new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+            canvasCenter
           );
           setShapes((oldShapes) => [...oldShapes, line]);
           setSelectedShapeId(shapes.length);
@@ -328,3 +335,4 @@ function App() {
 }
 
 export default App;
+
