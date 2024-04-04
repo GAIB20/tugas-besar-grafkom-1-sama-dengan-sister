@@ -29,6 +29,7 @@ function App() {
   const [shapes, setShapes] = useState([]);
   const [selectedShapeId, setSelectedShapeId] = useState();
   const [transformation, setTransformation] = useState(null);
+  const [squareSide, setSquareSide] = useState();
 
   useEffect(() => {
     // Inisialisasi Web Gl
@@ -91,19 +92,14 @@ function App() {
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
-  // Change Transformation Data to Shape Configuration
   useEffect(() => {
-    console.log("Masuk ke sini", selectedShapeId);
     if (selectedShapeId !== null) {
-      console.log("Masuk ke selectedshapeid");
       const selectedShape = shapes[selectedShapeId];
-      console.log(selectedShape, selectedShapeId);
       if (selectedShape != null) {
         setIsPropertiesOpen(true);
         var transformationConfig = selectedShape
           .getTransformation()
           .getAllData();
-        console.log("Ini transformation config : ", transformationConfig);
         setTransformation(transformationConfig);
       }
     } else {
@@ -116,10 +112,18 @@ function App() {
 
     if (selectedShape) {
       // Update the transformation data to the one that the shape holds
-      selectedShape.updateShapes(transformation);
+      selectedShape.transformShades(transformation);
       redrawCanvas();
     }
   }, [transformation]); // Watch for changes in shapes state
+
+  useEffect(() => {
+    const selectedShape = shapes[selectedShapeId];
+    if (selectedShape) {
+      selectedShape.updateShapes(squareSide);
+      redrawCanvas();
+    }
+  }, [squareSide]);
 
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
@@ -132,7 +136,6 @@ function App() {
     }
   };
 
-
   const handleMouseDown = (event) => {
     const canvas = document.querySelector("canvas");
     var x = canvasX(canvas, event.clientX);
@@ -143,8 +146,7 @@ function App() {
       setIsDrawing(true);
       const originPoint = new Point(x, y);
       setOriginPoint(originPoint);
-      setPoints([originPoint]); // Pastikan ini adalah array
-      // console.log(originPoint);
+      setPoints([originPoint]);
     } else {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
@@ -157,10 +159,9 @@ function App() {
             shapes.length,
             new Transformation(0, 0, 0, 0, 0, 0, 0, 0)
           );
-          setSelectedShapeId(shapes.length);
-          // square.render(gl, positionAttributeLocation, colorAttributeLocation);
           setShapes((oldShapes) => [...oldShapes, square]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
+          setSelectedShapeId(shapes.length);
           break;
         }
         case Shape.Line: {
@@ -170,9 +171,10 @@ function App() {
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             shapes.length
           );
-          setSelectedShapeId(shapes.length);
           setShapes((oldShapes) => [...oldShapes, line]);
           setPoints((oldPoints) => [...oldPoints, finalPoint]);
+          setSelectedShapeId(shapes.length);
+
           break;
         }
         default:
@@ -222,7 +224,6 @@ function App() {
     }
   };
 
-
   const lineButtonClicked = () => {
     setCurrentShapeType(Shape.Line);
   };
@@ -271,6 +272,8 @@ function App() {
           isOpen={isPropertiesOpen}
           shapes={shapes}
           setSelectedShapeId={setSelectedShapeId}
+          squareSide={squareSide}
+          setSquareSide={setSquareSide}
         />
       </div>
     </div>

@@ -15,6 +15,7 @@ export class Square extends DrawableObject {
       Math.abs(origin.x - final.x) > Math.abs(origin.y - final.y)
         ? Math.abs(origin.x - final.x)
         : Math.abs(origin.y - final.y);
+    this.distance = distance;
     const newX = origin.x > final.x ? origin.x - distance : origin.x + distance;
     const newY = origin.y > final.y ? origin.y - distance : origin.y + distance;
     final.updatePoint(newX, newY);
@@ -32,7 +33,7 @@ export class Square extends DrawableObject {
     this.vertices.push(p3);
     this.vertices.push(final);
 
-    this.transformation = transformation
+    this.transformation = transformation;
   }
 
   getTransformation = () => {
@@ -67,7 +68,7 @@ export class Square extends DrawableObject {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
   }
 
-  updateShapes(transformationInput) {
+  transformShades(transformationInput) {
     const newTransformation = new Transformation(
       transformationInput.x,
       transformationInput.y,
@@ -79,9 +80,10 @@ export class Square extends DrawableObject {
       transformationInput.shy
     );
 
-    this.transformation.difference(newTransformation)
+    this.transformation.difference(newTransformation);
 
-    var transformationMatrix = this.transformation.calculateTransformationMatrix();
+    var transformationMatrix =
+      this.transformation.calculateTransformationMatrix();
     // transformationMatrix.printMatrix();
 
     var shapeMatrix = new Matrix(4, 4);
@@ -110,7 +112,30 @@ export class Square extends DrawableObject {
       this.vertices[i].y = resultMatrix[1][i];
     }
 
-    this.transformation = newTransformation
+    this.transformation = newTransformation;
+  }
+
+  updateShapes(newSize) {
+    const centerX = (this.p1.x + this.p4.x) / 2;
+    const centerY = (this.p1.y + this.p4.y) / 2;
+    const halfNewSize = newSize / 2;
+
+    // Mengupdate posisi titik sudut relatif terhadap titik tengah dengan ukuran baru
+    this.p1.updatePoint(centerX - halfNewSize, centerY - halfNewSize);
+    this.p2.updatePoint(centerX - halfNewSize, centerY + halfNewSize);
+    this.p3.updatePoint(centerX + halfNewSize, centerY - halfNewSize);
+    this.p4.updatePoint(centerX + halfNewSize, centerY + halfNewSize);
+
+    // Memperbarui array vertices
+    this.vertices[0] = this.p1;
+    this.vertices[1] = this.p2;
+    this.vertices[2] = this.p3;
+    this.vertices[3] = this.p4;
+
+    // Memperbarui this.distance dengan ukuran baru
+    this.distance = newSize;
+
+    console.log("updated vertices : ", this.vertices);
   }
 
   getName() {

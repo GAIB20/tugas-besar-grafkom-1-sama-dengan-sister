@@ -12,4 +12,8 @@ export class DrawableObject {
     getID() {
       return this.id;
     }
+
+    getType(){
+      return this.type
+    }
 }

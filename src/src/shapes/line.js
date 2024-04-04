@@ -22,7 +22,7 @@ export class Line extends DrawableObject {
     return results;
   };
 
-  updateShapes = (transformationInput) => {
+  transformShades = (transformationInput) => {
     const transformation = new Transformation(
       transformationInput.x,
       transformationInput.y,
@@ -55,5 +55,10 @@ export class Line extends DrawableObject {
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(gl.LINE_STRIP, 0, points.length / 2);
+  }
+
+  updateShapes(newSize){
+    // TO DO : Update size line
+    console.log(newSize)
   }
 }

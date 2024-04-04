@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Shape } from "../constant/shape";
 
 const SLIDER_STEPS = 0.01;
 const SLIDER_MIN = -1;
@@ -11,6 +12,8 @@ const Properties = ({
   shapes,
   setSelectedShapeId,
   setTransformation,
+  squareSide,
+  setSquareSide,
 }) => {
   const [propsOpen, setPropsOpen] = useState(true);
 
@@ -78,8 +81,7 @@ const Properties = ({
                   id="translateXSlider"
                   step={SLIDER_STEPS}
                   defaultValue={transformation.x}
-                  value={transformation.x} 
-
+                  value={transformation.x}
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,
@@ -253,6 +255,31 @@ const Properties = ({
                     }));
                   }}
                 />
+              </div>
+              <div className="slidecontainer">
+                {shapes[selectedShapeId].getType() === Shape.Square && (
+                  <>
+                    <b>
+                      {" "}
+                      <p>
+                        {" "}
+                        {shapes[selectedShapeId].getName() +
+                          "Size : " +
+                          shapes[selectedShapeId].distance}
+                      </p>{" "}
+                    </b>
+                    <input
+                      type="range"
+                      min={0}
+                      max={500}
+                      className="slider"
+                      value={squareSide}
+                      onChange={(e) => {
+                        setSquareSide(Number(e.target.value));
+                      }}
+                    />
+                  </>
+                )}
               </div>
             </div>
           </div>
