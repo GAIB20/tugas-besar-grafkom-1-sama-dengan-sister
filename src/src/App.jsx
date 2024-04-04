@@ -115,7 +115,6 @@ function App() {
     const selectedShape = shapes[selectedShapeId];
 
     if (selectedShape) {
-      console.log("Masuk ke transformation");
       // Update the transformation data to the one that the shape holds
       selectedShape.transformShades(transformation);
       redrawCanvas();
@@ -135,9 +134,9 @@ function App() {
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
     console.log("Ini selected shape : ", selectedShape);
-    if(selectedShape){
-      selectedShape.updateShapes(rectangleSize)
-      redrawCanvas()
+    if (selectedShape) {
+      selectedShape.updateShapes(rectangleSize);
+      redrawCanvas();
     }
   }, [rectangleSize]);
 
@@ -157,9 +156,11 @@ function App() {
     var x = canvasX(canvas, event.clientX);
     var y = canvasY(canvas, event.clientY);
 
-    var rect = canvas.getBoundingClientRect()
-    const canvasCenter = [(rect.right - rect.left)/2, (rect.bottom - rect.top)/2]
-  
+    var rect = canvas.getBoundingClientRect();
+    const canvasCenter = [
+      (rect.right - rect.left) / 2,
+      (rect.bottom - rect.top) / 2,
+    ];
 
     if (!isDrawing) {
       // Kasus kalau dia baru mulai gambar
@@ -205,7 +206,8 @@ function App() {
             finalPoint,
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             shapes.length,
-            new Transformation(0, 0, 0, 0, 0, 0, 0, 0)
+            new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+            canvasCenter
           );
           console.log("INi rectangle : ", rectangle);
           setRectangleSize({
@@ -335,4 +337,3 @@ function App() {
 }
 
 export default App;
-

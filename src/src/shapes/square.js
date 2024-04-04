@@ -37,7 +37,7 @@ export class Square extends DrawableObject {
     console.log(this.color)
 
     this.transformation = transformation;
-    this.canvasCenter = canvasCenter
+    this.canvasCenter = canvasCenter;
   }
 
   getTransformation = () => {
@@ -89,8 +89,13 @@ export class Square extends DrawableObject {
 
     this.transformation.difference(newTransformation);
 
-    var transformationMatrix = this.transformation.calculateTransformationMatrix(centerX, centerY, this.canvasCenter[0], this.canvasCenter[1]);
-
+    var transformationMatrix =
+      this.transformation.calculateTransformationMatrix(
+        centerX,
+        centerY,
+        this.canvasCenter[0],
+        this.canvasCenter[1]
+      );
 
     var shapeMatrix = new Matrix(4, 4);
     var tempVertices0 = [this.p1.x, this.p1.y, 0, 1];
@@ -111,7 +116,7 @@ export class Square extends DrawableObject {
       transformationMatrix.getMatrix(),
       shapeMatrix.getMatrix()
     );
-    console.log(resultMatrix);
+    // console.log(resultMatrix);
 
     for (let i = 0; i < 4; i++) {
       this.vertices[i].x = resultMatrix[0][i];
