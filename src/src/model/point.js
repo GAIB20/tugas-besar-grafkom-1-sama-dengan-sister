@@ -1,7 +1,10 @@
+import { Color } from "./color";
+
 export class Point {
-  constructor(x, y) {
+  constructor(x, y, color) {
     this.x = x;
     this.y = y;
+    this.color = color;
   }
 
   updateX(_x) {
@@ -15,5 +18,9 @@ export class Point {
   updatePoint(_x, _y) {
     this.x = _x;
     this.y = _y;
+  }
+  
+  updateColor(color) {
+    this.color.updateColor(color);
   }
 }

@@ -15,6 +15,7 @@ import { Square } from "./shapes/square";
 import { Line } from "./shapes/line";
 import Transformation from "./utils/transformation";
 import { Rectangle } from "./shapes/rectangle";
+import { Color } from "./model/color";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -22,6 +23,7 @@ function App() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [originPoint, setOriginPoint] = useState();
   const [colorRgb, setColorRgb] = useState([0, 0, 0, 1]);
+  const [currentColor, setCurrentColor] = useState(new Color(0, 0, 0, 1));
   const [gl, setGl] = useState();
   const [positionAttributeLocation, setPositionAttributeLocation] = useState();
   const [colorAttributeLocation, setColorAttribLocation] = useState();
@@ -165,11 +167,11 @@ function App() {
     if (!isDrawing) {
       // Kasus kalau dia baru mulai gambar
       setIsDrawing(true);
-      const originPoint = new Point(x, y);
+      const originPoint = new Point(x, y, currentColor);
       setOriginPoint(originPoint);
     } else {
       // Kasus kalau dia udah selesai gambar
-      const finalPoint = new Point(x, y);
+      const finalPoint = new Point(x, y, currentColor);
       switch (currentShapeType) {
         case Shape.Square: {
           const square = new Square(
@@ -233,7 +235,7 @@ function App() {
     if (isDrawing) {
       let x2 = canvasX(canvas, event.clientX);
       let y2 = canvasY(canvas, event.clientY);
-      const finalPoint = new Point(x2, y2);
+      const finalPoint = new Point(x2, y2, currentColor);
 
       switch (currentShapeType) {
         case Shape.Square: {
