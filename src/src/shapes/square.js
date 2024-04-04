@@ -119,26 +119,20 @@ export class Square extends DrawableObject {
   }
 
   updateShapes(newSize) {
-    const centerX = (this.p1.x + this.p4.x) / 2;
+    // Hitung titik tengah
+    const centerX = (this.p4.x + this.p1.x) / 2;
     const centerY = (this.p1.y + this.p4.y) / 2;
-    const halfNewSize = newSize / 2;
+    const halfSize = newSize / 2;
 
-    // Mengupdate posisi titik sudut relatif terhadap titik tengah dengan ukuran baru
-    this.p1.updatePoint(centerX - halfNewSize, centerY - halfNewSize);
-    this.p2.updatePoint(centerX - halfNewSize, centerY + halfNewSize);
-    this.p3.updatePoint(centerX + halfNewSize, centerY - halfNewSize);
-    this.p4.updatePoint(centerX + halfNewSize, centerY + halfNewSize);
+    // Posisikan ulang titik sudut
+    this.p1 = new Point(centerX - halfSize, centerY + halfSize);
+    this.p2 = new Point(centerX - halfSize, centerY - halfSize);
+    this.p3 = new Point(centerX + halfSize, centerY + halfSize);
+    this.p4 = new Point(centerX + halfSize, centerY - halfSize);
 
-    // Memperbarui array vertices
-    this.vertices[0] = this.p1;
-    this.vertices[1] = this.p2;
-    this.vertices[2] = this.p3;
-    this.vertices[3] = this.p4;
-
-    // Memperbarui this.distance dengan ukuran baru
+    // Memperbarui vertices dan distance
+    this.vertices = [this.p1, this.p2, this.p3, this.p4];
     this.distance = newSize;
-
-    console.log("updated vertices : ", this.vertices);
   }
 
   getName() {

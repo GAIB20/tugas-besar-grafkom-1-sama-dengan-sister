@@ -14,6 +14,7 @@ import {
 import { Square } from "./shapes/square";
 import { Line } from "./shapes/line";
 import Transformation from "./utils/transformation";
+import { Rectangle } from "./shapes/rectangle";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -24,7 +25,6 @@ function App() {
   const [gl, setGl] = useState();
   const [positionAttributeLocation, setPositionAttributeLocation] = useState();
   const [colorAttributeLocation, setColorAttribLocation] = useState();
-  const [points, setPoints] = useState([]);
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
   const [selectedShapeId, setSelectedShapeId] = useState();
@@ -150,7 +150,6 @@ function App() {
       setIsDrawing(true);
       const originPoint = new Point(x, y);
       setOriginPoint(originPoint);
-      setPoints([originPoint]);
     } else {
       // Kasus kalau dia udah selesai gambar
       const finalPoint = new Point(x, y);
@@ -164,8 +163,8 @@ function App() {
             new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
             canvasCenter
           );
+          setSquareSide(Math.floor(square.distance));
           setShapes((oldShapes) => [...oldShapes, square]);
-          setPoints((oldPoints) => [...oldPoints, finalPoint]);
           setSelectedShapeId(shapes.length);
           break;
         }
@@ -179,9 +178,25 @@ function App() {
             canvasCenter
           );
           setShapes((oldShapes) => [...oldShapes, line]);
-          setPoints((oldPoints) => [...oldPoints, finalPoint]);
           setSelectedShapeId(shapes.length);
 
+          break;
+        }
+        case Shape.Rectangle: {
+          const rectangle = new Rectangle(
+            originPoint,
+            finalPoint,
+            [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+            shapes.length,
+            new Transformation(0, 0, 0, 0, 0, 0, 0, 0)
+          );
+          rectangle.render(
+            gl,
+            positionAttributeLocation,
+            colorAttributeLocation
+          );
+          setShapes((oldShapes) => [...oldShapes, rectangle])
+          setSelectedShapeId(shapes.length)
           break;
         }
         default:
@@ -224,7 +239,20 @@ function App() {
           line.render(gl, positionAttributeLocation, colorAttributeLocation);
           break;
         }
-
+        case Shape.Rectangle: {
+          const rectangle = new Rectangle(originPoint, finalPoint, [
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+            ...colorRgb,
+          ]);
+          rectangle.render(
+            gl,
+            positionAttributeLocation,
+            colorAttributeLocation
+          );
+          break;
+        }
         default:
           break;
       }

@@ -4,7 +4,6 @@ export class DrawableObject {
         this.type = type;
         this.color = color;
     }
-
     getName() {
       return this.type + " " + this.id;
     }
