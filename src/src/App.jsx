@@ -111,11 +111,15 @@ function App() {
           .getAllData();
         setTransformation(transformationConfig);
 
+        // Adjust
+        setCurrentShapeType(selectedShape.getShapeType())
+
         // If a polygon is selected, change polygonPoints too
         if (selectedShape.getShapeType() == Shape.Polygon) {
           var tempPoints = selectedShape.getPoints();
           setPolygonPoints(tempPoints);
         }
+        
       }
     } else {
       setIsPropertiesOpen(false);
