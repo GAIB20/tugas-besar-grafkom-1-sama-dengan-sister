@@ -67,6 +67,38 @@ const Properties = ({
                 })}
               </select>
             </div>
+            
+            <div className="sectionContainer">
+              <p className="sectionTitle"> Color </p>
+              <select
+                className="dropdown"
+                value={selectedShapeId}
+                onChange={(e) => setSelectedShapeId(Number(e.target.value))}
+              >
+                {" "}
+                {shapes?.map((shape) => {
+                  // console.log(shape.id);
+                  return (
+                    <option value={shape.id} key={shape.id}>
+                      {shape.getName()}
+                    </option>
+                  );
+                })}
+              </select>
+              <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"center"}}>
+                  <div style={{ minHeight:"20px", minWidth: "45%", backgroundColor:"#000000", borderRadius: "5px"}}>
+                  </div>
+                  <input
+                    type="text"
+                    id="colorInput"
+                    className="colorInput"
+                    defaultValue={transformation.x}
+                    onChange={(e) => {
+                      
+                    }}
+                  />
+                </div>
+            </div>
 
             <div className="sectionContainer">
               <p className="sectionTitle"> Translation </p>

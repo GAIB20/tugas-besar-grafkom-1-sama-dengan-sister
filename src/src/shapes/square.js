@@ -3,6 +3,7 @@ import { Point } from "../model/point";
 import Matrix, { multiplyMatrices } from "../utils/matrix";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
+import { Rectangle } from "./rectangle";
 
 export class Square extends DrawableObject {
   // p1 ---- p3
@@ -32,6 +33,8 @@ export class Square extends DrawableObject {
     this.vertices.push(p2);
     this.vertices.push(p3);
     this.vertices.push(final);
+
+    console.log(this.color)
 
     this.transformation = transformation;
     this.canvasCenter = canvasCenter
