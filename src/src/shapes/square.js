@@ -113,7 +113,7 @@ export class Square extends DrawableObject {
       transformationMatrix.getMatrix(),
       shapeMatrix.getMatrix()
     );
-    console.log(resultMatrix);
+    // console.log(resultMatrix);
 
     for (let i = 0; i < 4; i++) {
       this.vertices[i].x = resultMatrix[0][i];
