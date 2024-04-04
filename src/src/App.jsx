@@ -16,6 +16,8 @@ import { Line } from "./shapes/line";
 import Transformation from "./utils/transformation";
 import { Rectangle } from "./shapes/rectangle";
 import { Color } from "./model/color";
+import { downloadModel, saveModels } from "./file/save";
+import { parseFile } from "./file/load";
 
 function App() {
   const [workingTitle, setWorkingTitle] = useState("Untitled");
@@ -36,6 +38,11 @@ function App() {
     width: 0,
     length: 0,
   });
+  const [file, setFile] = useState();
+
+  const handleSaveModels = () => {
+    downloadModel(shapes);
+  };
 
   useEffect(() => {
     // Inisialisasi Web Gl
@@ -117,6 +124,7 @@ function App() {
     const selectedShape = shapes[selectedShapeId];
 
     if (selectedShape) {
+      console.log("Masuk ke transformation");
       // Update the transformation data to the one that the shape holds
       selectedShape.transformShades(transformation);
       redrawCanvas();
@@ -125,22 +133,43 @@ function App() {
 
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
-    console.log("Ini selected shape : ", selectedShape);
     if (selectedShape) {
-      console.log("Masuk ke sini");
       selectedShape.updateShapes(squareSide);
       redrawCanvas();
+      setTransformation((oldTransformation) => ({
+        ...oldTransformation,
+        rz: 0,
+        rvz: 0,
+        sx: 0,
+        sy: 0,
+        shx: 0,
+        shy: 0,
+      }));
     }
   }, [squareSide]);
 
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
     console.log("Ini selected shape : ", selectedShape);
-    if (selectedShape) {
-      selectedShape.updateShapes(rectangleSize);
-      redrawCanvas();
+    if(selectedShape){
+      selectedShape.updateShapes(rectangleSize)
+      redrawCanvas()
     }
   }, [rectangleSize]);
+
+  useEffect(() => {
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = () => {
+        const textContent = reader.result;
+        const shapes = parseFile(textContent);
+        setShapes((oldShapes) => [...oldShapes, ...shapes]);
+        setSelectedShapeId(shapes[0].id);
+        redrawCanvas();
+      };
+    }
+  }, [file]);
 
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
@@ -174,14 +203,15 @@ function App() {
       const finalPoint = new Point(x, y, currentColor);
       switch (currentShapeType) {
         case Shape.Square: {
-          const square = new Square(
-            originPoint,
-            finalPoint,
-            [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            shapes.length,
-            new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
-            canvasCenter
-          );
+          const square = new Square({
+            origin: originPoint,
+            final: finalPoint,
+            color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+            id: shapes.length,
+            transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+            canvasCenter: canvasCenter,
+            fromFile: false,
+          });
           setSquareSide(Math.floor(square.distance));
           setShapes((oldShapes) => [...oldShapes, square]);
           setSelectedShapeId(shapes.length);
@@ -202,22 +232,18 @@ function App() {
           break;
         }
         case Shape.Rectangle: {
-          console.log("Ini origin dan final", originPoint, finalPoint);
-          const rectangle = new Rectangle(
-            originPoint,
-            finalPoint,
-            [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            shapes.length,
-            new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
-            canvasCenter
-          );
-          console.log("INi rectangle : ", rectangle);
-          setRectangleSize({
-            width: Math.floor(rectangle.width),
-            length: Math.floor(rectangle.length),
+          const rectangle = new Rectangle({
+            origin: originPoint,
+            final: finalPoint,
+            color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+            id: shapes.length,
+            transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+            canvasCenter: canvasCenter,
           });
+
           setShapes((oldShapes) => [...oldShapes, rectangle]);
           setSelectedShapeId(shapes.length);
+          redrawCanvas();
           break;
         }
         default:
@@ -239,12 +265,12 @@ function App() {
 
       switch (currentShapeType) {
         case Shape.Square: {
-          const square = new Square(originPoint, finalPoint, [
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-          ]);
+          const square = new Square({
+            origin: originPoint,
+            final: finalPoint,
+            color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+            fromFile: false,
+          });
           square.render(gl, positionAttributeLocation, colorAttributeLocation);
           break;
         }
@@ -261,12 +287,11 @@ function App() {
           break;
         }
         case Shape.Rectangle: {
-          const rectangle = new Rectangle(originPoint, finalPoint, [
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-          ]);
+          const rectangle = new Rectangle({
+            origin: originPoint,
+            final: finalPoint,
+            color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+          });
           rectangle.render(
             gl,
             positionAttributeLocation,
@@ -285,13 +310,11 @@ function App() {
   };
 
   const rectangleButtonClicked = () => {
-    // console.log("Rect Button Clicked");
     setCurrentShapeType(Shape.Rectangle);
   };
 
   const polygonButtonClicked = () => {
     setCurrentShapeType(Shape.Polygon);
-    // console.log("Poly Button Clicked");
   };
 
   const squareButtonClicked = () => {
@@ -313,6 +336,8 @@ function App() {
           rectClick={rectangleButtonClicked}
           polyClick={polygonButtonClicked}
           squareClick={squareButtonClicked}
+          handleSaveModels={handleSaveModels}
+          setFile={setFile}
         />
         <div
           className="canvasContainer"

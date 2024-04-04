@@ -102,4 +102,8 @@ export class Line extends DrawableObject {
     // TO DO : Update size line
     console.log(newSize);
   }
+
+  getPoints() {
+    return [this.origin, this.final];
+  }
 }

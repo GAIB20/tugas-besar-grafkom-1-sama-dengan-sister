@@ -114,7 +114,6 @@ const Properties = ({
                   className="slider"
                   id="translateXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.x}
                   value={transformation.x}
                   onChange={(e) => {
                     setTransformation((old) => ({
@@ -136,7 +135,6 @@ const Properties = ({
                   className="slider"
                   id="translateYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.y}
                   value={transformation.y}
                   onChange={(e) => {
                     setTransformation((old) => ({
@@ -162,7 +160,6 @@ const Properties = ({
                   className="slider"
                   id="rotateZSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.rz}
                   value={transformation.rz}
                   onChange={(e) => {
                     setTransformation((old) => ({
@@ -184,7 +181,6 @@ const Properties = ({
                   className="slider"
                   id="revolveZSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.rvz}
                   value={transformation.rvz}
                   onChange={(e) => {
                     setTransformation((old) => ({
@@ -210,7 +206,6 @@ const Properties = ({
                   className="slider"
                   id="scaleXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.sx}
                   value={transformation.sx}
                   onChange={(e) => {
                     setTransformation((old) => ({
@@ -232,7 +227,6 @@ const Properties = ({
                   className="slider"
                   id="scaleYSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.sy}
                   value={transformation.sy}
                   onChange={(e) => {
                     setTransformation((old) => ({
@@ -258,7 +252,6 @@ const Properties = ({
                   className="slider"
                   id="shearXSlider"
                   step={SLIDER_STEPS}
-                  defaultValue={transformation.shx}
                   value={transformation.shx}
                   onChange={(e) => {
                     setTransformation((old) => ({
@@ -281,7 +274,6 @@ const Properties = ({
                   id="shearYSlider"
                   step={SLIDER_STEPS}
                   value={transformation.shy}
-                  defaultValue={transformation.shy}
                   onChange={(e) => {
                     setTransformation((old) => ({
                       ...old,

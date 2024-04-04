@@ -9,18 +9,35 @@ export class Rectangle extends DrawableObject {
   //  |            |
   //  p4 --------- p3
 
-  constructor(origin, final, color, id, transformation, canvasCenter) {
+  constructor({
+    origin = null,
+    final = null,
+    color = [],
+    id = null,
+    transformation = null,
+    canvasCenter = null,
+    fromFile = false,
+    vertices = [],
+  }) {
     super(id, Shape.Rectangle, color);
+    if (!fromFile) {
+      const p2 = new Point(origin.x, final.y);
+      const p4 = new Point(final.x, origin.y);
+      this.p1 = origin;
+      this.p2 = p2;
+      this.p3 = final;
+      this.p4 = p4;
 
-    const p2 = new Point(origin.x, final.y);
-    const p4 = new Point(final.x, origin.y);
-    this.p1 = origin;
-    this.p2 = p2;
-    this.p3 = final;
-    this.p4 = p4;
+      this.vertices = [origin];
+      this.vertices.push(p2, final, p4);
+    } else {
+      this.vertices = vertices;
+      this.p1 = vertices[0];
+      this.p2 = vertices[1];
+      this.p3 = vertices[2];
+      this.p4 = vertices[3];
+    }
 
-    this.vertices = [origin];
-    this.vertices.push(p2, final, p4);
     this.color = color;
     this.transformation = transformation;
     this.length = Math.abs(this.p1.x - this.p3.x);
@@ -116,7 +133,6 @@ export class Rectangle extends DrawableObject {
     // Setengah dari width dan length baru
     const halfNewWidth = newWidth / 2;
     const halfNewLength = newLength / 2;
-
     // Tetapkan ulang titik sudut berdasarkan titik tengah dan setengah dari width dan length baru
     this.p1 = new Point(centerX - halfNewLength, centerY - halfNewWidth);
     this.p2 = new Point(centerX + halfNewLength, centerY - halfNewWidth);
@@ -127,9 +143,23 @@ export class Rectangle extends DrawableObject {
 
     this.width = newWidth;
     this.length = newLength;
+    this.transformation = new Transformation(
+      this.transformation.tx,
+      this.transformation.ty,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    );
   }
 
   getName() {
     return "Rectangle " + this.id;
+  }
+
+  getPoints() {
+    return [this.p1, this.p2, this.p3, this.p4];
   }
 }

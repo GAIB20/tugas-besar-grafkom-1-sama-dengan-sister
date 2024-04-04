@@ -1,4 +1,11 @@
-function Tool({ lineClick, rectClick, polyClick, squareClick }) {
+function Tool({
+  lineClick,
+  rectClick,
+  polyClick,
+  squareClick,
+  handleSaveModels,
+  setFile,
+}) {
   const setLineButtonTitle = (enter) => {
     let elm = document.getElementById("lineButtonTitle");
     if (enter) {
@@ -38,7 +45,7 @@ function Tool({ lineClick, rectClick, polyClick, squareClick }) {
   };
 
   return (
-    <>
+    <div className="toolbar-container">
       <div className="toolbar">
         <button
           onClick={() => {
@@ -114,8 +121,20 @@ function Tool({ lineClick, rectClick, polyClick, squareClick }) {
             Polygon{" "}
           </div>
         </button>
+        <div className="button-container">
+          <button onClick={handleSaveModels}>Save</button>
+          <input
+            type="file"
+            onChange={(e) => {
+              console.log("Masuk on change");
+              if (e.target.files && e.target.files.length > 0) {
+                setFile(e.target.files[0]);
+              }
+            }}
+          />
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
