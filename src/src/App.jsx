@@ -111,11 +111,11 @@ function App() {
           .getAllData();
         setTransformation(transformationConfig);
 
-        // // If a polygon is selected, change polygonPoints too
-        // if (selectedShape.getShapeType() == Shape.Polygon) {
-        //   var tempPoints = selectedShape.getPoints();
-        //   setPolygonPoints(tempPoints);
-        // }
+        // If a polygon is selected, change polygonPoints too
+        if (selectedShape.getShapeType() == Shape.Polygon) {
+          var tempPoints = selectedShape.getPoints();
+          setPolygonPoints(tempPoints);
+        }
       }
     } else {
       setIsPropertiesOpen(false);
@@ -180,6 +180,27 @@ function App() {
     // Special Case for Polygons
     if (currentShapeType == Shape.Polygon) {
       var point = new Point(x, y);
+
+      // // Check if it is to erase
+      // var idx = undefined
+      // for (var i = 0; i < polygonPoints.length; i++){
+      //   var distance =  Math.sqrt(Math.pow((polygonPoints[i].x - x),2) + Math.pow((polygonPoints[i].y - y),2))
+      //   if (distance < 10){
+      //     idx = i;
+      //     break
+      //   }
+      // }
+
+      // // If found, then erase
+      // if (idx){
+      //   polygonPoints.splice(idx, 1);
+      //   polygonColorPoints.splice(idx,1);
+      // } else {
+      //   polygonPoints.push(point);
+      //   polygonColorPoints.push(...colorRgb);
+      //   // console.log(polygonPoints)
+      // }
+
       polygonPoints.push(point);
       polygonColorPoints.push(...colorRgb);
 
@@ -189,6 +210,8 @@ function App() {
 
       // Redraw Canvas
       redrawCanvas();
+      setPolygonPoints(selectedPolygon.getPoints())
+      console.log(polygonPoints)
     } else {
       if (!isDrawing) {
         // Kasus kalau dia baru mulai gambar
@@ -256,51 +279,58 @@ function App() {
 
   const handleMouseMove = (event) => {
     const canvas = document.querySelector("canvas");
-    redrawCanvas();
-    if (isDrawing) {
-      let x2 = canvasX(canvas, event.clientX);
-      let y2 = canvasY(canvas, event.clientY);
-      const finalPoint = new Point(x2, y2);
 
-      switch (currentShapeType) {
-        case Shape.Square: {
-          const square = new Square(originPoint, finalPoint, [
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-          ]);
-          square.render(gl, positionAttributeLocation, colorAttributeLocation);
-          break;
-        }
-        // Dia ga punya id karena ini cuma temporary square (belom fix)
+    if (currentShapeType != Shape.Polygon) {
+      redrawCanvas();
+      if (isDrawing) {
+        let x2 = canvasX(canvas, event.clientX);
+        let y2 = canvasY(canvas, event.clientY);
+        const finalPoint = new Point(x2, y2);
 
-        case Shape.Line: {
-          const line = new Line(originPoint, finalPoint, [
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-          ]);
-          line.render(gl, positionAttributeLocation, colorAttributeLocation);
-          break;
+        switch (currentShapeType) {
+          case Shape.Square: {
+            const square = new Square(originPoint, finalPoint, [
+              ...colorRgb,
+              ...colorRgb,
+              ...colorRgb,
+              ...colorRgb,
+            ]);
+            square.render(
+              gl,
+              positionAttributeLocation,
+              colorAttributeLocation
+            );
+            break;
+          }
+          // Dia ga punya id karena ini cuma temporary square (belom fix)
+
+          case Shape.Line: {
+            const line = new Line(originPoint, finalPoint, [
+              ...colorRgb,
+              ...colorRgb,
+              ...colorRgb,
+              ...colorRgb,
+            ]);
+            line.render(gl, positionAttributeLocation, colorAttributeLocation);
+            break;
+          }
+          case Shape.Rectangle: {
+            const rectangle = new Rectangle(originPoint, finalPoint, [
+              ...colorRgb,
+              ...colorRgb,
+              ...colorRgb,
+              ...colorRgb,
+            ]);
+            rectangle.render(
+              gl,
+              positionAttributeLocation,
+              colorAttributeLocation
+            );
+            break;
+          }
+          default:
+            break;
         }
-        case Shape.Rectangle: {
-          const rectangle = new Rectangle(originPoint, finalPoint, [
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-          ]);
-          rectangle.render(
-            gl,
-            positionAttributeLocation,
-            colorAttributeLocation
-          );
-          break;
-        }
-        default:
-          break;
       }
     }
   };
@@ -325,7 +355,7 @@ function App() {
     var canvasCenter = getCanvasCenter(canvas);
     const polygon = new Polygon(
       polygonPoints,
-      [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+      polygonColorPoints,
       shapes.length,
       new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
       canvasCenter

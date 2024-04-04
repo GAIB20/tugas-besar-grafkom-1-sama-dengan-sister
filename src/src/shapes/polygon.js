@@ -11,8 +11,10 @@ export class Polygon extends DrawableObject {
     super(id, Shape.Polygon, color);
     this.points = points;
     this.colorPoints = color;
+
     this.transformation = transformation;
     this.canvasCenter = canvasCenter;
+    this.convexHull = [];
   }
 
   getTransformation = () => {
@@ -21,6 +23,7 @@ export class Polygon extends DrawableObject {
 
   setPoints = (points) => {
     this.points = points;
+
   };
 
   getPoints = () => {
@@ -40,37 +43,51 @@ export class Polygon extends DrawableObject {
   };
 
   render(gl, positionAttributeLocation, colorAttributeLocation) {
-    var buffer = gl.createBuffer();
-    // const points = this.convertPointToCoordinates(this.points);
-    const pointPairs = this.convertPointToPairs(this.points);
-    // console.log(pointPairs);
+    if (this.points.length >= 3) {
+      // else is ignored
+      var buffer = gl.createBuffer();
+      // const points = this.convertPointToCoordinates(this.points);
 
-    // Make ConvexHull
-    const convexHullPairs = this.convexHull(pointPairs);
-    // console.log("CONVEX HULL", convexHullPairs);
+      const pointPairs = this.convertPointToPairs(this.points);
 
-    const orderedConvexHull = this.sortConvexHullForWebGL(convexHullPairs);
-    console.log(orderedConvexHull);
+      // Make ConvexHull
+      var convexHull = this.makeConvexHull(pointPairs);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(orderedConvexHull),
-      gl.STATIC_DRAW
-    );
-    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(positionAttributeLocation);
+      this.points = []
+      for (var i = 0; i < convexHull.length ; i++){
+        this.points[i] = new Point(convexHull[i][0], convexHull[i][1])
+      }
 
-    var colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array(this.colorPoints),
-      gl.STATIC_DRAW
-    );
-    gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(colorAttributeLocation);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, this.points.length);
+      this.convexHull = this.sortConvexHullForWebGL(convexHull);
+      // console.log(this.convexHull);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(this.convexHull),
+        gl.STATIC_DRAW
+      );
+      gl.vertexAttribPointer(
+        positionAttributeLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
+      gl.enableVertexAttribArray(positionAttributeLocation);
+
+      var colorBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(this.colorPoints),
+        gl.STATIC_DRAW
+      );
+      gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(colorAttributeLocation);
+      gl.drawArrays(gl.TRIANGLE_FAN, 0, this.points.length);
+    }
   }
 
   convertPointToCoordinates = (points) => {
@@ -100,65 +117,50 @@ export class Polygon extends DrawableObject {
   };
 
   transformShades(transformationInput) {
-    // const centerX = (this.p1.x + this.p4.x) / 2;
-    // const centerY = (this.p1.y + this.p4.y) / 2;
-    // const newTransformation = new Transformation(
-    //   transformationInput.x,
-    //   transformationInput.y,
-    //   transformationInput.rz,
-    //   transformationInput.rvz,
-    //   transformationInput.sx,
-    //   transformationInput.sy,
-    //   transformationInput.shx,
-    //   transformationInput.shy
-    // );
-    // this.transformation.difference(newTransformation);
-    // var transformationMatrix =
-    //   this.transformation.calculateTransformationMatrix(
-    //     centerX,
-    //     centerY,
-    //     this.canvasCenter[0],
-    //     this.canvasCenter[1]
-    //   );
-    // var shapeMatrix = new Matrix(4, 4);
-    // var tempVertices0 = [this.p1.x, this.p1.y, 0, 1];
-    // var tempVertices1 = [this.p2.x, this.p2.y, 0, 1];
-    // var tempVertices2 = [this.p3.x, this.p3.y, 0, 1];
-    // var tempVertices3 = [this.p4.x, this.p4.y, 0, 1];
-    // var tempMatrix = [
-    //   tempVertices0,
-    //   tempVertices1,
-    //   tempVertices2,
-    //   tempVertices3,
-    // ];
-    // shapeMatrix.insertMatrix(tempMatrix);
-    // shapeMatrix.transpose();
-    // var resultMatrix = multiplyMatrices(
-    //   transformationMatrix.getMatrix(),
-    //   shapeMatrix.getMatrix()
-    // );
-    // // console.log(resultMatrix);
-    // for (let i = 0; i < 4; i++) {
-    //   this.vertices[i].x = resultMatrix[0][i];
-    //   this.vertices[i].y = resultMatrix[1][i];
-    // }
-    // this.transformation = newTransformation;
+    if (this.points.length >= 3) { // else is ignored
+      const centroid = this.findCentroid(this.convexHull);
+      const newTransformation = new Transformation(
+        transformationInput.x,
+        transformationInput.y,
+        transformationInput.rz,
+        transformationInput.rvz,
+        transformationInput.sx,
+        transformationInput.sy,
+        transformationInput.shx,
+        transformationInput.shy
+      );
+      this.transformation.difference(newTransformation);
+      var transformationMatrix =
+        this.transformation.calculateTransformationMatrix(
+          centroid[0],
+          centroid[1],
+          this.canvasCenter[0],
+          this.canvasCenter[1]
+        );
+      transformationMatrix.getMatrix()
+      var shapeMatrix = new Matrix(this.points.length, 4);
+      var tempMatrix = [];
+      for (var i = 0; i < this.points.length; i++) {
+        var tempVertices = [this.points[i].x, this.points[i].y, 0, 1];
+        tempMatrix.push(tempVertices);
+      }
+      shapeMatrix.printMatrix()
+      shapeMatrix.insertMatrix(tempMatrix);
+      shapeMatrix.transpose();
+      var resultMatrix = multiplyMatrices(
+        transformationMatrix.getMatrix(),
+        shapeMatrix.getMatrix()
+      );
+      // console.log(resultMatrix);
+      for (let i = 0; i < 4; i++) {
+        this.points[i].x = resultMatrix[0][i];
+        this.points[i].y = resultMatrix[1][i];
+      }
+      this.transformation = newTransformation;
+    }
   }
 
-  updateShapes(newSize) {
-    // // Hitung titik tengah
-    // const centerX = (this.p4.x + this.p1.x) / 2;
-    // const centerY = (this.p1.y + this.p4.y) / 2;
-    // const halfSize = newSize / 2;
-    // // Posisikan ulang titik sudut
-    // this.p1 = new Point(centerX - halfSize, centerY - halfSize);
-    // this.p2 = new Point(centerX - halfSize, centerY + halfSize);
-    // this.p3 = new Point(centerX + halfSize, centerY - halfSize);
-    // this.p4 = new Point(centerX + halfSize, centerY + halfSize);
-    // // Memperbarui vertices dan distance
-    // this.vertices = [this.p1, this.p2, this.p3, this.p4];
-    // this.distance = newSize;
-  }
+
 
   getName() {
     return "Polygon" + this.id;
@@ -167,7 +169,7 @@ export class Polygon extends DrawableObject {
   // ========= CONVEX HULL ==============
 
   // Method to find the convex hull using the Divide and Conquer Algorithm
-  convexHull(points) {
+  makeConvexHull(points) {
     if (points.length < 3) {
       return points;
     }
@@ -247,5 +249,23 @@ export class Polygon extends DrawableObject {
     }
 
     return sortedVertices;
+  }
+
+  findCentroid(points) {
+    let centroidX = 0;
+    let centroidY = 0;
+    const n = points.length;
+
+    // Calculate the sum of x and y coordinates
+    for (let i = 0; i < n / 2; i += 2) {
+      centroidX += points[i];
+      centroidY += points[i + 1];
+    }
+
+    // Calculate the average of x and y coordinates
+    centroidX /= n;
+    centroidY /= n;
+
+    return [centroidX, centroidY];
   }
 }
