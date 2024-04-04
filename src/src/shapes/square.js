@@ -8,31 +8,51 @@ export class Square extends DrawableObject {
   // p1 ---- p3
   // |        |
   // p2 ---- p4
-  constructor(origin, final, color, id, transformation, canvasCenter) {
+  constructor({
+    origin = null,
+    final = null,
+    color = [],
+    id = null,
+    transformation = null,
+    canvasCenter = null,
+    fromFile = false,
+    vertices = [],
+  } = {}) {
     super(id, Shape.Square, color);
+    if (!fromFile) {
+      const distance =
+        Math.abs(origin.x - final.x) > Math.abs(origin.y - final.y)
+          ? Math.abs(origin.x - final.x)
+          : Math.abs(origin.y - final.y);
+      this.distance = distance;
+      const newX =
+        origin.x > final.x ? origin.x - distance : origin.x + distance;
+      const newY =
+        origin.y > final.y ? origin.y - distance : origin.y + distance;
+      final.updatePoint(newX, newY);
 
-    const distance =
-      Math.abs(origin.x - final.x) > Math.abs(origin.y - final.y)
-        ? Math.abs(origin.x - final.x)
-        : Math.abs(origin.y - final.y);
-    this.distance = distance;
-    const newX = origin.x > final.x ? origin.x - distance : origin.x + distance;
-    const newY = origin.y > final.y ? origin.y - distance : origin.y + distance;
-    final.updatePoint(newX, newY);
+      const p2 = new Point(origin.x, final.y);
+      const p3 = new Point(final.x, origin.y);
 
-    const p2 = new Point(origin.x, final.y);
-    const p3 = new Point(final.x, origin.y);
+      this.p1 = origin;
+      this.p2 = p2;
+      this.p3 = p3;
+      this.p4 = final;
 
-    this.p1 = origin;
-    this.p2 = p2;
-    this.p3 = p3;
-    this.p4 = final;
+      this.vertices = [origin];
+      this.vertices.push(p2);
+      this.vertices.push(p3);
+      this.vertices.push(final);
 
-    this.vertices = [origin];
-    this.vertices.push(p2);
-    this.vertices.push(p3);
-    this.vertices.push(final);
-
+      this.transformation = transformation;
+    } else {
+      this.vertices = vertices;
+      this.p1 = vertices[0];
+      this.p2 = vertices[1];
+      this.p3 = vertices[2];
+      this.p4 = vertices[3];
+    }
+    this.color = color;
     this.transformation = transformation;
     this.canvasCenter = canvasCenter;
   }
@@ -76,7 +96,6 @@ export class Square extends DrawableObject {
   transformShades(transformationInput) {
     const centerX = (this.p1.x + this.p4.x) / 2;
     const centerY = (this.p1.y + this.p4.y) / 2;
-
     const newTransformation = new Transformation(
       transformationInput.x,
       transformationInput.y,
@@ -87,7 +106,6 @@ export class Square extends DrawableObject {
       transformationInput.shx,
       transformationInput.shy
     );
-
     this.transformation.difference(newTransformation);
 
     var transformationMatrix =
@@ -146,5 +164,9 @@ export class Square extends DrawableObject {
 
   getName() {
     return "Square " + this.id;
+  }
+
+  getPoints() {
+    return [this.p1, this.p2, this.p3, this.p4];
   }
 }
