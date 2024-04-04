@@ -9,18 +9,35 @@ export class Rectangle extends DrawableObject {
   //  |            |
   //  p4 --------- p3
 
-  constructor(origin, final, color, id, transformation, canvasCenter) {
+  constructor({
+    origin = null,
+    final = null,
+    color = [],
+    id = null,
+    transformation = null,
+    canvasCenter = null,
+    fromFile = false,
+    vertices = [],
+  }) {
     super(id, Shape.Rectangle, color);
+    if (!fromFile) {
+      const p2 = new Point(origin.x, final.y);
+      const p4 = new Point(final.x, origin.y);
+      this.p1 = origin;
+      this.p2 = p2;
+      this.p3 = final;
+      this.p4 = p4;
 
-    const p2 = new Point(origin.x, final.y);
-    const p4 = new Point(final.x, origin.y);
-    this.p1 = origin;
-    this.p2 = p2;
-    this.p3 = final;
-    this.p4 = p4;
+      this.vertices = [origin];
+      this.vertices.push(p2, final, p4);
+    } else {
+      this.vertices = vertices;
+      this.p1 = vertices[0];
+      this.p2 = vertices[1];
+      this.p3 = vertices[2];
+      this.p4 = vertices[3];
+    }
 
-    this.vertices = [origin];
-    this.vertices.push(p2, final, p4);
     this.color = color;
     this.transformation = transformation;
     this.length = Math.abs(this.p1.x - this.p3.x);

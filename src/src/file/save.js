@@ -13,13 +13,9 @@ export const saveModels = (shapes) => {
   console.log(shapes);
   const items = [];
   for (let i = 0; i < shapes.length; i++) {
-    console.log("Ini shapes i", shapes[i]);
-    const points = convertPointToObject(shapes[i].getPoints());
     const vertices = convertPointToObject(shapes[i].vertices);
-    console.log("Ini vertices : ", vertices);
     const item = {
       id: shapes[i].id,
-      points: points,
       vertices: vertices,
       color: shapes[i].color,
       type: shapes[i].getType(),

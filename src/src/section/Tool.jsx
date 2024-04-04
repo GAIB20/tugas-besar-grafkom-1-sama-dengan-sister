@@ -4,6 +4,7 @@ function Tool({
   polyClick,
   squareClick,
   handleSaveModels,
+  setFile,
 }) {
   const setLineButtonTitle = (enter) => {
     let elm = document.getElementById("lineButtonTitle");
@@ -122,7 +123,15 @@ function Tool({
         </button>
         <div className="button-container">
           <button onClick={handleSaveModels}>Save</button>
-          <button>Load</button>
+          <input
+            type="file"
+            onChange={(e) => {
+              console.log("Masuk on change");
+              if (e.target.files && e.target.files.length > 0) {
+                setFile(e.target.files[0]);
+              }
+            }}
+          />
         </div>
       </div>
     </div>
