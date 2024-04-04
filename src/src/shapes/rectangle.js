@@ -8,9 +8,8 @@ export class Rectangle extends DrawableObject {
   //  p1 --------- p2
   //  |            |
   //  p4 --------- p3
-  
-  constructor(origin, final, color, id, transformation) {
-    console.log("Ini origin dan final di dalme", origin, final)
+
+  constructor(origin, final, color, id, transformation, canvasCenter) {
     super(id, Shape.Rectangle, color);
 
     const p2 = new Point(origin.x, final.y);
@@ -26,11 +25,14 @@ export class Rectangle extends DrawableObject {
     this.transformation = transformation;
     this.length = Math.abs(this.p1.x - this.p3.x);
     this.width = Math.abs(this.p1.y - this.p3.y);
+    this.canvasCenter = canvasCenter;
   }
   getTransformation = () => {
     return this.transformation;
   };
   transformShades(transformationInput) {
+    const centerX = (this.p1.x + this.p3.x) / 2;
+    const centerY = (this.p1.y + this.p3.y) / 2;
     const newTransformation = new Transformation(
       transformationInput.x,
       transformationInput.y,
@@ -43,12 +45,13 @@ export class Rectangle extends DrawableObject {
     );
 
     this.transformation.difference(newTransformation);
-    console.log("Ini new trans : ", newTransformation)
     var transformationMatrix =
-      this.transformation.calculateTransformationMatrix();
-    // transformationMatrix.printMatrix();
-    console.log("Ini trans mat : ", transformationMatrix)
-    console.log("Ini vertices : ", this.vertices)
+      this.transformation.calculateTransformationMatrix(
+        centerX,
+        centerY,
+        this.canvasCenter[0],
+        this.canvasCenter[1]
+      );
     var shapeMatrix = new Matrix(4, 4);
     var tempVertices0 = [this.p1.x, this.p1.y, 0, 1];
     var tempVertices1 = [this.p2.x, this.p2.y, 0, 1];
@@ -60,15 +63,12 @@ export class Rectangle extends DrawableObject {
       tempVertices2,
       tempVertices3,
     ];
-    console.log("Ini temp matrix : ", tempMatrix)
     shapeMatrix.insertMatrix(tempMatrix);
     shapeMatrix.transpose();
-    console.log("Ini shape matrix : ", shapeMatrix)
     var resultMatrix = multiplyMatrices(
       transformationMatrix.getMatrix(),
       shapeMatrix.getMatrix()
     );
-    console.log("Ini result matrix : ",resultMatrix);
 
     for (let i = 0; i < 4; i++) {
       this.vertices[i].x = resultMatrix[0][i];
@@ -107,8 +107,8 @@ export class Rectangle extends DrawableObject {
   }
 
   updateShapes(newSize) {
-    const newWidth = newSize.width
-    const newLength = newSize.length
+    const newWidth = newSize.width;
+    const newLength = newSize.length;
     // Hitung titik tengah
     const centerX = (this.p1.x + this.p3.x) / 2;
     const centerY = (this.p1.y + this.p3.y) / 2;
@@ -129,7 +129,7 @@ export class Rectangle extends DrawableObject {
     this.length = newLength;
   }
 
-  getName(){
-    return "Rectangle " + this.id
+  getName() {
+    return "Rectangle " + this.id;
   }
 }

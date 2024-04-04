@@ -205,7 +205,8 @@ function App() {
             finalPoint,
             [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             shapes.length,
-            new Transformation(0, 0, 0, 0, 0, 0, 0, 0)
+            new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+            canvasCenter
           );
           console.log("INi rectangle : ", rectangle);
           setRectangleSize({
