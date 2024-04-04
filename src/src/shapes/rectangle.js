@@ -30,6 +30,11 @@ export class Rectangle extends DrawableObject {
   getTransformation = () => {
     return this.transformation;
   };
+
+  getShapeType = () => {
+    return Shape.Rectangle
+  }
+
   transformShades(transformationInput) {
     const centerX = (this.p1.x + this.p3.x) / 2;
     const centerY = (this.p1.y + this.p3.y) / 2;
