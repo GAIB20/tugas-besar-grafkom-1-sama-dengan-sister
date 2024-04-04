@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Shape } from "../constant/shape";
+import { Color } from "../model/color";
 
 const SLIDER_STEPS = 0.01;
 const SLIDER_MIN = -1;
@@ -16,6 +17,10 @@ const Properties = ({
   setSquareSide,
   rectangleSize,
   setRectangleSize,
+  selectedPointId,
+  setSelectedPointId,
+  currentColor,
+  setCurrentColor,
 }) => {
   const [propsOpen, setPropsOpen] = useState(true);
 
@@ -72,15 +77,15 @@ const Properties = ({
               <p className="sectionTitle"> Color </p>
               <select
                 className="dropdown"
-                value={selectedShapeId}
-                onChange={(e) => setSelectedShapeId(Number(e.target.value))}
+                value={selectedPointId}
+                onChange={(e) => setSelectedPointId(Number(e.target.value))}
               >
                 {" "}
-                {shapes?.map((shape) => {
-                  // console.log(shape.id);
+                {shapes[selectedShapeId].vertices?.map((point) => {
+                  var idx = shapes[selectedShapeId].vertices?.indexOf(point);
                   return (
-                    <option value={shape.id} key={shape.id}>
-                      {shape.getName()}
+                    <option value={idx} key={idx}>
+                      {String(point.x) + ",  " + String(point.y)}
                     </option>
                   );
                 })}
@@ -92,9 +97,10 @@ const Properties = ({
                     type="text"
                     id="colorInput"
                     className="colorInput"
-                    defaultValue={transformation.x}
+                    defaultValue={"#" + currentColor.toHex()}
                     onChange={(e) => {
-                      
+                      // setCurrentColor(e.target.value)
+                      console.log(currentColor)
                     }}
                   />
                 </div>

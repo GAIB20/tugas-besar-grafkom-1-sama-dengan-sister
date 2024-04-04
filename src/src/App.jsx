@@ -32,6 +32,7 @@ function App() {
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
   const [selectedShapeId, setSelectedShapeId] = useState();
+  const [selectedPointId, setSelectedPointId] = useState(null);
   const [transformation, setTransformation] = useState(null);
   const [squareSide, setSquareSide] = useState();
   const [rectangleSize, setRectangleSize] = useState({
@@ -103,7 +104,10 @@ function App() {
     setPositionAttributeLocation(positionAttributeLocation);
     setColorAttribLocation(colorAttributeLocation);
     webglUtils.resizeCanvasToDisplaySize(canvas);
+
   }, []);
+
+
 
   useEffect(() => {
     if (selectedShapeId !== null) {
@@ -114,11 +118,24 @@ function App() {
           .getTransformation()
           .getAllData();
         setTransformation(transformationConfig);
+        setSelectedPointId(0);
+        console.log(currentColor)
+        console.log(currentColor.toHex())
       }
     } else {
       setIsPropertiesOpen(false);
     }
   }, [selectedShapeId]);
+
+  useEffect(() => {
+    if (selectedPointId !== null) {
+      setCurrentColor(shapes[selectedShapeId].vertices[selectedPointId].color);
+    } 
+  }, [selectedPointId]);
+  
+  useEffect(() => {
+    setSelectedShapeId(shapes.length-1);
+  }, [shapes]);
 
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
@@ -196,11 +213,11 @@ function App() {
     if (!isDrawing) {
       // Kasus kalau dia baru mulai gambar
       setIsDrawing(true);
-      const originPoint = new Point(x, y, currentColor);
+      const originPoint = new Point(x, y, new Color(currentColor.r, currentColor.g, currentColor.b, currentColor.a));
       setOriginPoint(originPoint);
     } else {
       // Kasus kalau dia udah selesai gambar
-      const finalPoint = new Point(x, y, currentColor);
+      const finalPoint = new Point(x, y, new Color(currentColor.r, currentColor.g, currentColor.b, currentColor.a));
       switch (currentShapeType) {
         case Shape.Square: {
           const square = new Square({
@@ -212,9 +229,9 @@ function App() {
             canvasCenter: canvasCenter,
             fromFile: false,
           });
+          console.log(square);
           setSquareSide(Math.floor(square.distance));
           setShapes((oldShapes) => [...oldShapes, square]);
-          setSelectedShapeId(shapes.length);
           break;
         }
         case Shape.Line: {
@@ -357,6 +374,10 @@ function App() {
           setSquareSide={setSquareSide}
           rectangleSize={rectangleSize}
           setRectangleSize={setRectangleSize}
+          selectedPointId={selectedPointId}
+          setSelectedPointId={setSelectedPointId}
+          currentColor={currentColor}
+          setCurrentColor={setCurrentColor}
         />
       </div>
     </div>

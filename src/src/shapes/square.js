@@ -32,8 +32,8 @@ export class Square extends DrawableObject {
         origin.y > final.y ? origin.y - distance : origin.y + distance;
       final.updatePoint(newX, newY);
 
-      const p2 = new Point(origin.x, final.y);
-      const p3 = new Point(final.x, origin.y);
+      const p2 = new Point(origin.x, final.y, origin.color);
+      const p3 = new Point(final.x, origin.y, final.color);
 
       this.p1 = origin;
       this.p2 = p2;
