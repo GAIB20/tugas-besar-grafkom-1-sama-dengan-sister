@@ -129,7 +129,7 @@ const Properties = ({
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Opacity &nbsp; &nbsp; {currentColor.a}</p>{" "}
+                  <p> Transparency &nbsp; &nbsp; {currentColor.a}</p>{" "}
                 </b>
                 <input
                   type="range"

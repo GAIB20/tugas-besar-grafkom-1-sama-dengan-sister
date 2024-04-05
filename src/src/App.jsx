@@ -356,6 +356,7 @@ function App() {
           var isObject = false;
           for (let i = shapes.length - 1; i >= 0; i--) {
             if (shapes[i].isInside(x, y)) {
+              console.log("TERPILIH");
               setSelectedShapeId(i);
               shapes[i].setPivot(x, y);
               var isCorner = shapes[i].isCorner(x, y);
@@ -368,6 +369,7 @@ function App() {
             }
           }
           if (!isObject) {
+            console.log("TIDAK TERPILIJ");
             setSelectedShapeId(null);
           }
         }
