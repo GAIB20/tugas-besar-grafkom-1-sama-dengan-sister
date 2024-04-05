@@ -284,7 +284,7 @@ function App() {
       if (idx){
         console.log("FOUND")
         polygonPoints.splice(idx, 1);
-        polygonColorPoints.splice(idx,1);
+        polygonColorPoints.splice(idx,4);
       } else {
         polygonPoints.push(point);
         polygonColorPoints.push(...colorRgb);
