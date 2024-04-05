@@ -7,18 +7,16 @@ import { Color } from "../model/color";
 
 export class Line extends DrawableObject {
   // p1 ---- p2
-  constructor(
-    {origin,
+  constructor({
+    origin,
     final,
-    color,
     id,
     transformation,
     canvasCenter,
-    fromFile
-  } ={}) {
-    super(id, Shape.Line, color);
+    fromFile,
+  } = {}) {
+    super(id, Shape.Line);
     if (!fromFile) {
-      this.color = color;
       this.origin = origin;
       this.final = final;
       this.vertices = [origin];
@@ -139,32 +137,55 @@ export class Line extends DrawableObject {
       const halfDotSize = dotSize / 2;
       const dotVertices = [];
       for (let i = 0; i < this.vertices.length; i++) {
-          const vertex = this.vertices[i];
-          dotVertices.push(
-              vertex.x - halfDotSize, vertex.y - halfDotSize,
-              vertex.x + halfDotSize, vertex.y - halfDotSize,
-              vertex.x + halfDotSize, vertex.y + halfDotSize,
-              vertex.x - halfDotSize, vertex.y - halfDotSize,
-              vertex.x + halfDotSize, vertex.y + halfDotSize,
-              vertex.x - halfDotSize, vertex.y + halfDotSize
-          );
+        const vertex = this.vertices[i];
+        dotVertices.push(
+          vertex.x - halfDotSize,
+          vertex.y - halfDotSize,
+          vertex.x + halfDotSize,
+          vertex.y - halfDotSize,
+          vertex.x + halfDotSize,
+          vertex.y + halfDotSize,
+          vertex.x - halfDotSize,
+          vertex.y - halfDotSize,
+          vertex.x + halfDotSize,
+          vertex.y + halfDotSize,
+          vertex.x - halfDotSize,
+          vertex.y + halfDotSize
+        );
       }
       const dotBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, dotBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotVertices), gl.STATIC_DRAW);
-      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(dotVertices),
+        gl.STATIC_DRAW
+      );
+      gl.vertexAttribPointer(
+        positionAttributeLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
       gl.enableVertexAttribArray(positionAttributeLocation);
 
-      const dotColor = [1, 0, 0, 1]; 
-      const dotColors = Array(dotVertices.length / 2 * 4).fill(dotColor).flat();
+      const dotColor = [1, 0, 0, 1];
+      const dotColors = Array((dotVertices.length / 2) * 4)
+        .fill(dotColor)
+        .flat();
       const dotColorBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, dotColorBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotColors), gl.STATIC_DRAW);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(dotColors),
+        gl.STATIC_DRAW
+      );
       gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(colorAttributeLocation);
 
       for (let i = 0; i < dotVertices.length / 2; i += 6) {
-          gl.drawArrays(gl.TRIANGLES, i, 6);
+        gl.drawArrays(gl.TRIANGLES, i, 6);
       }
     }
   }
@@ -178,8 +199,8 @@ export class Line extends DrawableObject {
     return [this.origin, this.final];
   }
 
-  getName(){
-    return "Line " + this.id
+  getName() {
+    return "Line " + this.id;
   }
 
   setPivot(x, y) {
@@ -197,10 +218,20 @@ export class Line extends DrawableObject {
   }
 
   isCorner(x, y) {
-    console.log(x, y, this.origin, this.final)
-    if (x <= this.origin.x + 20 && x >= this.origin.x - 20 && y <= this.origin.y + 20 && y >= this.origin.y - 20) {
+    console.log(x, y, this.origin, this.final);
+    if (
+      x <= this.origin.x + 20 &&
+      x >= this.origin.x - 20 &&
+      y <= this.origin.y + 20 &&
+      y >= this.origin.y - 20
+    ) {
       return 0;
-    } else if (x <= this.final.x + 20 && x >= this.final.x - 20 && y <= this.final.y + 20 && y >= this.final.y - 20) {
+    } else if (
+      x <= this.final.x + 20 &&
+      x >= this.final.x - 20 &&
+      y <= this.final.y + 20 &&
+      y >= this.final.y - 20
+    ) {
       return 1;
     } else {
       return null;
@@ -213,11 +244,17 @@ export class Line extends DrawableObject {
   }
 
   isInside(x, y) {
-    const distance1 = Math.sqrt((x - this.origin.x) ** 2 + (y - this.origin.y) ** 2);
-    const distance2 = Math.sqrt((x - this.final.x) ** 2 + (y - this.final.y) ** 2);
-    const lineLength = Math.sqrt((this.final.x - this.origin.x) ** 2 + (this.final.y - this.origin.y) ** 2);
+    const distance1 = Math.sqrt(
+      (x - this.origin.x) ** 2 + (y - this.origin.y) ** 2
+    );
+    const distance2 = Math.sqrt(
+      (x - this.final.x) ** 2 + (y - this.final.y) ** 2
+    );
+    const lineLength = Math.sqrt(
+      (this.final.x - this.origin.x) ** 2 + (this.final.y - this.origin.y) ** 2
+    );
 
-    const epsilon = 1; 
+    const epsilon = 1;
     return Math.abs(distance1 + distance2 - lineLength) < epsilon;
   }
 }

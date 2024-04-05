@@ -1,6 +1,4 @@
 import { Shape } from "../constant/shape";
-import { Color } from "../model/color";
-import { Point } from "../model/point";
 import Matrix, { multiplyMatrices } from "../utils/matrix";
 import { convertPointToPairs, makeConvexHull } from "../utils/misc";
 import Transformation from "../utils/transformation";
@@ -9,19 +7,14 @@ import { DrawableObject } from "./object";
 const REFERENCE_POINT = [0, 0];
 
 export class Polygon extends DrawableObject {
-  constructor(points, color, id, transformation, canvasCenter) {
-    super(id, Shape.Polygon, color);
+  constructor(points, id, transformation, canvasCenter) {
+    super(id, Shape.Polygon);
     this.points = points;
-    this.colorPoints = color;
-
+    console.log("Ini points di constuct r");
     this.transformation = transformation;
     this.canvasCenter = canvasCenter;
     this.convexHull = [];
-
-    this.vertice = []
-    for (let i = 0; i < points.length; i++){
-      this.vertice[i] = new Point(this.points[i].x, this.points[i].y, new Color(0, 0, 0, 1))
-    }
+    this.colorPoints = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1];
   }
 
   getTransformation = () => {
@@ -30,7 +23,6 @@ export class Polygon extends DrawableObject {
 
   setPoints = (points) => {
     this.points = points;
-
   };
 
   getPoints = () => {
@@ -50,12 +42,12 @@ export class Polygon extends DrawableObject {
   };
 
   render(gl, positionAttributeLocation, colorAttributeLocation) {
-    if (this.points.length >= 3) { // else is ignored
+    if (this.points.length >= 3) {
+      // else is ignored
       var buffer = gl.createBuffer();
       const tempConvexHull = convertPointToPairs(this.points);
       this.convexHull = this.sortConvexHullForWebGL(tempConvexHull);
       // console.log(this.convexHull);
-
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       gl.bufferData(
         gl.ARRAY_BUFFER,
@@ -74,11 +66,12 @@ export class Polygon extends DrawableObject {
 
       var colorBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+      console.log("Ini this.colorPoiints", this.colorPoints);
       gl.bufferData(
         gl.ARRAY_BUFFER,
         new Float32Array(this.colorPoints),
         gl.STATIC_DRAW
-      );
+      ); 
       gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(colorAttributeLocation);
 
@@ -86,9 +79,9 @@ export class Polygon extends DrawableObject {
     }
   }
 
-
   transformShades(transformationInput) {
-    if (this.points.length >= 3) { // else is ignored
+    if (this.points.length >= 3) {
+      // else is ignored
       const centroid = this.findCentroid();
       const newTransformation = new Transformation(
         transformationInput.x,
@@ -108,7 +101,7 @@ export class Polygon extends DrawableObject {
           this.canvasCenter[0],
           this.canvasCenter[1]
         );
-      transformationMatrix.getMatrix()
+      transformationMatrix.getMatrix();
       var shapeMatrix = new Matrix(this.points.length, 4);
       var tempMatrix = [];
       for (var i = 0; i < this.points.length; i++) {
@@ -122,8 +115,6 @@ export class Polygon extends DrawableObject {
         shapeMatrix.getMatrix()
       );
 
-
-
       for (let i = 0; i < this.points.length; i++) {
         this.points[i].x = resultMatrix[0][i];
         this.points[i].y = resultMatrix[1][i];
@@ -132,13 +123,9 @@ export class Polygon extends DrawableObject {
     }
   }
 
-
-
   getName() {
     return "Polygon" + this.id;
   }
-
-
 
   // // ======== SORTING ALGORITHM =============
 

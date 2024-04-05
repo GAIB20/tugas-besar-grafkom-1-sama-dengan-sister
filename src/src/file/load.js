@@ -1,7 +1,20 @@
+import { Color } from "../model/color";
+import { Point } from "../model/point";
 import { Line } from "../shapes/line";
+import { Polygon } from "../shapes/polygon";
 import { Rectangle } from "../shapes/rectangle";
 import { Square } from "../shapes/square";
 import Transformation from "../utils/transformation";
+
+const stringToPoints = (vertices) => {
+  console.log("INi vetices :", vertices);
+  const results = [];
+  for (let i = 0; i < vertices.length; i++) {
+    results[i] = new Point(vertices[i].x, vertices[i].y, new Color(0, 0, 0, 1));
+  }
+  console.log("Ini results ; ", results);
+  return results;
+};
 
 export const parseFile = (content, lastId) => {
   const contextJson = JSON.parse(content);
@@ -17,38 +30,60 @@ export const parseFile = (content, lastId) => {
     const shape = contextJson[i];
     const type = shape.type;
     const vertices = shape.vertices;
-    if (type === "Square") {
-      const square = new Square({
-        vertices: vertices,
-        id: id,
-        transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
-        fromFile: true,
-        canvasCenter: canvasCenter,
-      });
-      shapes.push(square);
-    }
-    if (type === "Rectangle") {
-      const rectangle = new Rectangle({
-        vertices: vertices,
-        id: id,
-        transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0),
-        fromFile: true,
-        canvasCenter: canvasCenter,
-      });
-      shapes.push(rectangle);
-    }
-    if (type === "Line") {
-      const line = new Line({
-        origin: vertices[0],
-        final: vertices[1],
-        id,
-        transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0),
-        canvasCenter: canvasCenter,
-        fromFile: true,
-      });
-      shapes.push(line);
+    switch (type) {
+      case "Square":
+        {
+          const square = new Square({
+            vertices: vertices,
+            id: id,
+            transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+            fromFile: true,
+            canvasCenter: canvasCenter,
+          });
+          shapes.push(square);
+        }
+
+        break;
+      case "Rectangle": {
+        const rectangle = new Rectangle({
+          vertices: vertices,
+          id: id,
+          transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0),
+          fromFile: true,
+          canvasCenter: canvasCenter,
+        });
+        shapes.push(rectangle);
+        break;
+      }
+      case "Line": {
+        const line = new Line({
+          origin: vertices[0],
+          final: vertices[1],
+          id,
+          transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0),
+          canvasCenter: canvasCenter,
+          fromFile: true,
+        });
+        shapes.push(line);
+        break;
+      }
+      case "Polygon": {
+        const points = stringToPoints(vertices);
+        console.log("Ini points : ", points);
+        const polygon = new Polygon(
+          points,
+          id,
+          new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0),
+          canvasCenter
+        );
+        shapes.push(polygon);
+        break;
+      }
+      default:
+        break;
     }
     id += 1;
   }
+  console.log("Ini shapes :", shapes);
   return shapes;
 };

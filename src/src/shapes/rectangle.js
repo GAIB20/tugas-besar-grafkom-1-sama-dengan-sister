@@ -13,14 +13,13 @@ export class Rectangle extends DrawableObject {
   constructor({
     origin = null,
     final = null,
-    color = [],
     id = null,
     transformation = null,
     canvasCenter = null,
     fromFile = false,
     vertices = [],
   }) {
-    super(id, Shape.Rectangle, color);
+    super(id, Shape.Rectangle);
     if (!fromFile) {
       const p2 = new Point(
         origin.x,
@@ -64,7 +63,6 @@ export class Rectangle extends DrawableObject {
       this.p4 = this.vertices[3];
     }
 
-    this.color = color;
     this.transformation = transformation;
     this.length = Math.abs(this.p1.x - this.p3.x);
     this.width = Math.abs(this.p1.y - this.p3.y);

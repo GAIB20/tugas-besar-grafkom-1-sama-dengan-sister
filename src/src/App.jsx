@@ -52,7 +52,7 @@ function App() {
   const [isDraggingVertex, setIsDraggingVertex] = useState(false);
 
   const handleSaveModels = () => {
-    downloadModel(shapes);
+    downloadModel(shapes, workingTitle);
   };
 
   useEffect(() => {
@@ -78,7 +78,6 @@ function App() {
       program,
       "u_resolution"
     );
-    var colorUniformLocation = gl.getUniformLocation(program, "u_color");
     var colorAttributeLocation = gl.getAttribLocation(program, "a_color");
 
     // Create a buffer to put three 2d clip space points in and bind it to ARRAY_BUFFER
@@ -118,10 +117,10 @@ function App() {
 
   // LISTENER TO CURRENT SELECTED SHAPE ID
   useEffect(() => {
-    console.log(selectedShapeId);
     if (selectedShapeId !== null) {
       const selectedShape = shapes[selectedShapeId];
       if (selectedShape != null) {
+        console.log("Ini selectedSHape : ", selectedShape);
         setIsPropertiesOpen(true);
 
         // Change the transformation to each shape's transform data
@@ -217,6 +216,12 @@ function App() {
       reader.onload = () => {
         const textContent = reader.result;
         const parsedShapes = parseFile(textContent, shapes.length);
+        for(let i = 0; i < parsedShapes.length; i++){
+          const currentShape = parsedShapes[i]
+          if(currentShape.getType() === Shape.Polygon){
+            setPolygonPoints(currentShape.getPoints())
+          }
+        }
         setShapes((oldShapes) => [...oldShapes, ...parsedShapes]);
         setSelectedShapeId(parsedShapes[0].id);
         redrawCanvas();
@@ -232,6 +237,7 @@ function App() {
       }
       gl.clear(gl.COLOR_BUFFER_BIT);
     } else {
+      console.log("Ini shapes di redraw : ", shapes)
       for (let i = 0; i < shapes.length; i++) {
         const currentShape = shapes[i];
         // console.log(currentShape);
@@ -271,20 +277,23 @@ function App() {
       var point = new Point(x, y, new Color(0, 0, 0, 1));
 
       // Check if it is to erase
-      var idx = null
-      for (var i = 0; i < polygonPoints.length; i++){
-        var distance =  Math.sqrt(Math.pow((polygonPoints[i].x - x),2) + Math.pow((polygonPoints[i].y - y),2))
-        if (distance < 10){
+      var idx = null;
+      for (var i = 0; i < polygonPoints.length; i++) {
+        var distance = Math.sqrt(
+          Math.pow(polygonPoints[i].x - x, 2) +
+            Math.pow(polygonPoints[i].y - y, 2)
+        );
+        if (distance < 10) {
           idx = i;
-          break
+          break;
         }
       }
 
       // If found, then erase
-      if (idx){
-        console.log("FOUND")
+      if (idx) {
+        console.log("FOUND");
         polygonPoints.splice(idx, 1);
-        polygonColorPoints.splice(idx,4);
+        polygonColorPoints.splice(idx, 4);
       } else {
         polygonPoints.push(point);
         polygonColorPoints.push(...colorRgb);
@@ -309,10 +318,9 @@ function App() {
       const selectedPolygon = shapes[selectedShapeId];
       selectedPolygon.setPoints(points);
       selectedPolygon.setColorPoints(polygonColorPoints);
-      
+
       // Redraw Canvas
       redrawCanvas();
-
     } else {
       if (!isDrawing) {
         // START DRAWING CASE
@@ -340,7 +348,7 @@ function App() {
               if (isCorner != null) {
                 setIsDraggingVertex(true);
                 setSelectedPointId(isCorner);
-              } 
+              }
               isObject = true;
               break;
             }
@@ -366,7 +374,6 @@ function App() {
             const square = new Square({
               origin: originPoint,
               final: finalPoint,
-              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
               id: shapes.length,
               transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
               canvasCenter: canvasCenter,
@@ -394,7 +401,6 @@ function App() {
             const rectangle = new Rectangle({
               origin: originPoint,
               final: finalPoint,
-              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
               id: shapes.length,
               transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
               canvasCenter: canvasCenter,
@@ -426,7 +432,6 @@ function App() {
             const square = new Square({
               origin: originPoint,
               final: finalPoint,
-              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
               fromFile: false,
             });
             square.render(
@@ -455,7 +460,6 @@ function App() {
             const rectangle = new Rectangle({
               origin: originPoint,
               final: finalPoint,
-              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             });
             rectangle.render(
               gl,
@@ -470,7 +474,7 @@ function App() {
       const canvas = document.querySelector("canvas");
       var x = canvasX(canvas, event.clientX);
       var y = canvasY(canvas, event.clientY);
-      
+
       if (selectedShapeId != null) {
         console.log(isDraggingVertex);
         if (!isDraggingVertex) {
@@ -480,11 +484,10 @@ function App() {
         }
         redrawCanvas();
       }
-      
     }
   };
 
-  const handleMouseUp = (event) => {
+  const handleMouseUp = () => {
     setIsDragging(false);
     setIsDraggingVertex(false);
   };
@@ -538,7 +541,6 @@ function App() {
     var canvasCenter = getCanvasCenter(canvas);
     const polygon = new Polygon(
       [],
-      polygonColorPoints,
       shapes.length,
       new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
       canvasCenter

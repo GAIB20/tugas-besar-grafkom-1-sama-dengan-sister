@@ -12,14 +12,13 @@ export class Square extends DrawableObject {
   constructor({
     origin = null,
     final = null,
-    color = [],
     id = null,
     transformation = null,
     canvasCenter = null,
     fromFile = false,
     vertices = [],
   } = {}) {
-    super(id, Shape.Square, color);
+    super(id, Shape.Square);
     if (!fromFile) {
       const distance =
         Math.abs(origin.x - final.x) > Math.abs(origin.y - final.y)
