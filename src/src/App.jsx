@@ -8,6 +8,7 @@ import {
   canvasX,
   canvasY,
   convertPointToPairs,
+  isPointInConvexHull,
   makeConvexHull,
 } from "./utils/misc";
 import * as webglUtils from "webgl-utils.js";
@@ -306,19 +307,14 @@ function App() {
       // Make convexHull of the points
       const pointPairs = convertPointToPairs(polygonPoints);
       var convexHull = makeConvexHull(pointPairs);
+      console.log(point, convexHull)
 
       var points = [];
-      for (i = 0; i < convexHull.length; i++) {
-        points[i] = new Point(
-          convexHull[i][0],
-          convexHull[i][1],
-          new Color(
-            currentColor.r,
-            currentColor.g,
-            currentColor.b,
-            currentColor.a
-          )
-        );
+      for(i = 0; i < polygonPoints.length; i++){
+        var tempPoint = polygonPoints[i]
+        if (isPointInConvexHull(tempPoint, convexHull)){
+          points.push(tempPoint)
+        }
       }
       setPolygonPoints(points);
 
