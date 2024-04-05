@@ -17,7 +17,7 @@ import Transformation from "./utils/transformation";
 import { Rectangle } from "./shapes/rectangle";
 import { Color } from "./model/color";
 import { Polygon } from "./shapes/polygon";
-import { downloadModel, saveModels } from "./file/save";
+import { downloadModel } from "./file/save";
 import { parseFile } from "./file/load";
 
 function App() {
@@ -108,10 +108,7 @@ function App() {
     setPositionAttributeLocation(positionAttributeLocation);
     setColorAttribLocation(colorAttributeLocation);
     webglUtils.resizeCanvasToDisplaySize(canvas);
-
   }, []);
-
-
 
   useEffect(() => {
     if (selectedShapeId !== null) {
@@ -124,9 +121,11 @@ function App() {
           .getTransformation()
           .getAllData();
         setTransformation(transformationConfig);
-        setSelectedPointId(0)
+        setSelectedPointId(0);
+        console.log("Ini shape selected  :", shapes[selectedShapeId]);
+        console.log("Ini color : ", shapes[selectedShapeId].vertices[0].color);
         setCurrentColor(shapes[selectedShapeId].vertices[0].color);
-        setInput("#"+shapes[selectedShapeId].vertices[0].color.toHex());
+        setInput("#" + shapes[selectedShapeId].vertices[0].color.toHex());
 
         // Adjust
         setCurrentShapeType(selectedShape.getShapeType());
@@ -145,17 +144,19 @@ function App() {
   useEffect(() => {
     if (selectedPointId !== null) {
       setCurrentColor(shapes[selectedShapeId].vertices[selectedPointId].color);
-      setInput("#"+shapes[selectedShapeId].vertices[selectedPointId].color.toHex());
-    } 
+      setInput(
+        "#" + shapes[selectedShapeId].vertices[selectedPointId].color.toHex()
+      );
+    }
   }, [selectedPointId]);
-  
+
   useEffect(() => {
-    setSelectedShapeId(shapes.length-1);
-  }, [shapes]);  
-  
+    setSelectedShapeId(shapes.length - 1);
+  }, [shapes]);
+
   useEffect(() => {
     console.log("MASUKKK");
-    console.log()
+    console.log();
     redrawCanvas();
   }, [currentColor]);
 
@@ -201,9 +202,9 @@ function App() {
       reader.readAsText(file);
       reader.onload = () => {
         const textContent = reader.result;
-        const shapes = parseFile(textContent);
-        setShapes((oldShapes) => [...oldShapes, ...shapes]);
-        setSelectedShapeId(shapes[0].id);
+        const parsedShapes = parseFile(textContent, shapes.length);
+        setShapes((oldShapes) => [...oldShapes, ...parsedShapes]);
+        setSelectedShapeId(parsedShapes[0].id);
         redrawCanvas();
       };
     }
@@ -278,11 +279,29 @@ function App() {
       if (!isDrawing) {
         // Kasus kalau dia baru mulai gambar
         setIsDrawing(true);
-        const originPoint = new Point(x, y, new Color(currentColor.r, currentColor.g, currentColor.b, currentColor.a));
+        const originPoint = new Point(
+          x,
+          y,
+          new Color(
+            currentColor.r,
+            currentColor.g,
+            currentColor.b,
+            currentColor.a
+          )
+        );
         setOriginPoint(originPoint);
       } else {
         // Kasus kalau dia udah selesai gambar
-        const finalPoint = new Point(x, y, new Color(currentColor.r, currentColor.g, currentColor.b, currentColor.a));
+        const finalPoint = new Point(
+          x,
+          y,
+          new Color(
+            currentColor.r,
+            currentColor.g,
+            currentColor.b,
+            currentColor.a
+          )
+        );
         switch (currentShapeType) {
           case Shape.Square: {
             const square = new Square({
@@ -299,14 +318,15 @@ function App() {
             break;
           }
           case Shape.Line: {
-            const line = new Line(
-              originPoint,
-              finalPoint,
-              [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-              shapes.length,
-              new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
-              canvasCenter
-            );
+            const line = new Line({
+              origin: originPoint,
+              final: finalPoint,
+              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+              id: shapes.length,
+              transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+              canvasCenter: canvasCenter,
+              fromFile: false,
+            });
             setShapes((oldShapes) => [...oldShapes, line]);
             setSelectedShapeId(shapes.length);
             break;
@@ -354,15 +374,12 @@ function App() {
           square.render(gl, positionAttributeLocation, colorAttributeLocation);
           break;
         }
-        // Dia ga punya id karena ini cuma temporary square (belom fix)
 
         case Shape.Line: {
-          const line = new Line(originPoint, finalPoint, [
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-            ...colorRgb,
-          ]);
+          const line = new Line({
+            origin: originPoint,
+            final: finalPoint,
+          });
           line.render(gl, positionAttributeLocation, colorAttributeLocation);
           break;
         }

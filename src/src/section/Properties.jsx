@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Shape } from "../constant/shape";
-import { Color } from "../model/color";
 
 const SLIDER_STEPS = 0.01;
 const SLIDER_MIN = -1;

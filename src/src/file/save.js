@@ -4,6 +4,7 @@ const convertPointToObject = (points) => {
     const point = {
       x: points[i].x,
       y: points[i].y,
+      color : points[i].color
     };
     results.push(point);
   }
@@ -17,7 +18,6 @@ export const saveModels = (shapes) => {
     const item = {
       id: shapes[i].id,
       vertices: vertices,
-      color: shapes[i].color,
       type: shapes[i].getType(),
     };
     items.push(item);

@@ -3,7 +3,6 @@ import { Point } from "../model/point";
 import Matrix, { multiplyMatrices } from "../utils/matrix";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
-import { Rectangle } from "./rectangle";
 import { Color } from "../model/color";
 
 export class Square extends DrawableObject {
@@ -33,8 +32,21 @@ export class Square extends DrawableObject {
         origin.y > final.y ? origin.y - distance : origin.y + distance;
       final.updatePoint(newX, newY);
 
-      const p2 = new Point(origin.x, final.y, new Color(origin.color.r, origin.color.g, origin.color.b, origin.color.a));
-      const p3 = new Point(final.x, origin.y, new Color(final.color.r, final.color.g, final.color.b, final.color.a));
+      const p2 = new Point(
+        origin.x,
+        final.y,
+        new Color(
+          origin.color.r,
+          origin.color.g,
+          origin.color.b,
+          origin.color.a
+        )
+      );
+      const p3 = new Point(
+        final.x,
+        origin.y,
+        new Color(final.color.r, final.color.g, final.color.b, final.color.a)
+      );
 
       this.p1 = origin;
       this.p2 = p2;
@@ -48,13 +60,24 @@ export class Square extends DrawableObject {
 
       this.transformation = transformation;
     } else {
-      this.vertices = vertices;
-      this.p1 = vertices[0];
-      this.p2 = vertices[1];
-      this.p3 = vertices[2];
-      this.p4 = vertices[3];
+      this.vertices = [];
+      for (let i = 0; i < vertices.length; i++) {
+        this.vertices[i] = new Point(
+          vertices[i].x,
+          vertices[i].y,
+          new Color(
+            vertices[i].color.r,
+            vertices[i].color.g,
+            vertices[i].color.b,
+            vertices[i].color.a
+          )
+        );
+      }
+      this.p1 = this.vertices[0];
+      this.p2 = this.vertices[1];
+      this.p3 = this.vertices[2];
+      this.p4 = this.vertices[3];
     }
-    this.color = color;
     this.transformation = transformation;
     this.canvasCenter = canvasCenter;
   }
@@ -64,8 +87,8 @@ export class Square extends DrawableObject {
   };
 
   getShapeType = () => {
-    return Shape.Square
-  }
+    return Shape.Square;
+  };
 
   convertPointToCoordinates = () => {
     const results = [];
@@ -83,9 +106,9 @@ export class Square extends DrawableObject {
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionAttributeLocation);
 
-    var renderedcolor = []
+    var renderedcolor = [];
     for (let i = 0; i < this.vertices.length; i++) {
-      renderedcolor.push(...(this.vertices[i].color.toArray()));
+      renderedcolor.push(...this.vertices[i].color.toArray());
     }
 
     var colorBuffer = gl.createBuffer();
@@ -159,10 +182,46 @@ export class Square extends DrawableObject {
     const halfSize = newSize / 2;
 
     // Posisikan ulang titik sudut
-    this.p1 = new Point(centerX - halfSize, centerY - halfSize, new Color(this.p1.color.r, this.p1.color.g, this.p1.color.b, this.p1.color.a));
-    this.p2 = new Point(centerX - halfSize, centerY + halfSize, new Color(this.p2.color.r, this.p2.color.g, this.p2.color.b, this.p2.color.a));
-    this.p3 = new Point(centerX + halfSize, centerY - halfSize, new Color(this.p3.color.r, this.p3.color.g, this.p3.color.b, this.p3.color.a));
-    this.p4 = new Point(centerX + halfSize, centerY + halfSize, new Color(this.p4.color.r, this.p4.color.g, this.p4.color.b, this.p4.color.a));
+    this.p1 = new Point(
+      centerX - halfSize,
+      centerY - halfSize,
+      new Color(
+        this.p1.color.r,
+        this.p1.color.g,
+        this.p1.color.b,
+        this.p1.color.a
+      )
+    );
+    this.p2 = new Point(
+      centerX - halfSize,
+      centerY + halfSize,
+      new Color(
+        this.p2.color.r,
+        this.p2.color.g,
+        this.p2.color.b,
+        this.p2.color.a
+      )
+    );
+    this.p3 = new Point(
+      centerX + halfSize,
+      centerY - halfSize,
+      new Color(
+        this.p3.color.r,
+        this.p3.color.g,
+        this.p3.color.b,
+        this.p3.color.a
+      )
+    );
+    this.p4 = new Point(
+      centerX + halfSize,
+      centerY + halfSize,
+      new Color(
+        this.p4.color.r,
+        this.p4.color.g,
+        this.p4.color.b,
+        this.p4.color.a
+      )
+    );
 
     // Memperbarui vertices dan distance
     this.vertices = [this.p1, this.p2, this.p3, this.p4];

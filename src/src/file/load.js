@@ -1,10 +1,10 @@
+import { Line } from "../shapes/line";
 import { Rectangle } from "../shapes/rectangle";
 import { Square } from "../shapes/square";
 import Transformation from "../utils/transformation";
 
-export const parseFile = (content) => {
+export const parseFile = (content, lastId) => {
   const contextJson = JSON.parse(content);
-  console.log("Ini contextJson", contextJson);
   const shapes = [];
   const canvas = document.querySelector("canvas");
   var rect = canvas.getBoundingClientRect();
@@ -12,38 +12,43 @@ export const parseFile = (content) => {
     (rect.right - rect.left) / 2,
     (rect.bottom - rect.top) / 2,
   ];
-  console.log(contextJson.length);
+  let id = lastId;
   for (let i = 0; i < contextJson.length; i++) {
     const shape = contextJson[i];
-    console.log("Ini shape context json : ", shape);
-    const id = shape.id;
     const type = shape.type;
     const vertices = shape.vertices;
-    const color = shape.color;
     if (type === "Square") {
       const square = new Square({
         vertices: vertices,
         id: id,
-        color: color,
         transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
         fromFile: true,
         canvasCenter: canvasCenter,
       });
-
       shapes.push(square);
     }
     if (type === "Rectangle") {
-      console.log("Masuk ke rectangle");
       const rectangle = new Rectangle({
         vertices: vertices,
         id: id,
-        color: color,
         transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0),
         fromFile: true,
         canvasCenter: canvasCenter,
       });
       shapes.push(rectangle);
     }
+    if (type === "Line") {
+      const line = new Line({
+        origin: vertices[0],
+        final: vertices[1],
+        id,
+        transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0),
+        canvasCenter: canvasCenter,
+        fromFile: true,
+      });
+      shapes.push(line);
+    }
+    id += 1;
   }
   return shapes;
 };

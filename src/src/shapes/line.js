@@ -2,17 +2,45 @@ import { Shape } from "../constant/shape";
 import { DrawableObject } from "./object";
 import Transformation from "../utils/transformation";
 import Matrix, { multiplyMatrices } from "../utils/matrix";
+import { Point } from "../model/point";
+import { Color } from "../model/color";
 
 export class Line extends DrawableObject {
   // p1 ---- p2
-  constructor(origin, final, color, id, transformation, canvasCenter) {
+  constructor(
+    {origin,
+    final,
+    color,
+    id,
+    transformation,
+    canvasCenter,
+    fromFile
+  } ={}) {
     super(id, Shape.Line, color);
-    this.color = color;
-    this.origin = origin;
-    this.final = final;
-    this.vertices = [origin];
-    this.vertices.push(final);
-
+    if (!fromFile) {
+      this.color = color;
+      this.origin = origin;
+      this.final = final;
+      this.vertices = [origin];
+      this.vertices.push(final);
+    } else {
+      this.origin = new Point(
+        origin.x,
+        origin.y,
+        new Color(
+          origin.color.r,
+          origin.color.g,
+          origin.color.b,
+          origin.color.a
+        )
+      );
+      this.final = new Point(
+        final.x,
+        final.y,
+        new Color(final.color.r, final.color.g, final.color.b, final.color.a)
+      );
+      this.vertices = [this.origin, this.final];
+    }
     this.transformation = transformation;
     this.canvasCenter = canvasCenter;
   }
@@ -22,8 +50,8 @@ export class Line extends DrawableObject {
   };
 
   getShapeType = () => {
-    return Shape.Line
-  }
+    return Shape.Line;
+  };
 
   convertPointToCoordinates = () => {
     const results = [];
@@ -71,7 +99,7 @@ export class Line extends DrawableObject {
       shapeMatrix.getMatrix()
     );
 
-    for (let i = 0; i < 2; i++){
+    for (let i = 0; i < 2; i++) {
       this.vertices[i].x = resultMatrix[0][i];
       this.vertices[i].y = resultMatrix[1][i];
     }
@@ -90,9 +118,9 @@ export class Line extends DrawableObject {
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionAttributeLocation);
 
-    var renderedcolor = []
+    var renderedcolor = [];
     for (let i = 0; i < this.vertices.length; i++) {
-      renderedcolor.push(...(this.vertices[i].color.toArray()));
+      renderedcolor.push(...this.vertices[i].color.toArray());
     }
 
     var colorBuffer = gl.createBuffer();
@@ -114,5 +142,9 @@ export class Line extends DrawableObject {
 
   getPoints() {
     return [this.origin, this.final];
+  }
+
+  getName(){
+    return "Line " + this.id
   }
 }
