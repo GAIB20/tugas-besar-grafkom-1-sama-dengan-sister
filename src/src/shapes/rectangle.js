@@ -19,6 +19,7 @@ export class Rectangle extends DrawableObject {
     fromFile = false,
     vertices,
   }) {
+    console.log("Masuk ke constructor")
     super(id, Shape.Rectangle);
     if (!fromFile) {
       const p2 = new Point(
@@ -130,6 +131,7 @@ export class Rectangle extends DrawableObject {
 
   convertPointToCoordinates = () => {
     const results = [];
+
     for (let i = 0; i < this.vertices.length; i++) {
       results.push(this.vertices[i].x, this.vertices[i].y);
     }
@@ -320,12 +322,10 @@ export class Rectangle extends DrawableObject {
     console.log("Ini titik", this.p1, this.p2, this.p3, this.p4);
 
     // this.vertices[0].updatePoint(centerX - halfNewLength, centerY - halfNewWidth)
-    this.vertices = [];
-    console.log("Ini this vertices sebelom update", this.vertices);
-    this.vertices.push(p1);
-    this.vertices.push(p2);
-    this.vertices.push(p3);
-    this.vertices.push(p4);
+    this.vertices[0] = this.p1;
+    this.vertices[1] =this.p2;
+    this.vertices[2] =this.p3;
+    this.vertices[3] =this.p4;
     console.log("Ini this vertices : ", this.vertices);
     this.width = newWidth;
     this.length = newLength;

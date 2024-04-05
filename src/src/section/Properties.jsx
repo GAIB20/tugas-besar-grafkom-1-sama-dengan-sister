@@ -49,6 +49,18 @@ const Properties = ({
     }
   };
 
+  const resetTransformation = () => {
+    setTransformation((oldTransformation) => ({
+      ...oldTransformation,
+      rz: 0,
+      rvz: 0,
+      sx: 0,
+      sy: 0,
+      shx: 0,
+      shy: 0,
+    }));
+  };
+
   const handleWidthUpdate = (e) => {
     const selectedShape = shapes[selectedShapeId];
     if (selectedShape) {
@@ -56,18 +68,32 @@ const Properties = ({
         width: Number(e.target.value),
         length: rectangleSize.length,
       });
+      resetTransformation();
       redrawCanvas();
     }
   };
 
   const handleLengthUpdate = (e) => {
     const selectedShape = shapes[selectedShapeId];
+    console.log("Ini shapes :", shapes);
     if (selectedShape) {
       selectedShape.updateShapes({
         width: Number(e.target.value),
         length: rectangleSize.length,
       });
+      console.log("Ini selcted shape : ", selectedShape);
+      resetTransformation();
       redrawCanvas();
+    }
+  };
+
+  const handleSquareChange = (e) => {
+    const selectedShape = shapes[selectedShapeId];
+    if (selectedShape) {
+      selectedShape.updateShapes(Number(e.target.value));
+      setSquareSide(Number(e.target.value));
+      redrawCanvas();
+      resetTransformation();
     }
   };
 
@@ -157,7 +183,7 @@ const Properties = ({
               <div className="slidecontainer">
                 <b>
                   {" "}
-                  <p> Opacity &nbsp; &nbsp; {currentColor.a}</p>{" "}
+                  <p> Transparency &nbsp; &nbsp; {currentColor.a}</p>{" "}
                 </b>
                 <input
                   type="range"
@@ -380,7 +406,7 @@ const Properties = ({
                       className="slider"
                       value={squareSide}
                       onChange={(e) => {
-                        setSquareSide(Number(e.target.value));
+                        handleSquareChange(e);
                       }}
                     />
                   </>
@@ -426,7 +452,7 @@ const Properties = ({
                         step={SLIDER_STEPS}
                         value={rectangleSize.length}
                         onChange={(e) => {
-                          handleLengthUpdate(e)
+                          handleLengthUpdate(e);
                           setRectangleSize((oldSize) => ({
                             ...oldSize,
                             length: Number(e.target.value),

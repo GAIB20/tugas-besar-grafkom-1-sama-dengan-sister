@@ -34,7 +34,7 @@ export class Polygon extends DrawableObject {
     return Shape.Polygon;
   };
 
-  render(gl, positionAttributeLocation, colorAttributeLocation) {
+  render(gl, positionAttributeLocation, colorAttributeLocation, withBorder) {
     if (this.points.length >= 2) {
       // else is ignored
       var buffer = gl.createBuffer();
@@ -92,6 +92,96 @@ export class Polygon extends DrawableObject {
         gl.drawArrays(gl.LINE_STRIP, 0, this.points.length / 2);
       } else {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, this.points.length);
+      }
+
+      if (withBorder) {
+        const borderPoints = this.convexHull;
+        const borderBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, borderBuffer);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array(borderPoints),
+          gl.STATIC_DRAW
+        );
+        gl.vertexAttribPointer(
+          positionAttributeLocation,
+          2,
+          gl.FLOAT,
+          false,
+          0,
+          0
+        );
+  
+        const borderColor = [1, 0, 0, 1];
+        const borderColors = Array(borderPoints.length / 2)
+          .fill(borderColor)
+          .flat();
+        const colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array(borderColors),
+          gl.STATIC_DRAW
+        );
+        gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+  
+        gl.drawArrays(gl.LINE_LOOP, 0, borderPoints.length / 2);
+  
+        const dotSize = 10;
+        const halfDotSize = dotSize / 2;
+        const dotVertices = [];
+        for (let i = 0; i < this.convexHull.length / 2; i++) {
+          const x = this.convexHull[i*2];
+          const y = this.convexHull[i*2+1];
+          dotVertices.push(
+            x - halfDotSize,
+            y - halfDotSize,
+            x + halfDotSize,
+            y - halfDotSize,
+            x + halfDotSize,
+            y + halfDotSize,
+            x - halfDotSize,
+            y - halfDotSize,
+            x + halfDotSize,
+            y + halfDotSize,
+            x - halfDotSize,
+            y + halfDotSize
+          );
+        }
+        const dotBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, dotBuffer);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array(dotVertices),
+          gl.STATIC_DRAW
+        );
+        gl.vertexAttribPointer(
+          positionAttributeLocation,
+          2,
+          gl.FLOAT,
+          false,
+          0,
+          0
+        );
+        gl.enableVertexAttribArray(positionAttributeLocation);
+  
+        const dotColor = [1, 0, 0, 1]; // Color of the dots
+        const dotColors = Array((dotVertices.length / 2) * 4)
+          .fill(dotColor)
+          .flat();
+        const dotColorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, dotColorBuffer);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array(dotColors),
+          gl.STATIC_DRAW
+        );
+        gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(colorAttributeLocation);
+  
+        for (let i = 0; i < dotVertices.length / 2; i += 6) {
+          gl.drawArrays(gl.TRIANGLES, i, 6);
+        }
       }
     }
   }
@@ -195,5 +285,53 @@ export class Polygon extends DrawableObject {
     centroidY /= n;
 
     return [centroidX, centroidY];
+  }
+
+
+  isInside(x, y) {
+    let crossings = 0;
+    const vertices = this.convexHull;
+
+    for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+        const xi = vertices[i*2], yi = vertices[i*2+1];
+        const xj = vertices[j*2], yj = vertices[j*2+1];
+
+        const intersect = ((yi > y) != (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+        if (intersect) crossings++;
+    }
+
+    return crossings % 2 !== 0;
+  }
+
+  place(x, y) {
+    for (let i = 0; i < this.points.length; i++) {
+      this.points[i].x = x - this.pivot[i*2];
+      this.points[i].y = y - this.pivot[i*2+1];
+    }
+  }
+
+  setPivot(x, y) {
+    console.log(this.points.length)
+    this.pivot = []
+    for (let i = 0; i < this.points.length; i++) {
+      this.pivot.push(x - this.points[i].x);
+      this.pivot.push(y - this.points[i].y);
+    }
+  }
+
+  isCorner(x, y) {
+    for (let i = 0; i < this.points.length; i++) {
+      if (x <= this.points[i].x + 20 && x >= this.points[i].x - 20 && y <= this.points[i].y + 20 && y >= this.points[i].y - 20) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  changeVertex(x, y, id) {
+    this.points[id].x = x;
+    this.points[id].y = y;
   }
 }

@@ -119,6 +119,7 @@ function App() {
   useEffect(() => {
     if (selectedShapeId !== null) {
       const selectedShape = shapes[selectedShapeId];
+      console.log("Ini selected shape :", selectedShape);
       if (selectedShape != null) {
         setIsPropertiesOpen(true);
 
@@ -133,7 +134,7 @@ function App() {
         if (selectedShape.getShapeType() == Shape.Polygon) {
           var tempPoints = selectedShape.getPoints();
           setPolygonPoints(tempPoints);
-          setCurrentShapeType(Shape.Polygon);
+          // setCurrentShapeType(Shape.Polygon);
         }
         redrawCanvas();
       }
@@ -169,25 +170,6 @@ function App() {
     }
   }, [transformation]);
 
-  // LISTENER TO SQUARE ATTRIBUTES
-  useEffect(() => {
-    const selectedShape = shapes[selectedShapeId];
-    if (selectedShape) {
-      selectedShape.updateShapes(squareSide);
-      redrawCanvas();
-      setTransformation((oldTransformation) => ({
-        ...oldTransformation,
-        rz: 0,
-        rvz: 0,
-        sx: 0,
-        sy: 0,
-        shx: 0,
-        shy: 0,
-      }));
-    }
-  }, [squareSide]);
-
-
   // LISTENER TO FILE OBJECT
   useEffect(() => {
     if (file) {
@@ -200,6 +182,15 @@ function App() {
           const currentShape = parsedShapes[i];
           if (currentShape.getType() === Shape.Polygon) {
             setPolygonPoints(currentShape.getPoints());
+          }
+          if (currentShape.getType() === Shape.Rectangle) {
+            setRectangleSize({
+              width: currentShape.width,
+              length: currentShape.length,
+            });
+          }
+          if (currentShape.getType() === Shape.Square) {
+            setSquareSide(currentShape.distance);
           }
         }
         setShapes((oldShapes) => [...oldShapes, ...parsedShapes]);
@@ -322,6 +313,7 @@ function App() {
           var isObject = false;
           for (let i = shapes.length - 1; i >= 0; i--) {
             if (shapes[i].isInside(x, y)) {
+              console.log("TERPILIH");
               setSelectedShapeId(i);
               shapes[i].setPivot(x, y);
               var isCorner = shapes[i].isCorner(x, y);
@@ -334,6 +326,7 @@ function App() {
             }
           }
           if (!isObject) {
+            console.log("TIDAK TERPILIJ");
             setSelectedShapeId(null);
           }
         }
@@ -384,7 +377,11 @@ function App() {
               canvasCenter: canvasCenter,
               fromFile: false,
             });
+            console.log("Ini new rect : ", rectangle);
             setShapes((oldShapes) => [...oldShapes, rectangle]);
+            setSelectedShapeId(shapes.length);
+            setTransformation(new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0));
+            setIsPropertiesOpen(true);
             setRectangleSize({
               width: Math.floor(rectangle.width),
               length: Math.floor(rectangle.length),
@@ -554,15 +551,15 @@ function App() {
   };
 
   const handleAnimation = () => {
-    console.log("Halo");
-    // for (let i = 0; i < shapes.length; i++) {
-    //   const shape = shapes[i];
-    //   shape.animateRightAndBack(
-    //     gl,
-    //     positionAttributeLocation,
-    //     colorAttributeLocation
-    //   );
-    // }
+    // console.log("Animation Triggered");
+    for (let i = 0; i < shapes.length; i++) {
+      const shape = shapes[i];
+      shape.animateRightAndBack(
+        gl,
+        positionAttributeLocation,
+        colorAttributeLocation
+      );
+    }
   };
   const handleKeyDown = (event) => {
     if (event.key === "Backspace" && selectedShapeId != null) {
