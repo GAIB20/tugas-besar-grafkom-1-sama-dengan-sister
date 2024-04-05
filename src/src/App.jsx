@@ -119,9 +119,9 @@ function App() {
           .getTransformation()
           .getAllData();
         setTransformation(transformationConfig);
-        setSelectedPointId(0);
-        console.log(currentColor)
-        console.log(currentColor.toHex())
+        setSelectedPointId(0)
+        setCurrentColor(shapes[selectedShapeId].vertices[0].color);
+        setInput("#"+shapes[selectedShapeId].vertices[0].color.toHex());
       }
     } else {
       setIsPropertiesOpen(false);
@@ -137,7 +137,13 @@ function App() {
   
   useEffect(() => {
     setSelectedShapeId(shapes.length-1);
-  }, [shapes]);
+  }, [shapes]);  
+  
+  useEffect(() => {
+    console.log("MASUKKK");
+    console.log()
+    redrawCanvas();
+  }, [currentColor]);
 
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
@@ -193,7 +199,7 @@ function App() {
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
       const currentShape = shapes[i];
-      console.log(currentShape);
+      // console.log(currentShape);
       currentShape.render(
         gl,
         positionAttributeLocation,

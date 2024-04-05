@@ -94,7 +94,7 @@ const Properties = ({
                 })}
               </select>
               <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"center"}}>
-                  <div style={{ minHeight:"20px", minWidth: "45%", backgroundColor:"#"+currentColor?.toHex(), borderRadius: "5px"}}>
+                  <div style={{ minHeight:"20px", minWidth: "45%", backgroundColor:"rgba("+currentColor.r+", "+currentColor.g+", "+currentColor.b+", "+currentColor.a+")", borderRadius: "5px"}}>
                   </div>
                   <input
                     type="text"
@@ -109,7 +109,29 @@ const Properties = ({
                       }
                     }}
                   />
-                </div>
+              </div>
+              <div className="slidecontainer">
+                <b>
+                  {" "}
+                  <p> Opacity &nbsp; &nbsp; {currentColor.a}</p>{" "}
+                </b>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  className="slider"
+                  id="OpacitySlider"
+                  step={0.01}
+                  value={currentColor.a}
+                  onChange={(e) => {
+                    shapes[selectedShapeId].vertices[selectedPointId].color.a = e.target.value;
+                    setCurrentColor((old) => ({
+                      ...old,
+                      a: e.target.value,
+                    }));
+                  }}
+                />
+              </div>
             </div>
 
             <div className="sectionContainer">
