@@ -1,6 +1,6 @@
 import { Shape } from "../constant/shape";
 import Matrix, { multiplyMatrices } from "../utils/matrix";
-import { convertPointToPairs } from "../utils/misc";
+import { convertPointToPairs, getIdxXYFromPairArray } from "../utils/misc";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
 
@@ -39,9 +39,20 @@ export class Polygon extends DrawableObject {
       // else is ignored
       var buffer = gl.createBuffer();
       const tempConvexHull = convertPointToPairs(this.points);
+      // console.log("BEFORE SORTED", tempConvexHull)
       this.convexHull = this.sortConvexHullForWebGL(tempConvexHull);
       // console.log("CONVEX HULL", this.convexHull);
 
+      // Search for color idx to be sorted too
+      var colorIndexArr = []
+      for(var i = 0; i < this.convexHull.length; i+=2 ){
+        var tempX = this.convexHull[i]
+        var tempY = this.convexHull[i+1]
+        var getIdx = getIdxXYFromPairArray(tempX, tempY, tempConvexHull)
+        colorIndexArr.push(getIdx)
+      }
+
+      // BUFFER DATA VERTICES
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       gl.bufferData(
         gl.ARRAY_BUFFER,
@@ -58,13 +69,14 @@ export class Polygon extends DrawableObject {
       );
       gl.enableVertexAttribArray(positionAttributeLocation);
 
-      console.log("VERTICES", this.vertices);
 
+      // Take the order of rendered color from the colorIndexArr
       var renderedcolor = [];
-      for (let i = 0; i < this.vertices.length; i++) {
-        renderedcolor.push(...this.vertices[i].color.toArray());
+      for (let i = 0; i < colorIndexArr.length; i++) {
+        renderedcolor.push(...this.vertices[colorIndexArr[i]].color.toArray());
       }
 
+      // BUFFER DATA COLORS
       var colorBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
       gl.bufferData(

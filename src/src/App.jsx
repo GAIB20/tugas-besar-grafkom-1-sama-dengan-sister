@@ -8,6 +8,7 @@ import {
   canvasX,
   canvasY,
   convertPointToPairs,
+  isPointInConvexHull,
   makeConvexHull,
 } from "./utils/misc";
 import * as webglUtils from "webgl-utils.js";
@@ -30,7 +31,6 @@ function App() {
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [originPoint, setOriginPoint] = useState();
-  const [colorRgb, setColorRgb] = useState([0, 0, 0, 1]);
   const [currentColor, setCurrentColor] = useState(new Color(0, 0, 0, 1));
   const [gl, setGl] = useState();
   const [positionAttributeLocation, setPositionAttributeLocation] = useState();
@@ -121,7 +121,6 @@ function App() {
     if (selectedShapeId !== null) {
       const selectedShape = shapes[selectedShapeId];
       if (selectedShape != null) {
-        console.log("Ini selectedSHape : ", selectedShape);
         setIsPropertiesOpen(true);
 
         // Change the transformation to each shape's transform data
@@ -130,10 +129,6 @@ function App() {
           .getAllData();
         setTransformation(transformationConfig);
         setSelectedPointId(0);
-        // setCurrentColor(shapes[selectedShapeId].vertices[0].color); // BENTAR
-
-        // Adjust
-        // setCurrentShapeType(selectedShape.getShapeType());
 
         // If a polygon is selected, change polygonPoints and set to Creation Mode
         if (selectedShape.getShapeType() == Shape.Polygon) {
@@ -148,14 +143,6 @@ function App() {
       redrawCanvas();
     }
   }, [selectedShapeId]);
-
-  // LISTENER TO CURRENT SELECTED POINT
-  // BENTAR
-  // useEffect(() => {
-  //   if (selectedPointId !== null) {
-  //     setCurrentColor(shapes[selectedShapeId].vertices[selectedPointId].color);
-  //   }
-  // }, [selectedPointId]);
 
   // LISTENER TO CURRENT SELECTED SHAPE
   useEffect(() => {
@@ -207,6 +194,15 @@ function App() {
     if (selectedShape) {
       selectedShape.updateShapes(rectangleSize);
       redrawCanvas();
+      setTransformation((oldTransformation) => ({
+        ...oldTransformation,
+        rz: 0,
+        rvz: 0,
+        sx: 0,
+        sy: 0,
+        shx: 0,
+        shy: 0,
+      }));
     }
   }, [rectangleSize]);
 
@@ -218,10 +214,10 @@ function App() {
       reader.onload = () => {
         const textContent = reader.result;
         const parsedShapes = parseFile(textContent, shapes.length);
-        for(let i = 0; i < parsedShapes.length; i++){
-          const currentShape = parsedShapes[i]
-          if(currentShape.getType() === Shape.Polygon){
-            setPolygonPoints(currentShape.getPoints())
+        for (let i = 0; i < parsedShapes.length; i++) {
+          const currentShape = parsedShapes[i];
+          if (currentShape.getType() === Shape.Polygon) {
+            setPolygonPoints(currentShape.getPoints());
           }
         }
         setShapes((oldShapes) => [...oldShapes, ...parsedShapes]);
@@ -239,10 +235,8 @@ function App() {
       }
       gl.clear(gl.COLOR_BUFFER_BIT);
     } else {
-      console.log("Ini shapes di redraw : ", shapes)
       for (let i = 0; i < shapes.length; i++) {
         const currentShape = shapes[i];
-        // console.log(currentShape);
         const currentObj = i == selectedShapeId;
         currentShape.render(
           gl,
@@ -252,7 +246,6 @@ function App() {
         );
       }
     }
-    // window.requestAnimationFrame(redrawCanvas);
   };
 
   // GET THE CENTER POINT OF CANVAS
@@ -306,25 +299,19 @@ function App() {
         polygonColorPoints.splice(idx, 4);
       } else {
         polygonPoints.push(point);
-        polygonColorPoints.push(...colorRgb);
       }
 
       // Make convexHull of the points
       const pointPairs = convertPointToPairs(polygonPoints);
       var convexHull = makeConvexHull(pointPairs);
+      console.log(point, convexHull)
 
       var points = [];
-      for (i = 0; i < convexHull.length; i++) {
-        points[i] = new Point(
-          convexHull[i][0],
-          convexHull[i][1],
-          new Color(
-            currentColor.r,
-            currentColor.g,
-            currentColor.b,
-            currentColor.a
-          )
-        );
+      for(i = 0; i < polygonPoints.length; i++){
+        var tempPoint = polygonPoints[i]
+        if (isPointInConvexHull(tempPoint, convexHull)){
+          points.push(tempPoint)
+        }
       }
       setPolygonPoints(points);
 
@@ -395,15 +382,15 @@ function App() {
               canvasCenter: canvasCenter,
               fromFile: false,
             });
-            // setSquareSide(Math.floor(square.distance));
+            setSquareSide(Math.floor(square.distance));
             setShapes((oldShapes) => [...oldShapes, square]);
+            setSelectedShapeId(shapes.length);
             break;
           }
           case Shape.Line: {
             const line = new Line({
               origin: originPoint,
               final: finalPoint,
-              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
               id: shapes.length,
               transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
               canvasCenter: canvasCenter,
@@ -420,17 +407,20 @@ function App() {
               id: shapes.length,
               transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
               canvasCenter: canvasCenter,
+              fromFile: false,
             });
             setShapes((oldShapes) => [...oldShapes, rectangle]);
+            setSelectedShapeId(shapes.length);
             break;
           }
           default:
             break;
         }
-        setOriginPoint(undefined);
-        setIsDrawing(false);
-        setCurrentShapeType(null);
       }
+
+      setOriginPoint(undefined);
+      setIsDrawing(false);
+      setCurrentShapeType(null);
     }
   };
 
@@ -520,7 +510,7 @@ function App() {
   };
 
   // FUNCTION LINE BUTTON HANDLE
-  const lineButtonClicked = (e) => {
+  const lineButtonClicked = () => {
     setPolygonPoints([]);
     refreshChosenButton();
     if (currentShapeType == Shape.Line) {
