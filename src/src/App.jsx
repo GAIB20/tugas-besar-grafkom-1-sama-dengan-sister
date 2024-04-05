@@ -36,7 +36,6 @@ function App() {
   const [selectedPointId, setSelectedPointId] = useState(null);
   const [transformation, setTransformation] = useState(null);
   const [squareSide, setSquareSide] = useState();
-  const [input, setInput] = useState("");
   const [rectangleSize, setRectangleSize] = useState({
     width: 0,
     length: 0,
@@ -122,10 +121,7 @@ function App() {
           .getAllData();
         setTransformation(transformationConfig);
         setSelectedPointId(0);
-        console.log("Ini shape selected  :", shapes[selectedShapeId]);
-        console.log("Ini color : ", shapes[selectedShapeId].vertices[0].color);
         setCurrentColor(shapes[selectedShapeId].vertices[0].color);
-        setInput("#" + shapes[selectedShapeId].vertices[0].color.toHex());
 
         // Adjust
         setCurrentShapeType(selectedShape.getShapeType());
@@ -144,9 +140,6 @@ function App() {
   useEffect(() => {
     if (selectedPointId !== null) {
       setCurrentColor(shapes[selectedShapeId].vertices[selectedPointId].color);
-      setInput(
-        "#" + shapes[selectedShapeId].vertices[selectedPointId].color.toHex()
-      );
     }
   }, [selectedPointId]);
 
@@ -474,8 +467,6 @@ function App() {
           currentColor={currentColor}
           setCurrentColor={setCurrentColor}
           redrawCanvas={redrawCanvas}
-          input={input}
-          setInput={setInput}
         />
       </div>
     </div>

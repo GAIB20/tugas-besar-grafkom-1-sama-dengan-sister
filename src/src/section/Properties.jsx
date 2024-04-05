@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Shape } from "../constant/shape";
+import { rgbToHex } from "../utils/color";
 
 const SLIDER_STEPS = 0.01;
 const SLIDER_MIN = -1;
@@ -21,10 +22,17 @@ const Properties = ({
   currentColor,
   setCurrentColor,
   redrawCanvas,
-  input, 
-  setInput
 }) => {
   const [propsOpen, setPropsOpen] = useState(true);
+  // [color, setColor] ngebantu sync data
+  const [color, setColor] = useState();
+  useEffect(() => {
+    if (shapes[selectedShapeId]?.vertices[selectedPointId]?.color) {
+      setColor(
+        rgbToHex(shapes[selectedShapeId]?.vertices[selectedPointId]?.color)
+      );
+    }
+  }, [selectedShapeId, selectedPointId]);
 
   const changePropsState = () => {
     if (propsOpen) {
@@ -74,7 +82,7 @@ const Properties = ({
                 })}
               </select>
             </div>
-            
+
             <div className="sectionContainer">
               <p className="sectionTitle"> Color </p>
               <select
@@ -92,22 +100,28 @@ const Properties = ({
                   );
                 })}
               </select>
-              <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"center"}}>
-                  <div style={{ minHeight:"20px", minWidth: "45%", backgroundColor:"rgba("+currentColor.r+", "+currentColor.g+", "+currentColor.b+", 1)", borderRadius: "5px"}}>
-                  </div>
-                  <input
-                    type="text"
-                    id="colorInput"
-                    className="colorInput"
-                    value={input}
-                    onChange={(e) => {
-                      setInput(e.target.value);
-                      if (/^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/.test(e.target.value)) {
-                        shapes[selectedShapeId].vertices[selectedPointId].color.updateHex(e.target.value);
-                        redrawCanvas();
-                      }
-                    }}
-                  />
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  height: "100%",
+                  width: "100%",
+                }}
+              >
+                <input
+                  className="input-color"
+                  type="color"
+                  value={color}
+                  onChange={(e) => {
+                    setColor(e.target.value);
+                    shapes[selectedShapeId].vertices[
+                      selectedPointId
+                    ].color.updateHex(e.target.value);
+                    redrawCanvas();
+                  }}
+                />
               </div>
               <div className="slidecontainer">
                 <b>
@@ -123,7 +137,8 @@ const Properties = ({
                   step={0.01}
                   value={currentColor.a}
                   onChange={(e) => {
-                    shapes[selectedShapeId].vertices[selectedPointId].color.a = e.target.value;
+                    shapes[selectedShapeId].vertices[selectedPointId].color.a =
+                      e.target.value;
                     setCurrentColor((old) => ({
                       ...old,
                       a: e.target.value,
