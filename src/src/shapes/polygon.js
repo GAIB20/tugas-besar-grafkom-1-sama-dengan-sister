@@ -6,7 +6,6 @@ import { convertPointToPairs } from "../utils/misc";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
 
-
 export class Polygon extends DrawableObject {
   constructor(points, color, id, transformation, canvasCenter) {
     super(id, Shape.Polygon, color);
@@ -18,10 +17,7 @@ export class Polygon extends DrawableObject {
     this.canvasCenter = canvasCenter;
     this.convexHull = [];
 
-    this.vertice = []
-    for (let i = 0; i < points.length; i++){
-      this.vertice[i] = new Point(this.points[i].x, this.points[i].y, new Color(0, 0, 0, 1))
-    }
+    this.vertice = points;
   }
 
   getTransformation = () => {
@@ -30,7 +26,7 @@ export class Polygon extends DrawableObject {
 
   setPoints = (points) => {
     this.points = points;
-
+    this.vertices = points;
   };
 
   getPoints = () => {
@@ -50,11 +46,12 @@ export class Polygon extends DrawableObject {
   };
 
   render(gl, positionAttributeLocation, colorAttributeLocation) {
-    if (this.points.length >= 3) { // else is ignored
+    if (this.points.length >= 2) {
+      // else is ignored
       var buffer = gl.createBuffer();
       const tempConvexHull = convertPointToPairs(this.points);
       this.convexHull = this.sortConvexHullForWebGL(tempConvexHull);
-      // console.log(this.convexHull);
+      // console.log("CONVEX HULL", this.convexHull);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       gl.bufferData(
@@ -72,23 +69,36 @@ export class Polygon extends DrawableObject {
       );
       gl.enableVertexAttribArray(positionAttributeLocation);
 
+      console.log("VERTICES", this.vertices)
+
+      var renderedcolor = [];
+      for (let i = 0; i < this.vertices.length; i++) {
+        renderedcolor.push(...this.vertices[i].color.toArray());
+      }
+
+
       var colorBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
       gl.bufferData(
         gl.ARRAY_BUFFER,
-        new Float32Array(this.colorPoints),
+        new Float32Array(renderedcolor),
         gl.STATIC_DRAW
       );
       gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(colorAttributeLocation);
 
-      gl.drawArrays(gl.TRIANGLE_FAN, 0, this.points.length);
+      if (this.points.length == 2) {
+        // Draw line if only 2 points
+        gl.drawArrays(gl.LINE_STRIP, 0, this.points.length / 2);
+      } else {
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, this.points.length);
+      }
     }
   }
 
-
   transformShades(transformationInput) {
-    if (this.points.length >= 3) { // else is ignored
+    if (this.points.length >= 2) {
+      // else is ignored
       const centroid = this.findCentroid();
       const newTransformation = new Transformation(
         transformationInput.x,
@@ -108,7 +118,7 @@ export class Polygon extends DrawableObject {
           this.canvasCenter[0],
           this.canvasCenter[1]
         );
-      transformationMatrix.getMatrix()
+      transformationMatrix.getMatrix();
       var shapeMatrix = new Matrix(this.points.length, 4);
       var tempMatrix = [];
       for (var i = 0; i < this.points.length; i++) {
@@ -122,8 +132,6 @@ export class Polygon extends DrawableObject {
         shapeMatrix.getMatrix()
       );
 
-
-
       for (let i = 0; i < this.points.length; i++) {
         this.points[i].x = resultMatrix[0][i];
         this.points[i].y = resultMatrix[1][i];
@@ -133,13 +141,9 @@ export class Polygon extends DrawableObject {
     }
   }
 
-
-
   getName() {
     return "Polygon" + this.id;
   }
-
-
 
   // // ======== SORTING ALGORITHM =============
 

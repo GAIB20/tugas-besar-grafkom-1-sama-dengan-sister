@@ -270,7 +270,16 @@ function App() {
 
     // Special Case for Polygons
     if (currentShapeType == Shape.Polygon) {
-      var point = new Point(x, y, new Color(0, 0, 0, 1));
+      var point = new Point(
+        x,
+        y,
+        new Color(
+          currentColor.r,
+          currentColor.g,
+          currentColor.b,
+          currentColor.a
+        )
+      );
 
       // Check if it is to erase
       var idx = null;
@@ -292,7 +301,6 @@ function App() {
       } else {
         polygonPoints.push(point);
         polygonColorPoints.push(...colorRgb);
-        // console.log(polygonPoints)
       }
 
       // Make convexHull of the points
@@ -553,7 +561,6 @@ function App() {
       setShapes((oldShapes) => [...oldShapes, polygon]);
       setSelectedShapeId(shapes.length);
       setCurrentShapeType(Shape.Polygon);
-
     } else {
       // Condition currentShapeType == null
       setCurrentShapeType(null);
