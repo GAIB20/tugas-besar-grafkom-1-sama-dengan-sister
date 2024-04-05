@@ -132,6 +132,8 @@ export class Square extends DrawableObject {
     );
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
+    gl.enable(gl.BLEND); 
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
 
     if (withBorder) {
