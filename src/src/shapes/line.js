@@ -182,12 +182,42 @@ export class Line extends DrawableObject {
     return "Line " + this.id
   }
 
+  setPivot(x, y) {
+    this.pivotX = x - this.origin.x;
+    this.pivotY = y - this.origin.y;
+  }
+
+  place(x, y) {
+    var lenX = this.final.x - this.origin.x;
+    var lenY = this.final.y - this.origin.y;
+    this.origin.x = x - this.pivotX;
+    this.origin.y = y - this.pivotY;
+    this.final.x = x + (lenX - this.pivotX);
+    this.final.y = y + (lenY - this.pivotY);
+  }
+
+  isCorner(x, y) {
+    console.log(x, y, this.origin, this.final)
+    if (x <= this.origin.x + 20 && x >= this.origin.x - 20 && y <= this.origin.y + 20 && y >= this.origin.y - 20) {
+      return 0;
+    } else if (x <= this.final.x + 20 && x >= this.final.x - 20 && y <= this.final.y + 20 && y >= this.final.y - 20) {
+      return 1;
+    } else {
+      return null;
+    }
+  }
+
+  changeVertex(x, y, id) {
+    this.vertices[id].x = x;
+    this.vertices[id].y = y;
+  }
+
   isInside(x, y) {
     const distance1 = Math.sqrt((x - this.origin.x) ** 2 + (y - this.origin.y) ** 2);
     const distance2 = Math.sqrt((x - this.final.x) ** 2 + (y - this.final.y) ** 2);
     const lineLength = Math.sqrt((this.final.x - this.origin.x) ** 2 + (this.final.y - this.origin.y) ** 2);
 
-    const epsilon = 0.1; 
+    const epsilon = 1; 
     return Math.abs(distance1 + distance2 - lineLength) < epsilon;
   }
 }

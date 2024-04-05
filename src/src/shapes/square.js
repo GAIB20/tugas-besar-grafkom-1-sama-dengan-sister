@@ -236,6 +236,37 @@ export class Square extends DrawableObject {
     this.transformation = newTransformation;
   }
 
+  place(x, y) {
+    this.p1.x = x - this.pivotX1;
+    this.p1.y = y - this.pivotY1;
+    this.p2.x = x - this.pivotX2;
+    this.p2.y = y - this.pivotY2;
+    this.p3.x = x - this.pivotX3;
+    this.p3.y = y - this.pivotY3;
+    this.p4.x = x - this.pivotX4;
+    this.p4.y = y - this.pivotY4;
+  }
+
+  isCorner(x, y) {
+    if (x <= this.p1.x + 20 && x >= this.p1.x - 20 && y <= this.p1.y + 20 && y >= this.p1.y - 20) {
+      return 0;
+    } else if (x <= this.p2.x + 20 && x >= this.p2.x - 20 && y <= this.p2.y + 20 && y >= this.p2.y - 20) {
+      return 1;
+    } else if (x <= this.p3.x + 20 && x >= this.p3.x - 20 && y <= this.p3.y + 20 && y >= this.p3.y - 20) {
+      return 2;
+    } else if (x <= this.p4.x + 20 && x >= this.p4.x - 20 && y <= this.p4.y + 20 && y >= this.p4.y - 20) {
+      return 3;
+    } else {
+      return null;
+    }
+  }
+
+  changeVertex(x, y, id) {
+    this.vertices[id].x = x;
+    this.vertices[id].y = y;
+  }
+
+
   updateShapes(newSize) {
     // Hitung titik tengah
     const centerX = (this.p4.x + this.p1.x) / 2;
@@ -297,10 +328,31 @@ export class Square extends DrawableObject {
     return [this.p1, this.p2, this.p3, this.p4];
   }
 
+  setPivot(x, y) {
+    this.pivotX1 = x - this.p1.x;
+    this.pivotY1 = y - this.p1.y;
+    this.pivotX2 = x - this.p2.x;
+    this.pivotY2 = y - this.p2.y;
+    this.pivotX3 = x - this.p3.x;
+    this.pivotY3 = y - this.p3.y;
+    this.pivotX4 = x - this.p4.x;
+    this.pivotY4 = y - this.p4.y;
+  }
+
   isInside(x, y) {
-    if (x <= this.p3.x && x >= this.p1.x && y >= this.p1.y && y <= this.p2.y) {
-      return true;
+    let crossings = 0;
+    const vertices = this.vertices;
+
+    for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+        const xi = vertices[i == 2 ? 3 : i == 3 ? 2 : i].x, yi = vertices[i == 2 ? 3 : i == 3 ? 2 : i].y;
+        const xj = vertices[j == 2 ? 3 : j == 3 ? 2 : j].x, yj = vertices[j == 2 ? 3 : j == 3 ? 2 : j].y;
+
+        const intersect = ((yi > y) != (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+        if (intersect) crossings++;
     }
-    return false;
+
+    return crossings % 2 !== 0;
   }
 }
