@@ -48,6 +48,7 @@ function App() {
   const [polygonPoints, setPolygonPoints] = useState([]);
   const [polygonColorPoints, setPolygonColorPoints] = useState([]);
   const [file, setFile] = useState();
+  console.log(polygonPoints)
 
   const handleSaveModels = () => {
     downloadModel(shapes);
@@ -252,35 +253,33 @@ function App() {
     if (currentShapeType == Shape.Polygon) {
       var point = new Point(x, y, new Color(0, 0, 0, 1));
 
-      // // Check if it is to erase
-      // var idx = undefined
-      // for (var i = 0; i < polygonPoints.length; i++){
-      //   var distance =  Math.sqrt(Math.pow((polygonPoints[i].x - x),2) + Math.pow((polygonPoints[i].y - y),2))
-      //   if (distance < 10){
-      //     idx = i;
-      //     break
-      //   }
-      // }
+      // Check if it is to erase
+      var idx = null
+      for (var i = 0; i < polygonPoints.length; i++){
+        var distance =  Math.sqrt(Math.pow((polygonPoints[i].x - x),2) + Math.pow((polygonPoints[i].y - y),2))
+        if (distance < 10){
+          idx = i;
+          break
+        }
+      }
 
-      // // If found, then erase
-      // if (idx){
-      //   polygonPoints.splice(idx, 1);
-      //   polygonColorPoints.splice(idx,1);
-      // } else {
-      //   polygonPoints.push(point);
-      //   polygonColorPoints.push(...colorRgb);
-      //   // console.log(polygonPoints)
-      // }
-
-      polygonPoints.push(point);
-      polygonColorPoints.push(...colorRgb);
+      // If found, then erase
+      if (idx){
+        console.log("FOUND")
+        polygonPoints.splice(idx, 1);
+        polygonColorPoints.splice(idx,1);
+      } else {
+        polygonPoints.push(point);
+        polygonColorPoints.push(...colorRgb);
+        // console.log(polygonPoints)
+      }
 
       // Make convexHull of the points
       const pointPairs = convertPointToPairs(polygonPoints);
       var convexHull = makeConvexHull(pointPairs);
 
       var points = [];
-      for (var i = 0; i < convexHull.length; i++) {
+      for (i = 0; i < convexHull.length; i++) {
         points[i] = new Point(
           convexHull[i][0],
           convexHull[i][1],
@@ -293,11 +292,10 @@ function App() {
       const selectedPolygon = shapes[selectedShapeId];
       selectedPolygon.setPoints(points);
       selectedPolygon.setColorPoints(polygonColorPoints);
-      console.log(selectedPolygon.getPoints());
       
-
       // Redraw Canvas
       redrawCanvas();
+
     } else {
       if (!isDrawing) {
         // START DRAWING CASE
@@ -459,6 +457,7 @@ function App() {
 
   // FUNCTION LINE BUTTON HANDLE
   const lineButtonClicked = (e) => {
+    setPolygonPoints([]);
     refreshChosenButton();
     if (currentShapeType == Shape.Line) {
       setCurrentShapeType(null);
@@ -471,6 +470,7 @@ function App() {
 
   // FUNCTION RECTANGLE BUTTON HANDLE
   const rectangleButtonClicked = () => {
+    setPolygonPoints([]);
     refreshChosenButton();
     if (currentShapeType == Shape.Rectangle) {
       setCurrentShapeType(null);
@@ -493,7 +493,7 @@ function App() {
     const canvas = document.querySelector("canvas");
     var canvasCenter = getCanvasCenter(canvas);
     const polygon = new Polygon(
-      polygonPoints,
+      [],
       polygonColorPoints,
       shapes.length,
       new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
@@ -505,6 +505,7 @@ function App() {
 
   // FUNCTION SQUARE BUTTON HANDLE
   const squareButtonClicked = () => {
+    setPolygonPoints([]);
     refreshChosenButton();
     if (currentShapeType == Shape.Square) {
       setCurrentShapeType(null);
