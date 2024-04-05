@@ -234,4 +234,39 @@ export class Rectangle extends DrawableObject {
   getPoints() {
     return [this.p1, this.p2, this.p3, this.p4];
   }
+  animateRightAndBack() {
+    const moveAmount = 50; // Jumlah geser ke kanan dalam piksel
+    const duration = 3000; // Durasi animasi dalam milidetik
+    let startTime = null;
+    let progress = 0;
+
+    const animateStep = () => {
+      if (!startTime) startTime = Date.now();
+      const elapsed = Date.now() - startTime;
+
+      if (elapsed >= duration) {
+        console.log("Animation end");
+        return; // Hentikan animasi
+      }
+
+      progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama
+
+      // Hitung perubahan posisi. `Math.abs((progress % 2) - 1)` menciptakan siklus pergi-pulang
+      const currentMove = moveAmount * Math.abs((progress % 2) - 1);
+      // Aplikasikan perubahan relatif terhadap posisi awal
+      this.vertices.forEach((vertex) => {
+        vertex.x = vertex.initialX + currentMove * (progress <= 1 ? 1 : -1);
+      });
+
+      requestAnimationFrame(animateStep); // Jadwalkan iterasi selanjutnya
+    };
+
+    if (!this.vertices[0].initialX) {
+      this.vertices.forEach((vertex) => {
+        vertex.initialX = vertex.x;
+      });
+    }
+
+    animateStep(); // Mulai animasi
+  }
 }

@@ -213,6 +213,7 @@ function App() {
         colorAttributeLocation
       );
     }
+    // window.requestAnimationFrame(redrawCanvas);
   };
 
   const getCanvasCenter = (canvas) => {
@@ -426,6 +427,17 @@ function App() {
     setCurrentShapeType(Shape.Square);
   };
 
+  const handleAnimation = () => {
+    console.log("Halo");
+    for (let i = 0; i < shapes.length; i++) {
+      const shape = shapes[i];
+      shape.animateRightAndBack(
+        gl,
+        positionAttributeLocation,
+        colorAttributeLocation
+      );
+    }
+  };
   return (
     <div className="screen">
       <div className="topbar">
@@ -443,6 +455,7 @@ function App() {
           squareClick={squareButtonClicked}
           handleSaveModels={handleSaveModels}
           setFile={setFile}
+          handleAnimation={handleAnimation}
         />
         <div
           className="canvasContainer"
