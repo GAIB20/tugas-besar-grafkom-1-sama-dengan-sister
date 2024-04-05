@@ -18,8 +18,7 @@ export class Rectangle extends DrawableObject {
     canvasCenter = null,
     fromFile = false,
     vertices,
-  }) {
-    console.log("Masuk ke constructor")
+  } = {}) {
     super(id, Shape.Rectangle);
     if (!fromFile) {
       const p2 = new Point(
@@ -42,12 +41,11 @@ export class Rectangle extends DrawableObject {
       this.p3 = final;
       this.p4 = p4;
 
-      this.vertices = [];
-      this.vertices.push(this.p1);
+      this.vertices = [origin];
       this.vertices.push(this.p2);
       this.vertices.push(this.p3);
       this.vertices.push(this.p4);
-      console.log("Ini di constsct", this.vertices);
+      this.transformation = transformation;
     } else {
       this.vertices = [];
       for (let i = 0; i < vertices.length; i++) {
@@ -66,9 +64,9 @@ export class Rectangle extends DrawableObject {
       this.p2 = this.vertices[1];
       this.p3 = this.vertices[2];
       this.p4 = this.vertices[3];
+      this.transformation = transformation;
     }
 
-    this.transformation = transformation;
     this.length = Math.abs(this.p1.x - this.p3.x);
     this.width = Math.abs(this.p1.y - this.p3.y);
     this.canvasCenter = canvasCenter;
@@ -255,25 +253,17 @@ export class Rectangle extends DrawableObject {
   }
 
   updateShapes(newSize) {
-    console.log("Ini this vertices sebelom update", this.vertices);
-
-    console.log("Masuk new new size :", newSize);
     const newWidth = newSize.width;
     const newLength = newSize.length;
-
-    console.log("Ini this vertices sebelom update", this.vertices);
-
     // Hitung titik tengah
     const centerX = (this.p1.x + this.p3.x) / 2;
     const centerY = (this.p1.y + this.p3.y) / 2;
+
     // Setengah dari width dan length baru
     const halfNewWidth = newWidth / 2;
     const halfNewLength = newLength / 2;
-
-    console.log("Ini this vertices sebelom update", this.vertices);
-
     // Tetapkan ulang titik sudut berdasarkan titik tengah dan setengah dari width dan length baru
-    const p1 = new Point(
+    this.p1 = new Point(
       centerX - halfNewLength,
       centerY - halfNewWidth,
       new Color(
@@ -283,7 +273,7 @@ export class Rectangle extends DrawableObject {
         this.p1.color.a
       )
     );
-    const p2 = new Point(
+    this.p2 = new Point(
       centerX + halfNewLength,
       centerY - halfNewWidth,
       new Color(
@@ -293,7 +283,7 @@ export class Rectangle extends DrawableObject {
         this.p2.color.a
       )
     );
-    const p3 = new Point(
+    this.p3 = new Point(
       centerX + halfNewLength,
       centerY + halfNewWidth,
       new Color(
@@ -303,7 +293,7 @@ export class Rectangle extends DrawableObject {
         this.p3.color.a
       )
     );
-    const p4 = new Point(
+    this.p4 = new Point(
       centerX - halfNewLength,
       centerY + halfNewWidth,
       new Color(
@@ -313,32 +303,11 @@ export class Rectangle extends DrawableObject {
         this.p4.color.a
       )
     );
-    console.log("Ini this vertices sebelom update", this.vertices);
 
-    this.p1 = p1;
-    this.p2 = p2;
-    this.p3 = p3;
-    this.p4 = p4;
-    console.log("Ini titik", this.p1, this.p2, this.p3, this.p4);
+    this.vertices = [this.p1, this.p2, this.p3, this.p4];
 
-    // this.vertices[0].updatePoint(centerX - halfNewLength, centerY - halfNewWidth)
-    this.vertices[0] = this.p1;
-    this.vertices[1] =this.p2;
-    this.vertices[2] =this.p3;
-    this.vertices[3] =this.p4;
-    console.log("Ini this vertices : ", this.vertices);
     this.width = newWidth;
     this.length = newLength;
-    this.transformation = new Transformation(
-      this.transformation.tx,
-      this.transformation.ty,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    );
   }
 
   getName() {
@@ -413,7 +382,6 @@ export class Rectangle extends DrawableObject {
       const elapsed = Date.now() - startTime;
 
       if (elapsed >= duration) {
-        console.log("Animation end");
         return; // Hentikan animasi
       }
       progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama

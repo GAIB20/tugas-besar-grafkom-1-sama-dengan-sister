@@ -20,7 +20,6 @@ const stringToPoints = (vertices) => {
       )
     );
   }
-  console.log("Ini results ; ", results);
   return results;
 };
 
@@ -91,6 +90,5 @@ export const parseFile = (content, lastId) => {
     }
     id += 1;
   }
-  console.log("Ini shapes :", shapes);
   return shapes;
 };

@@ -72,12 +72,13 @@ export class Square extends DrawableObject {
           )
         );
       }
+      this.distance = Math.abs(this.vertices[0].x - this.vertices[1].x);
       this.p1 = this.vertices[0];
       this.p2 = this.vertices[1];
       this.p3 = this.vertices[2];
       this.p4 = this.vertices[3];
+      this.transformation = transformation;
     }
-    this.transformation = transformation;
     this.canvasCenter = canvasCenter;
   }
 
@@ -96,7 +97,7 @@ export class Square extends DrawableObject {
     }
     return results;
   };
-  
+
   calculateBorderPoints() {
     const results = [];
 
@@ -106,8 +107,7 @@ export class Square extends DrawableObject {
     results.push(this.vertices[2].x, this.vertices[2].y);
 
     return results;
-}
-
+  }
 
   render(gl, positionAttributeLocation, colorAttributeLocation, withBorder) {
     var buffer = gl.createBuffer();
@@ -131,23 +131,40 @@ export class Square extends DrawableObject {
     );
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
-    gl.enable(gl.BLEND); 
+    gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
 
     if (withBorder) {
-      const borderPoints = this.calculateBorderPoints(); 
-      const borderBuffer = gl.createBuffer(); 
-      gl.bindBuffer(gl.ARRAY_BUFFER, borderBuffer); 
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(borderPoints), gl.STATIC_DRAW); 
-      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0); 
+      const borderPoints = this.calculateBorderPoints();
+      const borderBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, borderBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(borderPoints),
+        gl.STATIC_DRAW
+      );
+      gl.vertexAttribPointer(
+        positionAttributeLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
 
-      const borderColor = [1, 0, 0, 1]; 
-      const borderColors = Array(borderPoints.length / 2).fill(borderColor).flat(); 
-      const colorBuffer = gl.createBuffer(); 
-      gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer); 
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(borderColors), gl.STATIC_DRAW); 
-      gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0); 
+      const borderColor = [1, 0, 0, 1];
+      const borderColors = Array(borderPoints.length / 2)
+        .fill(borderColor)
+        .flat();
+      const colorBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(borderColors),
+        gl.STATIC_DRAW
+      );
+      gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
 
       gl.drawArrays(gl.LINE_LOOP, 0, borderPoints.length / 2);
 
@@ -155,32 +172,55 @@ export class Square extends DrawableObject {
       const halfDotSize = dotSize / 2;
       const dotVertices = [];
       for (let i = 0; i < this.vertices.length; i++) {
-          const vertex = this.vertices[i];
-          dotVertices.push(
-              vertex.x - halfDotSize, vertex.y - halfDotSize,
-              vertex.x + halfDotSize, vertex.y - halfDotSize,
-              vertex.x + halfDotSize, vertex.y + halfDotSize,
-              vertex.x - halfDotSize, vertex.y - halfDotSize,
-              vertex.x + halfDotSize, vertex.y + halfDotSize,
-              vertex.x - halfDotSize, vertex.y + halfDotSize
-          );
+        const vertex = this.vertices[i];
+        dotVertices.push(
+          vertex.x - halfDotSize,
+          vertex.y - halfDotSize,
+          vertex.x + halfDotSize,
+          vertex.y - halfDotSize,
+          vertex.x + halfDotSize,
+          vertex.y + halfDotSize,
+          vertex.x - halfDotSize,
+          vertex.y - halfDotSize,
+          vertex.x + halfDotSize,
+          vertex.y + halfDotSize,
+          vertex.x - halfDotSize,
+          vertex.y + halfDotSize
+        );
       }
       const dotBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, dotBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotVertices), gl.STATIC_DRAW);
-      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(dotVertices),
+        gl.STATIC_DRAW
+      );
+      gl.vertexAttribPointer(
+        positionAttributeLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
       gl.enableVertexAttribArray(positionAttributeLocation);
 
       const dotColor = [1, 0, 0, 1]; // Color of the dots
-      const dotColors = Array(dotVertices.length / 2 * 4).fill(dotColor).flat();
+      const dotColors = Array((dotVertices.length / 2) * 4)
+        .fill(dotColor)
+        .flat();
       const dotColorBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, dotColorBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotColors), gl.STATIC_DRAW);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(dotColors),
+        gl.STATIC_DRAW
+      );
       gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(colorAttributeLocation);
 
       for (let i = 0; i < dotVertices.length / 2; i += 6) {
-          gl.drawArrays(gl.TRIANGLES, i, 6);
+        gl.drawArrays(gl.TRIANGLES, i, 6);
       }
     }
   }
@@ -227,7 +267,6 @@ export class Square extends DrawableObject {
       transformationMatrix.getMatrix(),
       shapeMatrix.getMatrix()
     );
-    // console.log(resultMatrix);
 
     for (let i = 0; i < 4; i++) {
       this.vertices[i].x = resultMatrix[0][i];
@@ -249,13 +288,33 @@ export class Square extends DrawableObject {
   }
 
   isCorner(x, y) {
-    if (x <= this.p1.x + 20 && x >= this.p1.x - 20 && y <= this.p1.y + 20 && y >= this.p1.y - 20) {
+    if (
+      x <= this.p1.x + 20 &&
+      x >= this.p1.x - 20 &&
+      y <= this.p1.y + 20 &&
+      y >= this.p1.y - 20
+    ) {
       return 0;
-    } else if (x <= this.p2.x + 20 && x >= this.p2.x - 20 && y <= this.p2.y + 20 && y >= this.p2.y - 20) {
+    } else if (
+      x <= this.p2.x + 20 &&
+      x >= this.p2.x - 20 &&
+      y <= this.p2.y + 20 &&
+      y >= this.p2.y - 20
+    ) {
       return 1;
-    } else if (x <= this.p3.x + 20 && x >= this.p3.x - 20 && y <= this.p3.y + 20 && y >= this.p3.y - 20) {
+    } else if (
+      x <= this.p3.x + 20 &&
+      x >= this.p3.x - 20 &&
+      y <= this.p3.y + 20 &&
+      y >= this.p3.y - 20
+    ) {
       return 2;
-    } else if (x <= this.p4.x + 20 && x >= this.p4.x - 20 && y <= this.p4.y + 20 && y >= this.p4.y - 20) {
+    } else if (
+      x <= this.p4.x + 20 &&
+      x >= this.p4.x - 20 &&
+      y <= this.p4.y + 20 &&
+      y >= this.p4.y - 20
+    ) {
       return 3;
     } else {
       return null;
@@ -266,7 +325,6 @@ export class Square extends DrawableObject {
     this.vertices[id].x = x;
     this.vertices[id].y = y;
   }
-
 
   updateShapes(newSize) {
     // Hitung titik tengah
@@ -345,13 +403,15 @@ export class Square extends DrawableObject {
     const vertices = this.vertices;
 
     for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
-        const xi = vertices[i == 2 ? 3 : i == 3 ? 2 : i].x, yi = vertices[i == 2 ? 3 : i == 3 ? 2 : i].y;
-        const xj = vertices[j == 2 ? 3 : j == 3 ? 2 : j].x, yj = vertices[j == 2 ? 3 : j == 3 ? 2 : j].y;
+      const xi = vertices[i == 2 ? 3 : i == 3 ? 2 : i].x,
+        yi = vertices[i == 2 ? 3 : i == 3 ? 2 : i].y;
+      const xj = vertices[j == 2 ? 3 : j == 3 ? 2 : j].x,
+        yj = vertices[j == 2 ? 3 : j == 3 ? 2 : j].y;
 
-        const intersect = ((yi > y) != (yj > y)) &&
-            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      const intersect =
+        yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
 
-        if (intersect) crossings++;
+      if (intersect) crossings++;
     }
 
     return crossings % 2 !== 0;
@@ -371,7 +431,6 @@ export class Square extends DrawableObject {
       const elapsed = Date.now() - startTime;
 
       if (elapsed >= duration) {
-        console.log("Animation end");
         return; // Hentikan animasi
       }
       progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama

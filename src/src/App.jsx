@@ -119,7 +119,6 @@ function App() {
   useEffect(() => {
     if (selectedShapeId !== null) {
       const selectedShape = shapes[selectedShapeId];
-      console.log("Ini selected shape :", selectedShape);
       if (selectedShape != null) {
         setIsPropertiesOpen(true);
 
@@ -313,7 +312,6 @@ function App() {
           var isObject = false;
           for (let i = shapes.length - 1; i >= 0; i--) {
             if (shapes[i].isInside(x, y)) {
-              console.log("TERPILIH");
               setSelectedShapeId(i);
               shapes[i].setPivot(x, y);
               var isCorner = shapes[i].isCorner(x, y);
@@ -326,7 +324,6 @@ function App() {
             }
           }
           if (!isObject) {
-            console.log("TIDAK TERPILIJ");
             setSelectedShapeId(null);
           }
         }
@@ -377,7 +374,6 @@ function App() {
               canvasCenter: canvasCenter,
               fromFile: false,
             });
-            console.log("Ini new rect : ", rectangle);
             setShapes((oldShapes) => [...oldShapes, rectangle]);
             setSelectedShapeId(shapes.length);
             setTransformation(new Transformation(0, 0, 0, 0, 0, 0, 0, 0, 0));
@@ -551,7 +547,6 @@ function App() {
   };
 
   const handleAnimation = () => {
-    // console.log("Animation Triggered");
     for (let i = 0; i < shapes.length; i++) {
       const shape = shapes[i];
       shape.animateRightAndBack(

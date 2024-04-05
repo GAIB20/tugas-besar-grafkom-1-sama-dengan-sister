@@ -39,9 +39,7 @@ export class Polygon extends DrawableObject {
       // else is ignored
       var buffer = gl.createBuffer();
       const tempConvexHull = convertPointToPairs(this.points);
-      // console.log("BEFORE SORTED", tempConvexHull)
       this.convexHull = this.sortConvexHullForWebGL(tempConvexHull);
-      // console.log("CONVEX HULL", this.convexHull);
 
       // Search for color idx to be sorted too
       var colorIndexArr = []
@@ -313,7 +311,6 @@ export class Polygon extends DrawableObject {
   }
 
   setPivot(x, y) {
-    console.log(this.points.length)
     this.pivot = []
     for (let i = 0; i < this.points.length; i++) {
       this.pivot.push(x - this.points[i].x);
@@ -349,7 +346,6 @@ export class Polygon extends DrawableObject {
       const elapsed = Date.now() - startTime;
 
       if (elapsed >= duration) {
-        console.log("Animation end");
         return; // Hentikan animasi
       }
       progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama

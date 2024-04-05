@@ -75,13 +75,11 @@ const Properties = ({
 
   const handleLengthUpdate = (e) => {
     const selectedShape = shapes[selectedShapeId];
-    console.log("Ini shapes :", shapes);
     if (selectedShape) {
       selectedShape.updateShapes({
-        width: Number(e.target.value),
-        length: rectangleSize.length,
+        width: rectangleSize.width,
+        length: Number(e.target.value),
       });
-      console.log("Ini selcted shape : ", selectedShape);
       resetTransformation();
       redrawCanvas();
     }
@@ -124,7 +122,6 @@ const Properties = ({
               >
                 {" "}
                 {shapes?.map((shape) => {
-                  // console.log(shape.id);
                   return (
                     <option value={shape.id} key={shape.id}>
                       {shape.getName()}
