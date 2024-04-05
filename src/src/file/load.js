@@ -7,10 +7,18 @@ import { Square } from "../shapes/square";
 import Transformation from "../utils/transformation";
 
 const stringToPoints = (vertices) => {
-  console.log("INi vetices :", vertices);
   const results = [];
   for (let i = 0; i < vertices.length; i++) {
-    results[i] = new Point(vertices[i].x, vertices[i].y, new Color(0, 0, 0, 1));
+    results[i] = new Point(
+      vertices[i].x,
+      vertices[i].y,
+      new Color(
+        vertices[i].color.r,
+        vertices[i].color.g,
+        vertices[i].color.b,
+        vertices[i].color.a
+      )
+    );
   }
   console.log("Ini results ; ", results);
   return results;

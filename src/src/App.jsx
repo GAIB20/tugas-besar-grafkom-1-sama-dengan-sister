@@ -50,6 +50,7 @@ function App() {
   const [file, setFile] = useState();
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggingVertex, setIsDraggingVertex] = useState(false);
+  console.log(polygonPoints);
 
   const handleSaveModels = () => {
     downloadModel(shapes, workingTitle);
@@ -134,10 +135,11 @@ function App() {
         // Adjust
         // setCurrentShapeType(selectedShape.getShapeType());
 
-        // If a polygon is selected, change polygonPoints too
+        // If a polygon is selected, change polygonPoints and set to Creation Mode
         if (selectedShape.getShapeType() == Shape.Polygon) {
           var tempPoints = selectedShape.getPoints();
           setPolygonPoints(tempPoints);
+          setCurrentShapeType(Shape.Polygon);
         }
         redrawCanvas();
       }
@@ -274,7 +276,16 @@ function App() {
 
     // Special Case for Polygons
     if (currentShapeType == Shape.Polygon) {
-      var point = new Point(x, y, new Color(0, 0, 0, 1));
+      var point = new Point(
+        x,
+        y,
+        new Color(
+          currentColor.r,
+          currentColor.g,
+          currentColor.b,
+          currentColor.a
+        )
+      );
 
       // Check if it is to erase
       var idx = null;
@@ -291,13 +302,11 @@ function App() {
 
       // If found, then erase
       if (idx) {
-        console.log("FOUND");
         polygonPoints.splice(idx, 1);
         polygonColorPoints.splice(idx, 4);
       } else {
         polygonPoints.push(point);
         polygonColorPoints.push(...colorRgb);
-        // console.log(polygonPoints)
       }
 
       // Make convexHull of the points
@@ -309,7 +318,12 @@ function App() {
         points[i] = new Point(
           convexHull[i][0],
           convexHull[i][1],
-          new Color(0, 0, 0, 1)
+          new Color(
+            currentColor.r,
+            currentColor.g,
+            currentColor.b,
+            currentColor.a
+          )
         );
       }
       setPolygonPoints(points);
@@ -413,6 +427,7 @@ function App() {
         }
         setOriginPoint(undefined);
         setIsDrawing(false);
+        setCurrentShapeType(null);
       }
     }
   };
@@ -530,23 +545,27 @@ function App() {
 
   // FUNCTION POLYGON BUTTON HANDLE
   const polygonButtonClicked = () => {
-    setCurrentShapeType(Shape.Polygon);
-
     // Reset Polygon Points
     setPolygonPoints([]);
     setPolygonColorPoints([]);
 
-    // For Polygon, on Button Clicked, a new Polygon is Constructed
-    const canvas = document.querySelector("canvas");
-    var canvasCenter = getCanvasCenter(canvas);
-    const polygon = new Polygon(
-      [],
-      shapes.length,
-      new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
-      canvasCenter
-    );
-    setShapes((oldShapes) => [...oldShapes, polygon]);
-    setSelectedShapeId(shapes.length);
+    if (currentShapeType != Shape.Polygon) {
+      // For Polygon, on Button Clicked, a new Polygon is Constructed
+      const canvas = document.querySelector("canvas");
+      var canvasCenter = getCanvasCenter(canvas);
+      const polygon = new Polygon(
+        [],
+        shapes.length,
+        new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+        canvasCenter
+      );
+      setShapes((oldShapes) => [...oldShapes, polygon]);
+      setSelectedShapeId(shapes.length);
+      setCurrentShapeType(Shape.Polygon);
+    } else {
+      // Condition currentShapeType == null
+      setCurrentShapeType(null);
+    }
   };
 
   // FUNCTION SQUARE BUTTON HANDLE
@@ -596,6 +615,12 @@ function App() {
           onChange={(e) => setWorkingTitle(e.target.value)}
           value={workingTitle}
         />
+
+        {currentShapeType ? (
+          <div className="modeTitle">CREATION MODE</div>
+        ) : (
+          <div className="modeTitle">SELECT MODE</div>
+        )}
       </div>
       <div className="workspace">
         <Tool
