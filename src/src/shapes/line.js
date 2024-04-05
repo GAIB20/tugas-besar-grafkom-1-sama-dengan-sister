@@ -110,7 +110,7 @@ export class Line extends DrawableObject {
     // this.vertices[1] = transformation.translate(this.final);
   };
 
-  render(gl, positionAttributeLocation, colorAttributeLocation) {
+  render(gl, positionAttributeLocation, colorAttributeLocation, withBorder) {
     var buffer = gl.createBuffer();
     const points = this.convertPointToCoordinates();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -133,6 +133,40 @@ export class Line extends DrawableObject {
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(gl.LINE_STRIP, 0, points.length / 2);
+
+    if (withBorder) {
+      const dotSize = 10;
+      const halfDotSize = dotSize / 2;
+      const dotVertices = [];
+      for (let i = 0; i < this.vertices.length; i++) {
+          const vertex = this.vertices[i];
+          dotVertices.push(
+              vertex.x - halfDotSize, vertex.y - halfDotSize,
+              vertex.x + halfDotSize, vertex.y - halfDotSize,
+              vertex.x + halfDotSize, vertex.y + halfDotSize,
+              vertex.x - halfDotSize, vertex.y - halfDotSize,
+              vertex.x + halfDotSize, vertex.y + halfDotSize,
+              vertex.x - halfDotSize, vertex.y + halfDotSize
+          );
+      }
+      const dotBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, dotBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotVertices), gl.STATIC_DRAW);
+      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(positionAttributeLocation);
+
+      const dotColor = [1, 0, 0, 1]; 
+      const dotColors = Array(dotVertices.length / 2 * 4).fill(dotColor).flat();
+      const dotColorBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, dotColorBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotColors), gl.STATIC_DRAW);
+      gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(colorAttributeLocation);
+
+      for (let i = 0; i < dotVertices.length / 2; i += 6) {
+          gl.drawArrays(gl.TRIANGLES, i, 6);
+      }
+    }
   }
 
   updateShapes(newSize) {
@@ -146,5 +180,28 @@ export class Line extends DrawableObject {
 
   getName(){
     return "Line " + this.id
+  }
+
+  setPivot(x, y) {
+    this.pivotX = x - this.origin.x;
+    this.pivotY = y - this.origin.y;
+  }
+
+  place(x, y) {
+    var lenX = this.final.x - this.origin.x;
+    var lenY = this.final.y - this.origin.y;
+    this.origin.x = x - this.pivotX;
+    this.origin.y = y - this.pivotY;
+    this.final.x = x + (lenX - this.pivotX);
+    this.final.y = y + (lenY - this.pivotY);
+  }
+
+  isInside(x, y) {
+    const distance1 = Math.sqrt((x - this.origin.x) ** 2 + (y - this.origin.y) ** 2);
+    const distance2 = Math.sqrt((x - this.final.x) ** 2 + (y - this.final.y) ** 2);
+    const lineLength = Math.sqrt((this.final.x - this.origin.x) ** 2 + (this.final.y - this.origin.y) ** 2);
+
+    const epsilon = 0.1; 
+    return Math.abs(distance1 + distance2 - lineLength) < epsilon;
   }
 }

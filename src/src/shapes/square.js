@@ -97,8 +97,20 @@ export class Square extends DrawableObject {
     }
     return results;
   };
+  
+  calculateBorderPoints() {
+    const results = [];
 
-  render(gl, positionAttributeLocation, colorAttributeLocation) {
+    results.push(this.vertices[0].x, this.vertices[0].y);
+    results.push(this.vertices[1].x, this.vertices[1].y);
+    results.push(this.vertices[3].x, this.vertices[3].y);
+    results.push(this.vertices[2].x, this.vertices[2].y);
+
+    return results;
+}
+
+
+  render(gl, positionAttributeLocation, colorAttributeLocation, withBorder) {
     var buffer = gl.createBuffer();
     const points = this.convertPointToCoordinates();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -121,6 +133,55 @@ export class Square extends DrawableObject {
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, points.length / 2);
+
+    if (withBorder) {
+      const borderPoints = this.calculateBorderPoints(); 
+      const borderBuffer = gl.createBuffer(); 
+      gl.bindBuffer(gl.ARRAY_BUFFER, borderBuffer); 
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(borderPoints), gl.STATIC_DRAW); 
+      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0); 
+
+      const borderColor = [1, 0, 0, 1]; 
+      const borderColors = Array(borderPoints.length / 2).fill(borderColor).flat(); 
+      const colorBuffer = gl.createBuffer(); 
+      gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer); 
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(borderColors), gl.STATIC_DRAW); 
+      gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0); 
+
+      gl.drawArrays(gl.LINE_LOOP, 0, borderPoints.length / 2);
+
+      const dotSize = 10;
+      const halfDotSize = dotSize / 2;
+      const dotVertices = [];
+      for (let i = 0; i < this.vertices.length; i++) {
+          const vertex = this.vertices[i];
+          dotVertices.push(
+              vertex.x - halfDotSize, vertex.y - halfDotSize,
+              vertex.x + halfDotSize, vertex.y - halfDotSize,
+              vertex.x + halfDotSize, vertex.y + halfDotSize,
+              vertex.x - halfDotSize, vertex.y - halfDotSize,
+              vertex.x + halfDotSize, vertex.y + halfDotSize,
+              vertex.x - halfDotSize, vertex.y + halfDotSize
+          );
+      }
+      const dotBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, dotBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotVertices), gl.STATIC_DRAW);
+      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(positionAttributeLocation);
+
+      const dotColor = [1, 0, 0, 1]; // Color of the dots
+      const dotColors = Array(dotVertices.length / 2 * 4).fill(dotColor).flat();
+      const dotColorBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, dotColorBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotColors), gl.STATIC_DRAW);
+      gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(colorAttributeLocation);
+
+      for (let i = 0; i < dotVertices.length / 2; i += 6) {
+          gl.drawArrays(gl.TRIANGLES, i, 6);
+      }
+    }
   }
 
   transformShades(transformationInput) {
@@ -173,6 +234,17 @@ export class Square extends DrawableObject {
     }
 
     this.transformation = newTransformation;
+  }
+
+  place(x, y) {
+    this.p1.x = x - this.pivotX;
+    this.p1.y = y - this.pivotY;
+    this.p2.x = x - this.pivotX;
+    this.p2.y = y + (this.distance - this.pivotY);
+    this.p3.x = x + (this.distance - this.pivotX);
+    this.p3.y = y - this.pivotY;
+    this.p4.x = x + (this.distance - this.pivotX);
+    this.p4.y = y + (this.distance - this.pivotY);
   }
 
   updateShapes(newSize) {
@@ -234,5 +306,17 @@ export class Square extends DrawableObject {
 
   getPoints() {
     return [this.p1, this.p2, this.p3, this.p4];
+  }
+
+  setPivot(x, y) {
+    this.pivotX = x - this.p1.x;
+    this.pivotY = y - this.p1.y;
+  }
+
+  isInside(x, y) {
+    if (x <= this.p3.x && x >= this.p1.x && y >= this.p1.y && y <= this.p2.y) {
+      return true;
+    }
+    return false;
   }
 }

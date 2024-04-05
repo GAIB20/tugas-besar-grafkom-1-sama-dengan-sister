@@ -21,7 +21,7 @@ import { downloadModel } from "./file/save";
 import { parseFile } from "./file/load";
 
 function App() {
-  const [workingTitle, setWorkingTitle] = useState("Untitled");
+  const [workingTitle, setWorkingTitle] = useState("Potosop");
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [originPoint, setOriginPoint] = useState();
@@ -32,7 +32,7 @@ function App() {
   const [colorAttributeLocation, setColorAttribLocation] = useState();
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
-  const [selectedShapeId, setSelectedShapeId] = useState();
+  const [selectedShapeId, setSelectedShapeId] = useState(null);
   const [selectedPointId, setSelectedPointId] = useState(null);
   const [transformation, setTransformation] = useState(null);
   const [squareSide, setSquareSide] = useState();
@@ -43,6 +43,7 @@ function App() {
   const [polygonPoints, setPolygonPoints] = useState([]);
   const [polygonColorPoints, setPolygonColorPoints] = useState([]);
   const [file, setFile] = useState();
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleSaveModels = () => {
     downloadModel(shapes);
@@ -110,6 +111,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    console.log(selectedShapeId);
     if (selectedShapeId !== null) {
       const selectedShape = shapes[selectedShapeId];
       if (selectedShape != null) {
@@ -124,7 +126,7 @@ function App() {
         setCurrentColor(shapes[selectedShapeId].vertices[0].color);
 
         // Adjust
-        setCurrentShapeType(selectedShape.getShapeType());
+        // setCurrentShapeType(selectedShape.getShapeType());
 
         // If a polygon is selected, change polygonPoints too
         if (selectedShape.getShapeType() == Shape.Polygon) {
@@ -134,6 +136,7 @@ function App() {
       }
     } else {
       setIsPropertiesOpen(false);
+      redrawCanvas();
     }
   }, [selectedShapeId]);
 
@@ -144,7 +147,12 @@ function App() {
   }, [selectedPointId]);
 
   useEffect(() => {
-    setSelectedShapeId(shapes.length - 1);
+    if (shapes.length == 0) {
+      setSelectedShapeId(null);
+      redrawCanvas();
+    } else {
+      setSelectedShapeId(shapes.length - 1);
+    }
   }, [shapes]);
 
   useEffect(() => {
@@ -204,14 +212,23 @@ function App() {
   }, [file]);
 
   const redrawCanvas = () => {
-    for (let i = 0; i < shapes.length; i++) {
-      const currentShape = shapes[i];
-      // console.log(currentShape);
-      currentShape.render(
-        gl,
-        positionAttributeLocation,
-        colorAttributeLocation
-      );
+    if (shapes.length == 0) {
+      if (!gl) {
+        return;
+      }
+      gl.clear(gl.COLOR_BUFFER_BIT);
+    } else {
+      for (let i = 0; i < shapes.length; i++) {
+        const currentShape = shapes[i];
+        // console.log(currentShape);
+        const currentObj = i == selectedShapeId;
+        currentShape.render(
+          gl,
+          positionAttributeLocation,
+          colorAttributeLocation,
+          currentObj
+        );
+      }
     }
     // window.requestAnimationFrame(redrawCanvas);
   };
@@ -227,6 +244,7 @@ function App() {
   };
 
   const handleMouseDown = (event) => {
+    setIsDragging(true);
     const canvas = document.querySelector("canvas");
     var x = canvasX(canvas, event.clientX);
     var y = canvasY(canvas, event.clientY);
@@ -272,18 +290,34 @@ function App() {
     } else {
       if (!isDrawing) {
         // Kasus kalau dia baru mulai gambar
-        setIsDrawing(true);
-        const originPoint = new Point(
-          x,
-          y,
-          new Color(
-            currentColor.r,
-            currentColor.g,
-            currentColor.b,
-            currentColor.a
-          )
-        );
-        setOriginPoint(originPoint);
+        console.log(currentShapeType);
+        if (currentShapeType != null) {
+          setIsDrawing(true);
+          const originPoint = new Point(
+            x,
+            y,
+            new Color(
+              currentColor.r,
+              currentColor.g,
+              currentColor.b,
+              currentColor.a
+            )
+          );
+          setOriginPoint(originPoint);
+        } else {
+          var isObject = false;
+          for (let i = shapes.length - 1; i >= 0; i--) {
+            if (shapes[i].isInside(x, y)) {
+              setSelectedShapeId(i);
+              shapes[i].setPivot(x, y);
+              isObject = true;
+              break;
+            }
+          }
+          if (!isObject) {
+            setSelectedShapeId(null);
+          }
+        }
       } else {
         // Kasus kalau dia udah selesai gambar
         const finalPoint = new Point(
@@ -334,10 +368,7 @@ function App() {
               transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
               canvasCenter: canvasCenter,
             });
-
             setShapes((oldShapes) => [...oldShapes, rectangle]);
-            setSelectedShapeId(shapes.length);
-            redrawCanvas();
             break;
           }
           default:
@@ -350,56 +381,104 @@ function App() {
   };
 
   const handleMouseMove = (event) => {
-    const canvas = document.querySelector("canvas");
-    redrawCanvas();
-    if (isDrawing) {
-      let x2 = canvasX(canvas, event.clientX);
-      let y2 = canvasY(canvas, event.clientY);
-      const finalPoint = new Point(x2, y2, currentColor);
+    if (!isDragging) {
+      const canvas = document.querySelector("canvas");
+      redrawCanvas();
+      if (isDrawing) {
+        let x2 = canvasX(canvas, event.clientX);
+        let y2 = canvasY(canvas, event.clientY);
+        const finalPoint = new Point(x2, y2, currentColor);
 
-      switch (currentShapeType) {
-        case Shape.Square: {
-          const square = new Square({
-            origin: originPoint,
-            final: finalPoint,
-            color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            fromFile: false,
-          });
-          square.render(gl, positionAttributeLocation, colorAttributeLocation);
-          break;
-        }
+        switch (currentShapeType) {
+          case Shape.Square: {
+            const square = new Square({
+              origin: originPoint,
+              final: finalPoint,
+              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+              fromFile: false,
+            });
+            square.render(
+              gl,
+              positionAttributeLocation,
+              colorAttributeLocation,
+              false
+            );
+            break;
+          }
 
-        case Shape.Line: {
-          const line = new Line({
-            origin: originPoint,
-            final: finalPoint,
-          });
-          line.render(gl, positionAttributeLocation, colorAttributeLocation);
-          break;
-        }
-        case Shape.Rectangle: {
-          const rectangle = new Rectangle({
-            origin: originPoint,
-            final: finalPoint,
-            color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-          });
-          rectangle.render(
-            gl,
-            positionAttributeLocation,
-            colorAttributeLocation
-          );
-          break;
+          case Shape.Line: {
+            const line = new Line({
+              origin: originPoint,
+              final: finalPoint,
+            });
+            line.render(
+              gl,
+              positionAttributeLocation,
+              colorAttributeLocation,
+              false
+            );
+            break;
+          }
+          case Shape.Rectangle: {
+            const rectangle = new Rectangle({
+              origin: originPoint,
+              final: finalPoint,
+              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+            });
+            rectangle.render(
+              gl,
+              positionAttributeLocation,
+              colorAttributeLocation
+            );
+            break;
+          }
         }
       }
+    } else {
+      const canvas = document.querySelector("canvas");
+      var width = canvas.width;
+      var height = canvas.height;
+      var x = canvasX(canvas, event.clientX);
+      var y = canvasY(canvas, event.clientY);
+      shapes[selectedShapeId].place(x, y);
+      redrawCanvas();
     }
   };
 
-  const lineButtonClicked = () => {
-    setCurrentShapeType(Shape.Line);
+  const handleMouseUp = (event) => {
+    setIsDragging(false);
+  };
+
+  const refreshChosenButton = () => {
+    document.getElementById("lineButtonTitle").style.backgroundColor = "white";
+    document.getElementById("rectangleButtonTitle").style.backgroundColor =
+      "white";
+    document.getElementById("squareButtonTitle").style.backgroundColor =
+      "white";
+    document.getElementById("polygonButtonTitle").style.backgroundColor =
+      "white";
+  };
+
+  const lineButtonClicked = (e) => {
+    refreshChosenButton();
+    if (currentShapeType == Shape.Line) {
+      setCurrentShapeType(null);
+    } else {
+      setCurrentShapeType(Shape.Line);
+      document.getElementById("lineButtonTitle").style.backgroundColor =
+        "green";
+    }
   };
 
   const rectangleButtonClicked = () => {
-    setCurrentShapeType(Shape.Rectangle);
+    refreshChosenButton();
+    if (currentShapeType == Shape.Rectangle) {
+      setCurrentShapeType(null);
+    } else {
+      setCurrentShapeType(Shape.Rectangle);
+      document.getElementById("rectangleButtonTitle").style.backgroundColor =
+        "green";
+    }
   };
 
   const polygonButtonClicked = () => {
@@ -424,22 +503,44 @@ function App() {
   };
 
   const squareButtonClicked = () => {
-    setCurrentShapeType(Shape.Square);
+    refreshChosenButton();
+    if (currentShapeType == Shape.Square) {
+      setCurrentShapeType(null);
+    } else {
+      setCurrentShapeType(Shape.Square);
+      document.getElementById("squareButtonTitle").style.backgroundColor =
+        "green";
+    }
   };
 
   const handleAnimation = () => {
     console.log("Halo");
-    for (let i = 0; i < shapes.length; i++) {
-      const shape = shapes[i];
-      shape.animateRightAndBack(
-        gl,
-        positionAttributeLocation,
-        colorAttributeLocation
-      );
+    // for (let i = 0; i < shapes.length; i++) {
+    //   const shape = shapes[i];
+    //   shape.animateRightAndBack(
+    //     gl,
+    //     positionAttributeLocation,
+    //     colorAttributeLocation
+    //   );
+    // }
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === "Backspace" && selectedShapeId != null) {
+      shapes.splice(selectedShapeId, 1);
+      if (shapes.length == 0) {
+        setSelectedShapeId(null);
+      } else {
+        if (selectedShapeId == shapes.length) {
+          setSelectedShapeId(selectedShapeId - 1);
+        }
+      }
+      console.log(selectedShapeId, shapes.length);
+      redrawCanvas();
     }
   };
+
   return (
-    <div className="screen">
+    <div className="screen" tabIndex={0} onKeyDown={handleKeyDown}>
       <div className="topbar">
         <input
           className="topbar-logo"
@@ -461,6 +562,7 @@ function App() {
           className="canvasContainer"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
         >
           <canvas className="canvas" id="canvas"></canvas>
         </div>
