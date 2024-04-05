@@ -334,4 +334,60 @@ export class Polygon extends DrawableObject {
     this.points[id].x = x;
     this.points[id].y = y;
   }
+
+  animateRightAndBack() {
+    const moveAmount = 100; // Jumlah geser ke kanan dalam piksel
+    const duration = 3000; // Durasi animasi dalam milidetik
+    let startTime = null;
+    let progress = 0;
+
+    var rz_rand = Math.random()   
+    var decider = Math.floor(rz_rand*4)
+
+    const animateStep = () => {
+      if (!startTime) startTime = Date.now();
+      const elapsed = Date.now() - startTime;
+
+      if (elapsed >= duration) {
+        console.log("Animation end");
+        return; // Hentikan animasi
+      }
+      progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama
+      const currentMove = moveAmount * Math.abs((progress % 2) - 1);
+
+
+      // Aplikasikan perubahan relatif terhadap posisi awal
+      this.points.forEach((vertex) => {
+        if (decider % 2 == 0){
+          vertex.x =  vertex.initialX 
+        } else {
+          if (decider == 1){
+            vertex.x =  vertex.initialX + currentMove * (progress <= 1 ? 1 : -1); 
+          } else {
+            vertex.x =  vertex.initialX - currentMove * (progress <= 1 ? 1 : -1); 
+          }
+        }
+        if (decider == 1) {
+          vertex.y =  vertex.initialY + currentMove * (progress <= 1 ? 1 : -1);
+        } else {
+          if (decider <= 2){
+            vertex.y =  vertex.initialY + currentMove * (progress <= 1 ? 1 : -1);
+          } else {
+            vertex.y =  vertex.initialY - currentMove * (progress <= 1 ? 1 : -1);
+          }
+        }
+      });
+
+      window.requestAnimationFrame(animateStep);
+    };
+
+    if (!this.points[0].initialX) {
+      this.points.forEach((vertex) => {
+        vertex.initialX = vertex.x;
+        vertex.initialY = vertex.y;
+      });
+    }
+
+    window.requestAnimationFrame(animateStep); // Jadwalkan iterasi selanjutnya
+  }
 }
