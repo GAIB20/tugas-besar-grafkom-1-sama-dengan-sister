@@ -13,3 +13,82 @@ export const canvasY = (canvas, y) => {
   return newY;
 };
 
+
+// ========= CONVEX HULL ==============
+
+// Method to find the convex hull using the Divide and Conquer Algorithm
+export const makeConvexHull = (points) => {
+  if (points.length < 3) {
+    return points;
+  }
+
+  points.sort((a, b) => (a[0] !== b[0] ? a[0] - b[0] : a[1] - b[1]));
+
+  const upper = [];
+  const lower = [];
+
+  for (const point of points) {
+    while (
+      upper.length >= 2 &&
+      isNotRightTurn(
+        upper[upper.length - 2],
+        upper[upper.length - 1],
+        point
+      )
+    ) {
+      upper.pop();
+    }
+    upper.push(point);
+  }
+
+  for (let i = points.length - 1; i >= 0; i--) {
+    const point = points[i];
+    while (
+      lower.length >= 2 &&
+      isNotRightTurn(
+        lower[lower.length - 2],
+        lower[lower.length - 1],
+        point
+      )
+    ) {
+      lower.pop();
+    }
+    lower.push(point);
+  }
+
+  const hull = new Set([...upper, ...lower]);
+  return Array.from(hull);
+}
+
+// Function to check the correct direction
+const isNotRightTurn = (a, b, c) => {
+  return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) <= 0;
+}
+
+// MANIPULATION TYPE OF ARRAY OF POINTS
+
+export const convertPointToCoordinates = (points) => {
+  const results = [];
+  for (let i = 0; i < points.length; i++) {
+    results.push(points[i].x, points[i].y);
+  }
+  return results;
+};
+
+export const convertPointToPairs = (points) => {
+  // From Point data type to [x, y]
+  const results = [];
+  for (let i = 0; i < points.length; i++) {
+    results.push([points[i].x, points[i].y]);
+  }
+  return results;
+};
+
+export const convertPairsToCoordinates = (points) => {
+  // From data type [[x, y],[z,..]] to [x, y, z, ..]
+  const results = [];
+  for (let i = 0; i < points.length; i++) {
+    results.push(points[i][0], points[i][1]);
+  }
+  return results;
+};

@@ -4,7 +4,12 @@ import Properties from "./section/Properties";
 import { useState, useEffect } from "react";
 import { Point } from "./model/point";
 import { createShader, createProgram } from "./shader";
-import { canvasX, canvasY } from "./utils/misc";
+import {
+  canvasX,
+  canvasY,
+  convertPointToPairs,
+  makeConvexHull,
+} from "./utils/misc";
 import * as webglUtils from "webgl-utils.js";
 import { Shape } from "./constant/shape";
 import {
@@ -109,6 +114,7 @@ function App() {
     webglUtils.resizeCanvasToDisplaySize(canvas);
   }, []);
 
+  // LISTENER TO CURRENT SELECTED SHAPE ID
   useEffect(() => {
     if (selectedShapeId !== null) {
       const selectedShape = shapes[selectedShapeId];
@@ -121,7 +127,7 @@ function App() {
           .getAllData();
         setTransformation(transformationConfig);
         setSelectedPointId(0);
-        setCurrentColor(shapes[selectedShapeId].vertices[0].color);
+        // setCurrentColor(shapes[selectedShapeId].vertices[0].color); // BENTAR
 
         // Adjust
         // setCurrentShapeType(selectedShape.getShapeType());
@@ -134,26 +140,29 @@ function App() {
       }
     } else {
       setIsPropertiesOpen(false);
-      redrawCanvas()
+      redrawCanvas();
     }
   }, [selectedShapeId]);
 
-  useEffect(() => {
-    if (selectedPointId !== null) {
-      setCurrentColor(shapes[selectedShapeId].vertices[selectedPointId].color);
-    }
-  }, [selectedPointId]);
+  // LISTENER TO CURRENT SELECTED POINT
+  // BENTAR
+  // useEffect(() => {
+  //   if (selectedPointId !== null) {
+  //     setCurrentColor(shapes[selectedShapeId].vertices[selectedPointId].color);
+  //   }
+  // }, [selectedPointId]);
 
+  // LISTENER TO CURRENT SELECTED SHAPE
   useEffect(() => {
     setSelectedShapeId(shapes.length - 1);
   }, [shapes]);
 
+  // LISTENER TO CURRENT SELECTED COLOR
   useEffect(() => {
-    console.log("MASUKKK");
-    console.log();
     redrawCanvas();
   }, [currentColor]);
 
+  // LISTENER TO TRANSFORMATION CHANGES
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
 
@@ -165,6 +174,7 @@ function App() {
     }
   }, [transformation]);
 
+  // LISTENER TO SQUARE ATTRIBUTES
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
     if (selectedShape) {
@@ -182,6 +192,7 @@ function App() {
     }
   }, [squareSide]);
 
+  // LISTENER TO RECTANGLE ATTRIBUTES
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
     if (selectedShape) {
@@ -190,6 +201,7 @@ function App() {
     }
   }, [rectangleSize]);
 
+  // LISTENER TO FILE OBJECT
   useEffect(() => {
     if (file) {
       const reader = new FileReader();
@@ -204,6 +216,7 @@ function App() {
     }
   }, [file]);
 
+  // REDRAW CANVAS FUNCTION
   const redrawCanvas = () => {
     for (let i = 0; i < shapes.length; i++) {
       const currentShape = shapes[i];
@@ -218,6 +231,7 @@ function App() {
     }
   };
 
+  // GET THE CENTER POINT OF CANVAS
   const getCanvasCenter = (canvas) => {
     // Get Canvas Center
     var rect = canvas.getBoundingClientRect();
@@ -228,17 +242,16 @@ function App() {
     return canvasCenter;
   };
 
+  // LISTENER TO MOUSE CLICK
   const handleMouseDown = (event) => {
     const canvas = document.querySelector("canvas");
     var x = canvasX(canvas, event.clientX);
     var y = canvasY(canvas, event.clientY);
-    // console.log(x, y);
-
     var canvasCenter = getCanvasCenter(canvas);
 
     // Special Case for Polygons
     if (currentShapeType == Shape.Polygon) {
-      var point = new Point(x, y);
+      var point = new Point(x, y, new Color(0, 0, 0, 1));
 
       // // Check if it is to erase
       // var idx = undefined
@@ -263,17 +276,33 @@ function App() {
       polygonPoints.push(point);
       polygonColorPoints.push(...colorRgb);
 
+      // Make convexHull of the points
+      const pointPairs = convertPointToPairs(polygonPoints);
+      var convexHull = makeConvexHull(pointPairs);
+      console.log(convexHull)
+
+      var points = [];
+      for (var i = 0; i < convexHull.length; i++) {
+        points[i] = new Point(
+          convexHull[i][0],
+          convexHull[i][1],
+          new Color(0, 0, 0, 1)
+        );
+      }
+      setPolygonPoints(points);
+
+
+      // Set points to Polygon
       const selectedPolygon = shapes[selectedShapeId];
-      selectedPolygon.setPoints(polygonPoints);
+      selectedPolygon.setPoints(points);
       selectedPolygon.setColorPoints(polygonColorPoints);
 
       // Redraw Canvas
       redrawCanvas();
-      setPolygonPoints(selectedPolygon.getPoints());
-      console.log(polygonPoints);
+      // console.log(polygonPoints);
     } else {
       if (!isDrawing) {
-        // Kasus kalau dia baru mulai gambar
+        // START DRAWING CASE
         console.log(currentShapeType);
         if (currentShapeType != null) {
           setIsDrawing(true);
@@ -301,9 +330,8 @@ function App() {
             setSelectedShapeId(null);
           }
         }
-        
       } else {
-        // Kasus kalau dia udah selesai gambar
+        // FINISH DRAWING CASE
         const finalPoint = new Point(
           x,
           y,
@@ -364,6 +392,7 @@ function App() {
     }
   };
 
+  // LISTENER TO MOUSE MOVE
   const handleMouseMove = (event) => {
     const canvas = document.querySelector("canvas");
     redrawCanvas();
@@ -380,7 +409,12 @@ function App() {
             color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             fromFile: false,
           });
-          square.render(gl, positionAttributeLocation, colorAttributeLocation, false);
+          square.render(
+            gl,
+            positionAttributeLocation,
+            colorAttributeLocation,
+            false
+          );
           break;
         }
 
@@ -389,7 +423,12 @@ function App() {
             origin: originPoint,
             final: finalPoint,
           });
-          line.render(gl, positionAttributeLocation, colorAttributeLocation, false);
+          line.render(
+            gl,
+            positionAttributeLocation,
+            colorAttributeLocation,
+            false
+          );
           break;
         }
         case Shape.Rectangle: {
@@ -409,34 +448,42 @@ function App() {
     }
   };
 
+  // REFRESH BUTTON FUNCTION
   const refreshChosenButton = () => {
     document.getElementById("lineButtonTitle").style.backgroundColor = "white";
-    document.getElementById("rectangleButtonTitle").style.backgroundColor = "white";
-    document.getElementById("squareButtonTitle").style.backgroundColor = "white";
-    document.getElementById("polygonButtonTitle").style.backgroundColor = "white";
-  }
+    document.getElementById("rectangleButtonTitle").style.backgroundColor =
+      "white";
+    document.getElementById("squareButtonTitle").style.backgroundColor =
+      "white";
+    document.getElementById("polygonButtonTitle").style.backgroundColor =
+      "white";
+  };
 
+  // FUNCTION LINE BUTTON HANDLE
   const lineButtonClicked = (e) => {
-    refreshChosenButton()
+    refreshChosenButton();
     if (currentShapeType == Shape.Line) {
       setCurrentShapeType(null);
     } else {
       setCurrentShapeType(Shape.Line);
-      document.getElementById("lineButtonTitle").style.backgroundColor = "green";
+      document.getElementById("lineButtonTitle").style.backgroundColor =
+        "green";
     }
-    
   };
 
+  // FUNCTION RECTANGLE BUTTON HANDLE
   const rectangleButtonClicked = () => {
-    refreshChosenButton()
+    refreshChosenButton();
     if (currentShapeType == Shape.Rectangle) {
       setCurrentShapeType(null);
     } else {
       setCurrentShapeType(Shape.Rectangle);
-      document.getElementById("rectangleButtonTitle").style.backgroundColor = "green";
+      document.getElementById("rectangleButtonTitle").style.backgroundColor =
+        "green";
     }
   };
 
+  // FUNCTION POLYGON BUTTON HANDLE
   const polygonButtonClicked = () => {
     setCurrentShapeType(Shape.Polygon);
 
@@ -458,13 +505,15 @@ function App() {
     setSelectedShapeId(shapes.length);
   };
 
+  // FUNCTION SQUARE BUTTON HANDLE
   const squareButtonClicked = () => {
-    refreshChosenButton()
+    refreshChosenButton();
     if (currentShapeType == Shape.Square) {
       setCurrentShapeType(null);
     } else {
       setCurrentShapeType(Shape.Square);
-      document.getElementById("squareButtonTitle").style.backgroundColor = "green";
+      document.getElementById("squareButtonTitle").style.backgroundColor =
+        "green";
     }
   };
 

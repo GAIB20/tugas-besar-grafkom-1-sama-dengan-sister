@@ -1,6 +1,8 @@
 import { Shape } from "../constant/shape";
+import { Color } from "../model/color";
 import { Point } from "../model/point";
 import Matrix, { multiplyMatrices } from "../utils/matrix";
+import { convertPointToPairs, makeConvexHull } from "../utils/misc";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
 
@@ -15,6 +17,11 @@ export class Polygon extends DrawableObject {
     this.transformation = transformation;
     this.canvasCenter = canvasCenter;
     this.convexHull = [];
+
+    this.vertice = []
+    for (let i = 0; i < points.length; i++){
+      this.vertice[i] = new Point(this.points[i].x, this.points[i].y, new Color(0, 0, 0, 1))
+    }
   }
 
   getTransformation = () => {
@@ -43,22 +50,10 @@ export class Polygon extends DrawableObject {
   };
 
   render(gl, positionAttributeLocation, colorAttributeLocation) {
-    if (this.points.length >= 3) {
-      // else is ignored
+    if (this.points.length >= 3) { // else is ignored
       var buffer = gl.createBuffer();
-      // const points = this.convertPointToCoordinates(this.points);
-
-      const pointPairs = this.convertPointToPairs(this.points);
-
-      // Make ConvexHull
-      var convexHull = this.makeConvexHull(pointPairs);
-
-      this.points = []
-      for (var i = 0; i < convexHull.length ; i++){
-        this.points[i] = new Point(convexHull[i][0], convexHull[i][1])
-      }
-
-      this.convexHull = this.sortConvexHullForWebGL(convexHull);
+      const tempConvexHull = convertPointToPairs(this.points);
+      this.convexHull = this.sortConvexHullForWebGL(tempConvexHull);
       // console.log(this.convexHull);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -86,35 +81,11 @@ export class Polygon extends DrawableObject {
       );
       gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(colorAttributeLocation);
+
       gl.drawArrays(gl.TRIANGLE_FAN, 0, this.points.length);
     }
   }
 
-  convertPointToCoordinates = (points) => {
-    const results = [];
-    for (let i = 0; i < points.length; i++) {
-      results.push(points[i].x, points[i].y);
-    }
-    return results;
-  };
-
-  convertPointToPairs = (points) => {
-    // From Point data type to [x, y]
-    const results = [];
-    for (let i = 0; i < points.length; i++) {
-      results.push([points[i].x, points[i].y]);
-    }
-    return results;
-  };
-
-  convertPairsToCoordinates = (points) => {
-    // From data type [[x, y],[z,..]] to [x, y, z, ..]
-    const results = [];
-    for (let i = 0; i < points.length; i++) {
-      results.push(points[i][0], points[i][1]);
-    }
-    return results;
-  };
 
   transformShades(transformationInput) {
     if (this.points.length >= 3) { // else is ignored
@@ -151,7 +122,7 @@ export class Polygon extends DrawableObject {
         transformationMatrix.getMatrix(),
         shapeMatrix.getMatrix()
       );
-      // console.log(resultMatrix);
+
       for (let i = 0; i < 4; i++) {
         this.points[i].x = resultMatrix[0][i];
         this.points[i].y = resultMatrix[1][i];
@@ -166,56 +137,7 @@ export class Polygon extends DrawableObject {
     return "Polygon" + this.id;
   }
 
-  // ========= CONVEX HULL ==============
 
-  // Method to find the convex hull using the Divide and Conquer Algorithm
-  makeConvexHull(points) {
-    if (points.length < 3) {
-      return points;
-    }
-
-    points.sort((a, b) => (a[0] !== b[0] ? a[0] - b[0] : a[1] - b[1]));
-
-    const upper = [];
-    const lower = [];
-
-    for (const point of points) {
-      while (
-        upper.length >= 2 &&
-        this.isNotRightTurn(
-          upper[upper.length - 2],
-          upper[upper.length - 1],
-          point
-        )
-      ) {
-        upper.pop();
-      }
-      upper.push(point);
-    }
-
-    for (let i = points.length - 1; i >= 0; i--) {
-      const point = points[i];
-      while (
-        lower.length >= 2 &&
-        this.isNotRightTurn(
-          lower[lower.length - 2],
-          lower[lower.length - 1],
-          point
-        )
-      ) {
-        lower.pop();
-      }
-      lower.push(point);
-    }
-
-    const hull = new Set([...upper, ...lower]);
-    return Array.from(hull);
-  }
-
-  // Function to check the correct direction
-  isNotRightTurn(a, b, c) {
-    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) <= 0;
-  }
 
   // // ======== SORTING ALGORITHM =============
 

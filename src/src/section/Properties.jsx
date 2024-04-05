@@ -26,13 +26,16 @@ const Properties = ({
   const [propsOpen, setPropsOpen] = useState(true);
   // [color, setColor] ngebantu sync data
   const [color, setColor] = useState();
-  useEffect(() => {
-    if (shapes[selectedShapeId]?.vertices[selectedPointId]?.color) {
-      setColor(
-        rgbToHex(shapes[selectedShapeId]?.vertices[selectedPointId]?.color)
-      );
-    }
-  }, [selectedShapeId, selectedPointId]);
+
+  // LISTENER TO SELECTET SHAPE ID AND POINT ID
+  // BENTAR
+  // useEffect(() => {
+  //   if (shapes[selectedShapeId]?.vertices[selectedPointId]?.color) {
+  //     setColor(
+  //       rgbToHex(shapes[selectedShapeId]?.vertices[selectedPointId]?.color)
+  //     );
+  //   }
+  // }, [selectedShapeId, selectedPointId]);
 
   const changePropsState = () => {
     if (propsOpen) {
