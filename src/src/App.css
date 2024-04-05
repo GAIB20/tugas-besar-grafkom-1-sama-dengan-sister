@@ -64,6 +64,17 @@
   border-bottom: 2px solid white;
 }
 
+.modeTitle {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-right: 20px;
+  margin-top: 5px;
+}
+
 /* Properties */
 
 .properties {
@@ -238,37 +249,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0px 0px;
-}
-
-.button-container {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 4em;
-  gap: 16px;
-  max-width: 100%;
-}
-
-.button-container button {
-  padding-inline: 16px;
-  padding-top: 8px;
-  margin-inline: 10px;
-}
-
-.button-container input {
-  margin-inline: 10px;
+  padding: 0px 10px;
 }
 
 .toolbarButton {
-  width: 50%;
+  width: 80%;
+  max-width: 150px;
   position: relative;
   cursor: pointer;
   aspect-ratio: 1;
   overflow: hidden;
   margin-top: 10px;
 }
+
 
 .toolbarButton:hover {
   opacity: 0.8;
@@ -363,3 +356,64 @@
 .input-color {
   width: 100%;
 }
+
+/* Button */
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 4em;
+  gap: 12px;
+  width: 100%;
+}
+
+.saveButton{
+  border-radius: 12px;
+  padding: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+
+.saveButton:hover {
+  background-color: #afafaf;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.inputButton{
+  border-radius: 12px;
+  padding: 6px 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  text-align: center;
+  background-color: #f0f0f0;
+  color: black;
+}
+
+.inputButton:hover {
+  background-color: #afafaf;
+}
+
+.animateButton{
+  border-radius: 12px;
+  padding: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+
+.animateButton:hover {
+  background-color: #afafaf;
+}
+

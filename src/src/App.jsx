@@ -50,6 +50,7 @@ function App() {
   const [file, setFile] = useState();
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggingVertex, setIsDraggingVertex] = useState(false);
+  console.log(polygonPoints)
 
   const handleSaveModels = () => {
     downloadModel(shapes);
@@ -271,20 +272,23 @@ function App() {
       var point = new Point(x, y, new Color(0, 0, 0, 1));
 
       // Check if it is to erase
-      var idx = null
-      for (var i = 0; i < polygonPoints.length; i++){
-        var distance =  Math.sqrt(Math.pow((polygonPoints[i].x - x),2) + Math.pow((polygonPoints[i].y - y),2))
-        if (distance < 10){
+      var idx = null;
+      for (var i = 0; i < polygonPoints.length; i++) {
+        var distance = Math.sqrt(
+          Math.pow(polygonPoints[i].x - x, 2) +
+            Math.pow(polygonPoints[i].y - y, 2)
+        );
+        if (distance < 10) {
           idx = i;
-          break
+          break;
         }
       }
 
       // If found, then erase
-      if (idx){
-        console.log("FOUND")
+      if (idx) {
+        console.log("FOUND");
         polygonPoints.splice(idx, 1);
-        polygonColorPoints.splice(idx,4);
+        polygonColorPoints.splice(idx, 4);
       } else {
         polygonPoints.push(point);
         polygonColorPoints.push(...colorRgb);
@@ -309,10 +313,9 @@ function App() {
       const selectedPolygon = shapes[selectedShapeId];
       selectedPolygon.setPoints(points);
       selectedPolygon.setColorPoints(polygonColorPoints);
-      
+
       // Redraw Canvas
       redrawCanvas();
-
     } else {
       if (!isDrawing) {
         // START DRAWING CASE
@@ -340,7 +343,7 @@ function App() {
               if (isCorner != null) {
                 setIsDraggingVertex(true);
                 setSelectedPointId(isCorner);
-              } 
+              }
               isObject = true;
               break;
             }
@@ -470,7 +473,7 @@ function App() {
       const canvas = document.querySelector("canvas");
       var x = canvasX(canvas, event.clientX);
       var y = canvasY(canvas, event.clientY);
-      
+
       if (selectedShapeId != null) {
         console.log(isDraggingVertex);
         if (!isDraggingVertex) {
@@ -480,7 +483,6 @@ function App() {
         }
         redrawCanvas();
       }
-      
     }
   };
 
@@ -594,6 +596,12 @@ function App() {
           onChange={(e) => setWorkingTitle(e.target.value)}
           value={workingTitle}
         />
+
+        {currentShapeType ? (
+          <div className="modeTitle">CREATION MODE</div>
+        ) : (
+          <div className="modeTitle">SELECT MODE</div>
+        )}
       </div>
       <div className="workspace">
         <Tool

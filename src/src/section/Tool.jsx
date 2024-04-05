@@ -122,10 +122,14 @@ function Tool({
             Polygon{" "}
           </div>
         </button>
+
         <div className="button-container">
-          <button onClick={handleSaveModels}>Save</button>
+          <button className="saveButton" onClick={handleSaveModels}>Save</button>
+          <label htmlFor="fileInput" className="inputButton" > Input </label>
           <input
             type="file"
+            id="fileInput"
+            className="inputButton"
             onChange={(e) => {
               console.log("Masuk on change");
               if (e.target.files && e.target.files.length > 0) {
@@ -133,7 +137,7 @@ function Tool({
               }
             }}
           />
-          <button onClick={()=>handleAnimation()}>
+          <button className="animateButton" onClick={()=>handleAnimation()}>
             Animate
           </button>
         </div>
