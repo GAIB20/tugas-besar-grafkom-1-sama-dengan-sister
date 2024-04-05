@@ -49,6 +49,54 @@ const Properties = ({
     }
   };
 
+  const resetTransformation = () => {
+    setTransformation((oldTransformation) => ({
+      ...oldTransformation,
+      rz: 0,
+      rvz: 0,
+      sx: 0,
+      sy: 0,
+      shx: 0,
+      shy: 0,
+    }));
+  };
+
+  const handleWidthUpdate = (e) => {
+    const selectedShape = shapes[selectedShapeId];
+    if (selectedShape) {
+      selectedShape.updateShapes({
+        width: Number(e.target.value),
+        length: rectangleSize.length,
+      });
+      resetTransformation();
+      redrawCanvas();
+    }
+  };
+
+  const handleLengthUpdate = (e) => {
+    const selectedShape = shapes[selectedShapeId];
+    console.log("Ini shapes :", shapes);
+    if (selectedShape) {
+      selectedShape.updateShapes({
+        width: Number(e.target.value),
+        length: rectangleSize.length,
+      });
+      console.log("Ini selcted shape : ", selectedShape);
+      resetTransformation();
+      redrawCanvas();
+    }
+  };
+
+  const handleSquareChange = (e) => {
+    const selectedShape = shapes[selectedShapeId];
+    if (selectedShape) {
+      selectedShape.updateShapes(Number(e.target.value));
+      setSquareSide(Number(e.target.value));
+      redrawCanvas();
+      resetTransformation();
+    }
+  };
+
   return (
     <>
       <div className="properties" id="properties">
@@ -97,7 +145,13 @@ const Properties = ({
                 {shapes[selectedShapeId]?.vertices?.map((point, idx) => {
                   return (
                     <option value={idx} key={idx}>
-                      {"Point "+ String(idx+1) + " (" + String(point.x.toFixed(3)) + ",  " + String(point.y.toFixed(3)) +")"}
+                      {"Point " +
+                        String(idx + 1) +
+                        " (" +
+                        String(point.x.toFixed(3)) +
+                        ",  " +
+                        String(point.y.toFixed(3)) +
+                        ")"}
                     </option>
                   );
                 })}
@@ -352,7 +406,7 @@ const Properties = ({
                       className="slider"
                       value={squareSide}
                       onChange={(e) => {
-                        setSquareSide(Number(e.target.value));
+                        handleSquareChange(e);
                       }}
                     />
                   </>
@@ -376,6 +430,7 @@ const Properties = ({
                         step={SLIDER_STEPS}
                         value={rectangleSize.width}
                         onChange={(e) => {
+                          handleWidthUpdate(e);
                           setRectangleSize((oldSize) => ({
                             ...oldSize,
                             width: Number(e.target.value),
@@ -397,6 +452,7 @@ const Properties = ({
                         step={SLIDER_STEPS}
                         value={rectangleSize.length}
                         onChange={(e) => {
+                          handleLengthUpdate(e);
                           setRectangleSize((oldSize) => ({
                             ...oldSize,
                             length: Number(e.target.value),

@@ -77,7 +77,6 @@ export const parseFile = (content, lastId) => {
       }
       case "Polygon": {
         const points = stringToPoints(vertices);
-        console.log("Ini points : ", points);
         const polygon = new Polygon(
           points,
           id,

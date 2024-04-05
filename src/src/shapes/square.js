@@ -375,10 +375,8 @@ export class Square extends DrawableObject {
         return; // Hentikan animasi
       }
       progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama
+
       const currentMove = moveAmount * Math.abs((progress % 2) - 1);
-
-
-      // Aplikasikan perubahan relatif terhadap posisi awal
       this.vertices.forEach((vertex) => {
         if (decider % 2 == 0){
           vertex.x =  vertex.initialX + currentMove * (progress <= 1 ? 1 : -1); 

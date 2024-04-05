@@ -1,4 +1,3 @@
-import { Color } from "./color";
 
 export class Point {
   constructor(x, y, color) {
