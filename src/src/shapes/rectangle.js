@@ -321,8 +321,14 @@ export class Rectangle extends DrawableObject {
   }
 
   setPivot(x, y) {
-    this.pivotX = x - this.p1.x;
-    this.pivotY = y - this.p1.y;
+    this.pivotX1 = x - this.p1.x;
+    this.pivotY1 = y - this.p1.y;
+    this.pivotX2 = x - this.p2.x;
+    this.pivotY2 = y - this.p2.y;
+    this.pivotX3 = x - this.p3.x;
+    this.pivotY3 = y - this.p3.y;
+    this.pivotX4 = x - this.p4.x;
+    this.pivotY4 = y - this.p4.y;
   }
 
   isCorner(x, y) {
@@ -381,17 +387,17 @@ export class Rectangle extends DrawableObject {
 
     window.requestAnimationFrame(animateStep); // Jadwalkan iterasi selanjutnya
   }
+
+
   place(x, y) {
-    var lenX = this.p4.x - this.p1.x;
-    var lenY = this.p2.y - this.p1.y;
-    this.p1.x = x - this.pivotX;
-    this.p1.y = y - this.pivotY;
-    this.p2.x = x - this.pivotX;
-    this.p2.y = y + (lenY - this.pivotY);
-    this.p3.x = x + (lenX - this.pivotX);
-    this.p3.y = y + (lenY - this.pivotY);
-    this.p4.x = x + (lenX - this.pivotX);
-    this.p4.y = y - this.pivotY;
+    this.p1.x = x - this.pivotX1;
+    this.p1.y = y - this.pivotY1;
+    this.p2.x = x - this.pivotX2;
+    this.p2.y = y - this.pivotY2;
+    this.p3.x = x - this.pivotX3;
+    this.p3.y = y - this.pivotY3;
+    this.p4.x = x - this.pivotX4;
+    this.p4.y = y - this.pivotY4;
   }
 
   isInside(x, y) {

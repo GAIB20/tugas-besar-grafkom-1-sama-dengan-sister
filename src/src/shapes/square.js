@@ -237,14 +237,14 @@ export class Square extends DrawableObject {
   }
 
   place(x, y) {
-    this.p1.x = x - this.pivotX;
-    this.p1.y = y - this.pivotY;
-    this.p2.x = x - this.pivotX;
-    this.p2.y = y + (this.distance - this.pivotY);
-    this.p3.x = x + (this.distance - this.pivotX);
-    this.p3.y = y - this.pivotY;
-    this.p4.x = x + (this.distance - this.pivotX);
-    this.p4.y = y + (this.distance - this.pivotY);
+    this.p1.x = x - this.pivotX1;
+    this.p1.y = y - this.pivotY1;
+    this.p2.x = x - this.pivotX2;
+    this.p2.y = y - this.pivotY2;
+    this.p3.x = x - this.pivotX3;
+    this.p3.y = y - this.pivotY3;
+    this.p4.x = x - this.pivotX4;
+    this.p4.y = y - this.pivotY4;
   }
 
   isCorner(x, y) {
@@ -329,8 +329,14 @@ export class Square extends DrawableObject {
   }
 
   setPivot(x, y) {
-    this.pivotX = x - this.p1.x;
-    this.pivotY = y - this.p1.y;
+    this.pivotX1 = x - this.p1.x;
+    this.pivotY1 = y - this.p1.y;
+    this.pivotX2 = x - this.p2.x;
+    this.pivotY2 = y - this.p2.y;
+    this.pivotX3 = x - this.p3.x;
+    this.pivotY3 = y - this.p3.y;
+    this.pivotX4 = x - this.p4.x;
+    this.pivotY4 = y - this.p4.y;
   }
 
   isInside(x, y) {
