@@ -89,7 +89,7 @@ export class Polygon extends DrawableObject {
 
   transformShades(transformationInput) {
     if (this.points.length >= 3) { // else is ignored
-      const centroid = this.findCentroid(this.convexHull);
+      const centroid = this.findCentroid();
       const newTransformation = new Transformation(
         transformationInput.x,
         transformationInput.y,
@@ -115,7 +115,6 @@ export class Polygon extends DrawableObject {
         var tempVertices = [this.points[i].x, this.points[i].y, 0, 1];
         tempMatrix.push(tempVertices);
       }
-      shapeMatrix.printMatrix()
       shapeMatrix.insertMatrix(tempMatrix);
       shapeMatrix.transpose();
       var resultMatrix = multiplyMatrices(
@@ -123,7 +122,9 @@ export class Polygon extends DrawableObject {
         shapeMatrix.getMatrix()
       );
 
-      for (let i = 0; i < 4; i++) {
+
+
+      for (let i = 0; i < this.points.length; i++) {
         this.points[i].x = resultMatrix[0][i];
         this.points[i].y = resultMatrix[1][i];
       }
@@ -173,15 +174,15 @@ export class Polygon extends DrawableObject {
     return sortedVertices;
   }
 
-  findCentroid(points) {
+  findCentroid() {
     let centroidX = 0;
     let centroidY = 0;
-    const n = points.length;
+    const n = this.points.length;
 
     // Calculate the sum of x and y coordinates
-    for (let i = 0; i < n / 2; i += 2) {
-      centroidX += points[i];
-      centroidY += points[i + 1];
+    for (let i = 0; i < n; i++) {
+      centroidX += this.points[i].x;
+      centroidY += this.points[i].y;
     }
 
     // Calculate the average of x and y coordinates

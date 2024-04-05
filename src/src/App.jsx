@@ -167,7 +167,6 @@ function App() {
     const selectedShape = shapes[selectedShapeId];
 
     if (selectedShape) {
-      console.log("Masuk ke transformation");
       // Update the transformation data to the one that the shape holds
       selectedShape.transformShades(transformation);
       redrawCanvas();
@@ -279,7 +278,6 @@ function App() {
       // Make convexHull of the points
       const pointPairs = convertPointToPairs(polygonPoints);
       var convexHull = makeConvexHull(pointPairs);
-      console.log(convexHull)
 
       var points = [];
       for (var i = 0; i < convexHull.length; i++) {
@@ -291,15 +289,15 @@ function App() {
       }
       setPolygonPoints(points);
 
-
       // Set points to Polygon
       const selectedPolygon = shapes[selectedShapeId];
       selectedPolygon.setPoints(points);
       selectedPolygon.setColorPoints(polygonColorPoints);
+      console.log(selectedPolygon.getPoints());
+      
 
       // Redraw Canvas
       redrawCanvas();
-      // console.log(polygonPoints);
     } else {
       if (!isDrawing) {
         // START DRAWING CASE

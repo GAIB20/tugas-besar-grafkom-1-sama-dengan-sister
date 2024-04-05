@@ -75,11 +75,6 @@ class Transformation {
     return matrix;
   }
 
-  // translate = (point) => {
-  //   const position = [point.x, point.y, 1];
-  //   const translatedMatrix = this.translationMatrix.multiplyMatrix(position);
-  //   return new Point(translatedMatrix[0], translatedMatrix[1]);
-  // };
 
   generateRotationZMatrix(deg) {
     const rad = degToRad(deg * ROTATION_MULTIPLIER);
