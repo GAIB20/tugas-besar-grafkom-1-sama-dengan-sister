@@ -28,14 +28,14 @@ const Properties = ({
   const [color, setColor] = useState();
 
   // LISTENER TO SELECTET SHAPE ID AND POINT ID
-  // BENTAR
-  // useEffect(() => {
-  //   if (shapes[selectedShapeId]?.vertices[selectedPointId]?.color) {
-  //     setColor(
-  //       rgbToHex(shapes[selectedShapeId]?.vertices[selectedPointId]?.color)
-  //     );
-  //   }
-  // }, [selectedShapeId, selectedPointId]);
+  useEffect(() => {
+    const selectedShape = shapes[selectedShapeId];
+    if (selectedShape?.vertices[selectedPointId]?.color) {
+      setColor(
+        rgbToHex(shapes[selectedShapeId]?.vertices[selectedPointId]?.color)
+      );
+    }
+  }, [selectedShapeId, selectedPointId]);
 
   const changePropsState = () => {
     if (propsOpen) {
@@ -125,6 +125,7 @@ const Properties = ({
                   }}
                 />
               </div>
+
               <div className="slidecontainer">
                 <b>
                   {" "}

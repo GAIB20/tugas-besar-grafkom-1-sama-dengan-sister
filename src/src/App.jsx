@@ -50,7 +50,7 @@ function App() {
   const [file, setFile] = useState();
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggingVertex, setIsDraggingVertex] = useState(false);
-  console.log(polygonPoints)
+  console.log(polygonPoints);
 
   const handleSaveModels = () => {
     downloadModel(shapes);
@@ -136,10 +136,11 @@ function App() {
         // Adjust
         // setCurrentShapeType(selectedShape.getShapeType());
 
-        // If a polygon is selected, change polygonPoints too
+        // If a polygon is selected, change polygonPoints and set to Creation Mode
         if (selectedShape.getShapeType() == Shape.Polygon) {
           var tempPoints = selectedShape.getPoints();
           setPolygonPoints(tempPoints);
+          setCurrentShapeType(Shape.Polygon);
         }
         redrawCanvas();
       }
@@ -286,7 +287,6 @@ function App() {
 
       // If found, then erase
       if (idx) {
-        console.log("FOUND");
         polygonPoints.splice(idx, 1);
         polygonColorPoints.splice(idx, 4);
       } else {
@@ -304,7 +304,12 @@ function App() {
         points[i] = new Point(
           convexHull[i][0],
           convexHull[i][1],
-          new Color(0, 0, 0, 1)
+          new Color(
+            currentColor.r,
+            currentColor.g,
+            currentColor.b,
+            currentColor.a
+          )
         );
       }
       setPolygonPoints(points);
@@ -410,6 +415,7 @@ function App() {
         }
         setOriginPoint(undefined);
         setIsDrawing(false);
+        setCurrentShapeType(null);
       }
     }
   };
@@ -529,24 +535,29 @@ function App() {
 
   // FUNCTION POLYGON BUTTON HANDLE
   const polygonButtonClicked = () => {
-    setCurrentShapeType(Shape.Polygon);
-
     // Reset Polygon Points
     setPolygonPoints([]);
     setPolygonColorPoints([]);
 
-    // For Polygon, on Button Clicked, a new Polygon is Constructed
-    const canvas = document.querySelector("canvas");
-    var canvasCenter = getCanvasCenter(canvas);
-    const polygon = new Polygon(
-      [],
-      polygonColorPoints,
-      shapes.length,
-      new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
-      canvasCenter
-    );
-    setShapes((oldShapes) => [...oldShapes, polygon]);
-    setSelectedShapeId(shapes.length);
+    if (currentShapeType != Shape.Polygon) {
+      // For Polygon, on Button Clicked, a new Polygon is Constructed
+      const canvas = document.querySelector("canvas");
+      var canvasCenter = getCanvasCenter(canvas);
+      const polygon = new Polygon(
+        [],
+        polygonColorPoints,
+        shapes.length,
+        new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+        canvasCenter
+      );
+      setShapes((oldShapes) => [...oldShapes, polygon]);
+      setSelectedShapeId(shapes.length);
+      setCurrentShapeType(Shape.Polygon);
+
+    } else {
+      // Condition currentShapeType == null
+      setCurrentShapeType(null);
+    }
   };
 
   // FUNCTION SQUARE BUTTON HANDLE

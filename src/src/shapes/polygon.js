@@ -2,17 +2,17 @@ import { Shape } from "../constant/shape";
 import { Color } from "../model/color";
 import { Point } from "../model/point";
 import Matrix, { multiplyMatrices } from "../utils/matrix";
-import { convertPointToPairs, makeConvexHull } from "../utils/misc";
+import { convertPointToPairs } from "../utils/misc";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
 
-const REFERENCE_POINT = [0, 0];
 
 export class Polygon extends DrawableObject {
   constructor(points, color, id, transformation, canvasCenter) {
     super(id, Shape.Polygon, color);
     this.points = points;
     this.colorPoints = color;
+    this.vertices = this.points;
 
     this.transformation = transformation;
     this.canvasCenter = canvasCenter;
@@ -129,6 +129,7 @@ export class Polygon extends DrawableObject {
         this.points[i].y = resultMatrix[1][i];
       }
       this.transformation = newTransformation;
+      this.vertices = this.points;
     }
   }
 
