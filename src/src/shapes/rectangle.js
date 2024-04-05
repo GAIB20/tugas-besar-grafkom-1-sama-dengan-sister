@@ -135,6 +135,7 @@ export class Rectangle extends DrawableObject {
   render(gl, positionAttributeLocation, colorAttributeLocation, withBorder) {
     var buffer = gl.createBuffer();
     const points = this.convertPointToCoordinates();
+    console.log("Ini points : ", points)
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.STATIC_DRAW);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
