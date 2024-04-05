@@ -326,7 +326,6 @@ function App() {
             }
           }
           if (!isObject) {
-            console.log("TIDAK TERPILIJ");
             setSelectedShapeId(null);
           }
         }
