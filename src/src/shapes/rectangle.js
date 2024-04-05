@@ -19,7 +19,6 @@ export class Rectangle extends DrawableObject {
     fromFile = false,
     vertices,
   } = {}) {
-    console.log("Masuk ke constructor");
     super(id, Shape.Rectangle);
     if (!fromFile) {
       const p2 = new Point(
@@ -383,7 +382,6 @@ export class Rectangle extends DrawableObject {
       const elapsed = Date.now() - startTime;
 
       if (elapsed >= duration) {
-        console.log("Animation end");
         return; // Hentikan animasi
       }
       progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama

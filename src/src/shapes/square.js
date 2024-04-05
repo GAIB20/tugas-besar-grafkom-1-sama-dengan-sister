@@ -267,7 +267,6 @@ export class Square extends DrawableObject {
       transformationMatrix.getMatrix(),
       shapeMatrix.getMatrix()
     );
-    // console.log(resultMatrix);
 
     for (let i = 0; i < 4; i++) {
       this.vertices[i].x = resultMatrix[0][i];
@@ -432,7 +431,6 @@ export class Square extends DrawableObject {
       const elapsed = Date.now() - startTime;
 
       if (elapsed >= duration) {
-        console.log("Animation end");
         return; // Hentikan animasi
       }
       progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama

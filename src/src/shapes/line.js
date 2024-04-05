@@ -220,7 +220,6 @@ export class Line extends DrawableObject {
   }
 
   isCorner(x, y) {
-    console.log(x, y, this.origin, this.final);
     if (
       x <= this.origin.x + 20 &&
       x >= this.origin.x - 20 &&
@@ -273,7 +272,6 @@ export class Line extends DrawableObject {
       const elapsed = Date.now() - startTime;
 
       if (elapsed >= duration) {
-        console.log("Animation end");
         return; // Hentikan animasi
       }
       progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama

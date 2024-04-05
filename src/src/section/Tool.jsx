@@ -131,7 +131,6 @@ function Tool({
             id="fileInput"
             className="inputButton"
             onChange={(e) => {
-              console.log("Masuk on change");
               if (e.target.files && e.target.files.length > 0) {
                 setFile(e.target.files[0]);
               }

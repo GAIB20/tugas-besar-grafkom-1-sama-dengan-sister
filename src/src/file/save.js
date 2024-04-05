@@ -13,10 +13,8 @@ const convertPointToObject = (points) => {
   return results;
 };
 export const saveModels = (shapes) => {
-  console.log(shapes);
   const items = [];
   for (let i = 0; i < shapes.length; i++) {
-    console.log("Ini shapes ke i ", shapes[i]);
     let item = {};
     if (shapes[i].getType() === Shape.Polygon) {
       item = {
@@ -33,7 +31,6 @@ export const saveModels = (shapes) => {
         type: shapes[i].getType(),
       };
     }
-    console.log("Ini item : ", item);
     items.push(item);
   }
   return JSON.stringify(items, null, 2);
