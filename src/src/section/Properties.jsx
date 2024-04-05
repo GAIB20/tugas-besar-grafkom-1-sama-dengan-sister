@@ -49,6 +49,28 @@ const Properties = ({
     }
   };
 
+  const handleWidthUpdate = (e) => {
+    const selectedShape = shapes[selectedShapeId];
+    if (selectedShape) {
+      selectedShape.updateShapes({
+        width: Number(e.target.value),
+        length: rectangleSize.length,
+      });
+      redrawCanvas();
+    }
+  };
+
+  const handleLengthUpdate = (e) => {
+    const selectedShape = shapes[selectedShapeId];
+    if (selectedShape) {
+      selectedShape.updateShapes({
+        width: Number(e.target.value),
+        length: rectangleSize.length,
+      });
+      redrawCanvas();
+    }
+  };
+
   return (
     <>
       <div className="properties" id="properties">
@@ -97,7 +119,13 @@ const Properties = ({
                 {shapes[selectedShapeId]?.vertices?.map((point, idx) => {
                   return (
                     <option value={idx} key={idx}>
-                      {"Point "+ String(idx+1) + " (" + String(point.x.toFixed(3)) + ",  " + String(point.y.toFixed(3)) +")"}
+                      {"Point " +
+                        String(idx + 1) +
+                        " (" +
+                        String(point.x.toFixed(3)) +
+                        ",  " +
+                        String(point.y.toFixed(3)) +
+                        ")"}
                     </option>
                   );
                 })}
@@ -376,6 +404,7 @@ const Properties = ({
                         step={SLIDER_STEPS}
                         value={rectangleSize.width}
                         onChange={(e) => {
+                          handleWidthUpdate(e);
                           setRectangleSize((oldSize) => ({
                             ...oldSize,
                             width: Number(e.target.value),
@@ -397,6 +426,7 @@ const Properties = ({
                         step={SLIDER_STEPS}
                         value={rectangleSize.length}
                         onChange={(e) => {
+                          handleLengthUpdate(e)
                           setRectangleSize((oldSize) => ({
                             ...oldSize,
                             length: Number(e.target.value),

@@ -50,7 +50,6 @@ function App() {
   const [file, setFile] = useState();
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggingVertex, setIsDraggingVertex] = useState(false);
-  console.log(polygonPoints);
 
   const handleSaveModels = () => {
     downloadModel(shapes, workingTitle);
@@ -188,23 +187,6 @@ function App() {
     }
   }, [squareSide]);
 
-  // LISTENER TO RECTANGLE ATTRIBUTES
-  useEffect(() => {
-    const selectedShape = shapes[selectedShapeId];
-    if (selectedShape) {
-      selectedShape.updateShapes(rectangleSize);
-      redrawCanvas();
-      setTransformation((oldTransformation) => ({
-        ...oldTransformation,
-        rz: 0,
-        rvz: 0,
-        sx: 0,
-        sy: 0,
-        shx: 0,
-        shy: 0,
-      }));
-    }
-  }, [rectangleSize]);
 
   // LISTENER TO FILE OBJECT
   useEffect(() => {
@@ -304,13 +286,12 @@ function App() {
       // Make convexHull of the points
       const pointPairs = convertPointToPairs(polygonPoints);
       var convexHull = makeConvexHull(pointPairs);
-      console.log(point, convexHull)
 
       var points = [];
-      for(i = 0; i < polygonPoints.length; i++){
-        var tempPoint = polygonPoints[i]
-        if (isPointInConvexHull(tempPoint, convexHull)){
-          points.push(tempPoint)
+      for (i = 0; i < polygonPoints.length; i++) {
+        var tempPoint = polygonPoints[i];
+        if (isPointInConvexHull(tempPoint, convexHull)) {
+          points.push(tempPoint);
         }
       }
       setPolygonPoints(points);
@@ -318,14 +299,12 @@ function App() {
       // Set points to Polygon
       const selectedPolygon = shapes[selectedShapeId];
       selectedPolygon.setPoints(points);
-      selectedPolygon.setColorPoints(polygonColorPoints);
 
       // Redraw Canvas
       redrawCanvas();
     } else {
       if (!isDrawing) {
         // START DRAWING CASE
-        console.log(currentShapeType);
         if (currentShapeType != null) {
           setIsDrawing(true);
           const originPoint = new Point(
@@ -382,7 +361,6 @@ function App() {
             });
             setSquareSide(Math.floor(square.distance));
             setShapes((oldShapes) => [...oldShapes, square]);
-            setSelectedShapeId(shapes.length);
             break;
           }
           case Shape.Line: {
@@ -395,7 +373,6 @@ function App() {
               fromFile: false,
             });
             setShapes((oldShapes) => [...oldShapes, line]);
-            setSelectedShapeId(shapes.length);
             break;
           }
           case Shape.Rectangle: {
@@ -408,17 +385,21 @@ function App() {
               fromFile: false,
             });
             setShapes((oldShapes) => [...oldShapes, rectangle]);
-            setSelectedShapeId(shapes.length);
+            setRectangleSize({
+              width: Math.floor(rectangle.width),
+              length: Math.floor(rectangle.length),
+            });
             break;
           }
           default:
             break;
         }
-      }
+        redrawCanvas();
 
-      setOriginPoint(undefined);
-      setIsDrawing(false);
-      setCurrentShapeType(null);
+        setOriginPoint(undefined);
+        setIsDrawing(false);
+        setCurrentShapeType(null);
+      }
     }
   };
 
@@ -473,6 +454,8 @@ function App() {
             );
             break;
           }
+          default:
+            break;
         }
       }
     } else {
@@ -481,7 +464,6 @@ function App() {
       var y = canvasY(canvas, event.clientY);
 
       if (selectedShapeId != null) {
-        console.log(isDraggingVertex);
         if (!isDraggingVertex) {
           shapes[selectedShapeId].place(x, y);
         } else {
@@ -592,7 +574,6 @@ function App() {
           setSelectedShapeId(selectedShapeId - 1);
         }
       }
-      console.log(selectedShapeId, shapes.length);
       redrawCanvas();
     }
   };

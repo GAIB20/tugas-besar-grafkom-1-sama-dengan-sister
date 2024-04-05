@@ -17,7 +17,7 @@ export class Rectangle extends DrawableObject {
     transformation = null,
     canvasCenter = null,
     fromFile = false,
-    vertices = [],
+    vertices,
   }) {
     super(id, Shape.Rectangle);
     if (!fromFile) {
@@ -41,8 +41,12 @@ export class Rectangle extends DrawableObject {
       this.p3 = final;
       this.p4 = p4;
 
-      this.vertices = [origin];
-      this.vertices.push(p2, final, p4);
+      this.vertices = [];
+      this.vertices.push(this.p1);
+      this.vertices.push(this.p2);
+      this.vertices.push(this.p3);
+      this.vertices.push(this.p4);
+      console.log("Ini di constsct", this.vertices);
     } else {
       this.vertices = [];
       for (let i = 0; i < vertices.length; i++) {
@@ -135,7 +139,6 @@ export class Rectangle extends DrawableObject {
   render(gl, positionAttributeLocation, colorAttributeLocation, withBorder) {
     var buffer = gl.createBuffer();
     const points = this.convertPointToCoordinates();
-    console.log("Ini points : ", points)
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points), gl.STATIC_DRAW);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
@@ -155,7 +158,7 @@ export class Rectangle extends DrawableObject {
     );
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(colorAttributeLocation);
-    gl.enable(gl.BLEND); 
+    gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, points.length / 2);
 
@@ -250,17 +253,25 @@ export class Rectangle extends DrawableObject {
   }
 
   updateShapes(newSize) {
+    console.log("Ini this vertices sebelom update", this.vertices);
+
+    console.log("Masuk new new size :", newSize);
     const newWidth = newSize.width;
     const newLength = newSize.length;
+
+    console.log("Ini this vertices sebelom update", this.vertices);
+
     // Hitung titik tengah
     const centerX = (this.p1.x + this.p3.x) / 2;
     const centerY = (this.p1.y + this.p3.y) / 2;
-
     // Setengah dari width dan length baru
     const halfNewWidth = newWidth / 2;
     const halfNewLength = newLength / 2;
+
+    console.log("Ini this vertices sebelom update", this.vertices);
+
     // Tetapkan ulang titik sudut berdasarkan titik tengah dan setengah dari width dan length baru
-    this.p1 = new Point(
+    const p1 = new Point(
       centerX - halfNewLength,
       centerY - halfNewWidth,
       new Color(
@@ -270,7 +281,7 @@ export class Rectangle extends DrawableObject {
         this.p1.color.a
       )
     );
-    this.p2 = new Point(
+    const p2 = new Point(
       centerX + halfNewLength,
       centerY - halfNewWidth,
       new Color(
@@ -280,7 +291,7 @@ export class Rectangle extends DrawableObject {
         this.p2.color.a
       )
     );
-    this.p3 = new Point(
+    const p3 = new Point(
       centerX + halfNewLength,
       centerY + halfNewWidth,
       new Color(
@@ -290,7 +301,7 @@ export class Rectangle extends DrawableObject {
         this.p3.color.a
       )
     );
-    this.p4 = new Point(
+    const p4 = new Point(
       centerX - halfNewLength,
       centerY + halfNewWidth,
       new Color(
@@ -300,9 +311,22 @@ export class Rectangle extends DrawableObject {
         this.p4.color.a
       )
     );
+    console.log("Ini this vertices sebelom update", this.vertices);
 
-    this.vertices = [this.p1, this.p2, this.p3, this.p4];
+    this.p1 = p1;
+    this.p2 = p2;
+    this.p3 = p3;
+    this.p4 = p4;
+    console.log("Ini titik", this.p1, this.p2, this.p3, this.p4);
 
+    // this.vertices[0].updatePoint(centerX - halfNewLength, centerY - halfNewWidth)
+    this.vertices = [];
+    console.log("Ini this vertices sebelom update", this.vertices);
+    this.vertices.push(p1);
+    this.vertices.push(p2);
+    this.vertices.push(p3);
+    this.vertices.push(p4);
+    console.log("Ini this vertices : ", this.vertices);
     this.width = newWidth;
     this.length = newLength;
     this.transformation = new Transformation(
@@ -333,13 +357,33 @@ export class Rectangle extends DrawableObject {
   }
 
   isCorner(x, y) {
-    if (x <= this.p1.x + 20 && x >= this.p1.x - 20 && y <= this.p1.y + 20 && y >= this.p1.y - 20) {
+    if (
+      x <= this.p1.x + 20 &&
+      x >= this.p1.x - 20 &&
+      y <= this.p1.y + 20 &&
+      y >= this.p1.y - 20
+    ) {
       return 0;
-    } else if (x <= this.p2.x + 20 && x >= this.p2.x - 20 && y <= this.p2.y + 20 && y >= this.p2.y - 20) {
+    } else if (
+      x <= this.p2.x + 20 &&
+      x >= this.p2.x - 20 &&
+      y <= this.p2.y + 20 &&
+      y >= this.p2.y - 20
+    ) {
       return 1;
-    } else if (x <= this.p3.x + 20 && x >= this.p3.x - 20 && y <= this.p3.y + 20 && y >= this.p3.y - 20) {
+    } else if (
+      x <= this.p3.x + 20 &&
+      x >= this.p3.x - 20 &&
+      y <= this.p3.y + 20 &&
+      y >= this.p3.y - 20
+    ) {
       return 2;
-    } else if (x <= this.p4.x + 20 && x >= this.p4.x - 20 && y <= this.p4.y + 20 && y >= this.p4.y - 20) {
+    } else if (
+      x <= this.p4.x + 20 &&
+      x >= this.p4.x - 20 &&
+      y <= this.p4.y + 20 &&
+      y >= this.p4.y - 20
+    ) {
       return 3;
     } else {
       return null;
@@ -354,41 +398,6 @@ export class Rectangle extends DrawableObject {
   getPoints() {
     return [this.p1, this.p2, this.p3, this.p4];
   }
-  animateRightAndBack() {
-    const moveAmount = 50; // Jumlah geser ke kanan dalam piksel
-    const duration = 3000; // Durasi animasi dalam milidetik
-    let startTime = null;
-    let progress = 0;
-
-    const animateStep = () => {
-      if (!startTime) startTime = Date.now();
-      const elapsed = Date.now() - startTime;
-
-      if (elapsed >= duration) {
-        console.log("Animation end");
-        return; // Hentikan animasi
-      }
-
-      progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama
-
-      // Hitung perubahan posisi. `Math.abs((progress % 2) - 1)` menciptakan siklus pergi-pulang
-      const currentMove = moveAmount * Math.abs((progress % 2) - 1);
-      // Aplikasikan perubahan relatif terhadap posisi awal
-      this.vertices.forEach((vertex) => {
-        vertex.x = vertex.initialX + currentMove * (progress <= 1 ? 1 : -1);
-      });
-      window.requestAnimationFrame(animateStep);
-    };
-
-    if (!this.vertices[0].initialX) {
-      this.vertices.forEach((vertex) => {
-        vertex.initialX = vertex.x;
-      });
-    }
-
-    window.requestAnimationFrame(animateStep); // Jadwalkan iterasi selanjutnya
-  }
-
 
   place(x, y) {
     this.p1.x = x - this.pivotX1;
@@ -406,13 +415,15 @@ export class Rectangle extends DrawableObject {
     const vertices = this.vertices;
 
     for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
-        const xi = vertices[i].x, yi = vertices[i].y;
-        const xj = vertices[j].x, yj = vertices[j].y;
+      const xi = vertices[i].x,
+        yi = vertices[i].y;
+      const xj = vertices[j].x,
+        yj = vertices[j].y;
 
-        const intersect = ((yi > y) != (yj > y)) &&
-            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      const intersect =
+        yi > y != yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
 
-        if (intersect) crossings++;
+      if (intersect) crossings++;
     }
 
     return crossings % 2 !== 0;
