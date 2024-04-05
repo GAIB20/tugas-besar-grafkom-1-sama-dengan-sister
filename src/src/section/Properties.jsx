@@ -94,11 +94,10 @@ const Properties = ({
                 onChange={(e) => setSelectedPointId(Number(e.target.value))}
               >
                 {" "}
-                {shapes[selectedShapeId]?.vertices?.map((point) => {
-                  var idx = shapes[selectedShapeId].vertices?.indexOf(point);
+                {shapes[selectedShapeId]?.vertices?.map((point, idx) => {
                   return (
                     <option value={idx} key={idx}>
-                      {String(point.x) + ",  " + String(point.y)}
+                      {"Point "+ String(idx+1) + " (" + String(point.x.toFixed(3)) + ",  " + String(point.y.toFixed(3)) +")"}
                     </option>
                   );
                 })}

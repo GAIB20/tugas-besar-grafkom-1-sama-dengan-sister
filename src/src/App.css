@@ -15,7 +15,7 @@
 }
 
 .canvas {
-  width: 80%;
+  width: 90%;
   background-color: white;
   border: 2px solid black;
   overflow: auto;
@@ -254,7 +254,7 @@
 
 .toolbarButton {
   width: 80%;
-  max-width: 150px;
+  max-width: 100px;
   position: relative;
   cursor: pointer;
   aspect-ratio: 1;
