@@ -82,3 +82,25 @@ export const convertPairsToCoordinates = (points) => {
   }
   return results;
 };
+
+export const isPointInConvexHull = (point, convexHull) => {
+  for(var i = 0; i < convexHull.length; i++){
+    if (isPointPairTheSame(point, convexHull[i])){
+      return true
+    }
+  }
+  return false  
+}
+
+const isPointPairTheSame = (point, pair) => {
+  return Math.floor(point.x) == Math.floor(pair[0]) && Math.floor(point.y) == Math.floor(pair[1])
+}
+
+export const getIdxXYFromPairArray = (x, y, pairs) => {
+  for (var i = 0; i < pairs.length ; i++){
+    if (pairs[i][0] == x && pairs[i][1] == y){
+      return i
+    }
+  }
+  return undefined
+}
