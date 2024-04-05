@@ -308,4 +308,18 @@ export class Polygon extends DrawableObject {
       this.pivot.push(y - this.points[i].y);
     }
   }
+
+  isCorner(x, y) {
+    for (let i = 0; i < this.points.length; i++) {
+      if (x <= this.points[i].x + 20 && x >= this.points[i].x - 20 && y <= this.points[i].y + 20 && y >= this.points[i].y - 20) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  changeVertex(x, y, id) {
+    this.points[id].x = x;
+    this.points[id].y = y;
+  }
 }
