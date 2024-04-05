@@ -356,4 +356,44 @@ export class Square extends DrawableObject {
 
     return crossings % 2 !== 0;
   }
+
+  animateRightAndBack() {
+    const moveAmount = 50; // Jumlah geser ke kanan dalam piksel
+    const duration = 5000; // Durasi animasi dalam milidetik
+    let startTime = null;
+    let progress = 0;
+
+    const animateStep = () => {
+      if (!startTime) startTime = Date.now();
+      const elapsed = Date.now() - startTime;
+
+      var tempTransformation = new Transformation(0,0,0,0,0,0,0,0)
+      tempTransformation.copyTransformation(this.getTransformation())
+      
+      var tempPoints = this.vertices
+
+      if (elapsed >= duration) {
+        console.log("Animation end");
+        return; // Hentikan animasi
+      }
+
+      progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama
+
+      // Hitung perubahan posisi. `Math.abs((progress % 2) - 1)` menciptakan siklus pergi-pulang
+      const currentMove = moveAmount * Math.abs((progress % 2) - 1);
+      // Aplikasikan perubahan relatif terhadap posisi awal
+      this.vertices.forEach((vertex) => {
+        vertex.x = vertex.initialX + currentMove * (progress <= 1 ? 1 : -1);
+      });
+      window.requestAnimationFrame(animateStep);
+    };
+
+    if (!this.vertices[0].initialX) {
+      this.vertices.forEach((vertex) => {
+        vertex.initialX = vertex.x;
+      });
+    }
+
+    window.requestAnimationFrame(animateStep); // Jadwalkan iterasi selanjutnya
+  }
 }

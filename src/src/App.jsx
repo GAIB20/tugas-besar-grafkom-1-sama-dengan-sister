@@ -578,15 +578,15 @@ function App() {
   };
 
   const handleAnimation = () => {
-    console.log("Halo");
-    // for (let i = 0; i < shapes.length; i++) {
-    //   const shape = shapes[i];
-    //   shape.animateRightAndBack(
-    //     gl,
-    //     positionAttributeLocation,
-    //     colorAttributeLocation
-    //   );
-    // }
+    // console.log("Animation Triggered");
+    for (let i = 0; i < shapes.length; i++) {
+      const shape = shapes[i];
+      shape.animateRightAndBack(
+        gl,
+        positionAttributeLocation,
+        colorAttributeLocation
+      );
+    }
   };
   const handleKeyDown = (event) => {
     if (event.key === "Backspace" && selectedShapeId != null) {

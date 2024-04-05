@@ -373,8 +373,6 @@
 .saveButton{
   border-radius: 12px;
   padding: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
   cursor: pointer;
   text-align: center;
   background-color: #f0f0f0;
@@ -391,8 +389,6 @@ input[type="file"] {
 .inputButton{
   border-radius: 12px;
   padding: 6px 10px;
-  margin-left: 10px;
-  margin-right: 10px;
   cursor: pointer;
   text-align: center;
   background-color: #f0f0f0;
@@ -406,8 +402,6 @@ input[type="file"] {
 .animateButton{
   border-radius: 12px;
   padding: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
   cursor: pointer;
   text-align: center;
   background-color: #f0f0f0;

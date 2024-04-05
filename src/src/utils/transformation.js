@@ -218,6 +218,19 @@ class Transformation {
     this.shx = allData.shx - this.shx;
     this.shy = allData.shy - this.shy;
   };
+
+  copyTransformation = (tr) => {
+    // tr is Data Type transformation
+    var data = tr.getAllData()
+    this.x = data.x
+    this.y = data.y
+    this.rz = data.rz
+    this.rvz = data.rvz
+    this.sx = data.sx
+    this.sy = data.sy
+    this.shx = data.shx
+    this.shy = data.shy
+  }
 }
 
 export default Transformation;
