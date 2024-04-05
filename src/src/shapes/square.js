@@ -236,6 +236,17 @@ export class Square extends DrawableObject {
     this.transformation = newTransformation;
   }
 
+  place(x, y) {
+    this.p1.x = x - this.pivotX;
+    this.p1.y = y - this.pivotY;
+    this.p2.x = x - this.pivotX;
+    this.p2.y = y + (this.distance - this.pivotY);
+    this.p3.x = x + (this.distance - this.pivotX);
+    this.p3.y = y - this.pivotY;
+    this.p4.x = x + (this.distance - this.pivotX);
+    this.p4.y = y + (this.distance - this.pivotY);
+  }
+
   updateShapes(newSize) {
     // Hitung titik tengah
     const centerX = (this.p4.x + this.p1.x) / 2;
@@ -295,6 +306,11 @@ export class Square extends DrawableObject {
 
   getPoints() {
     return [this.p1, this.p2, this.p3, this.p4];
+  }
+
+  setPivot(x, y) {
+    this.pivotX = x - this.p1.x;
+    this.pivotY = y - this.p1.y;
   }
 
   isInside(x, y) {

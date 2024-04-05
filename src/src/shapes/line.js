@@ -182,6 +182,20 @@ export class Line extends DrawableObject {
     return "Line " + this.id
   }
 
+  setPivot(x, y) {
+    this.pivotX = x - this.origin.x;
+    this.pivotY = y - this.origin.y;
+  }
+
+  place(x, y) {
+    var lenX = this.final.x - this.origin.x;
+    var lenY = this.final.y - this.origin.y;
+    this.origin.x = x - this.pivotX;
+    this.origin.y = y - this.pivotY;
+    this.final.x = x + (lenX - this.pivotX);
+    this.final.y = y + (lenY - this.pivotY);
+  }
+
   isInside(x, y) {
     const distance1 = Math.sqrt((x - this.origin.x) ** 2 + (y - this.origin.y) ** 2);
     const distance2 = Math.sqrt((x - this.final.x) ** 2 + (y - this.final.y) ** 2);

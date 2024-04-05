@@ -280,8 +280,26 @@ export class Rectangle extends DrawableObject {
     return "Rectangle " + this.id;
   }
 
+  setPivot(x, y) {
+    this.pivotX = x - this.p1.x;
+    this.pivotY = y - this.p1.y;
+  }
+
   getPoints() {
     return [this.p1, this.p2, this.p3, this.p4];
+  }
+
+  place(x, y) {
+    var lenX = this.p4.x - this.p1.x;
+    var lenY = this.p2.y - this.p1.y;
+    this.p1.x = x - this.pivotX;
+    this.p1.y = y - this.pivotY;
+    this.p2.x = x - this.pivotX;
+    this.p2.y = y + (lenY - this.pivotY);
+    this.p3.x = x + (lenX - this.pivotX);
+    this.p3.y = y + (lenY - this.pivotY);
+    this.p4.x = x + (lenX - this.pivotX);
+    this.p4.y = y - this.pivotY;
   }
 
   isInside(x, y) {
