@@ -44,6 +44,7 @@ function App() {
   const [polygonColorPoints, setPolygonColorPoints] = useState([]);
   const [file, setFile] = useState();
   const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingVertex, setIsDraggingVertex] = useState(false);
 
   const handleSaveModels = () => {
     downloadModel(shapes);
@@ -312,7 +313,8 @@ function App() {
               setSelectedShapeId(i);
               shapes[i].setPivot(x, y);
               var isCorner = shapes[i].isCorner(x, y);
-              if (isCorner) {
+              if (isCorner != null) {
+                setIsDraggingVertex(true);
                 setSelectedPointId(isCorner);
               } 
               isObject = true;
@@ -445,7 +447,8 @@ function App() {
       var y = canvasY(canvas, event.clientY);
       
       if (selectedShapeId != null) {
-        if (selectedPointId == null) {
+        console.log(isDraggingVertex);
+        if (!isDraggingVertex) {
           shapes[selectedShapeId].place(x, y);
         } else {
           shapes[selectedShapeId].changeVertex(x, y, selectedPointId);
@@ -458,6 +461,7 @@ function App() {
 
   const handleMouseUp = (event) => {
     setIsDragging(false);
+    setIsDraggingVertex(false);
   };
 
   const refreshChosenButton = () => {

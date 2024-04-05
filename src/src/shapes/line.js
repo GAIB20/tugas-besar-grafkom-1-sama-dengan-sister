@@ -198,9 +198,9 @@ export class Line extends DrawableObject {
 
   isCorner(x, y) {
     console.log(x, y, this.origin, this.final)
-    if (x <= this.origin.x + 10 && x >= this.origin.x - 10 && y <= this.origin.y + 10 && y >= this.origin.y - 10) {
+    if (x <= this.origin.x + 20 && x >= this.origin.x - 20 && y <= this.origin.y + 20 && y >= this.origin.y - 20) {
       return 0;
-    } else if (x <= this.final.x + 10 && x >= this.final.x - 10 && y <= this.final.y + 10 && y >= this.final.y - 10) {
+    } else if (x <= this.final.x + 20 && x >= this.final.x - 20 && y <= this.final.y + 20 && y >= this.final.y - 20) {
       return 1;
     } else {
       return null;

@@ -248,13 +248,13 @@ export class Square extends DrawableObject {
   }
 
   isCorner(x, y) {
-    if (x <= this.p1.x + 10 && x >= this.p1.x - 10 && y <= this.p1.y + 10 && y >= this.p1.y - 10) {
+    if (x <= this.p1.x + 20 && x >= this.p1.x - 20 && y <= this.p1.y + 20 && y >= this.p1.y - 20) {
       return 0;
-    } else if (x <= this.p2.x + 10 && x >= this.p2.x - 10 && y <= this.p2.y + 10 && y >= this.p2.y - 10) {
+    } else if (x <= this.p2.x + 20 && x >= this.p2.x - 20 && y <= this.p2.y + 20 && y >= this.p2.y - 20) {
       return 1;
-    } else if (x <= this.p3.x + 10 && x >= this.p3.x - 10 && y <= this.p3.y + 10 && y >= this.p3.y - 10) {
+    } else if (x <= this.p3.x + 20 && x >= this.p3.x - 20 && y <= this.p3.y + 20 && y >= this.p3.y - 20) {
       return 2;
-    } else if (x <= this.p4.x + 10 && x >= this.p4.x - 10 && y <= this.p4.y + 10 && y >= this.p4.y - 10) {
+    } else if (x <= this.p4.x + 20 && x >= this.p4.x - 20 && y <= this.p4.y + 20 && y >= this.p4.y - 20) {
       return 3;
     } else {
       return null;
