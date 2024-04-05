@@ -105,3 +105,14 @@ export const isPointInConvexHull = (point, convexHull) => {
 const isPointPairTheSame = (point, pair) => {
   return Math.floor(point.x) == Math.floor(pair[0]) && Math.floor(point.y) == Math.floor(pair[1])
 }
+
+export const getIdxXYFromPairArray = (x, y, pairs) => {
+  for (var i = 0; i < pairs.length ; i++){
+    console.log(pairs[i][0], x , "||", pairs[i][1], y)
+    if (pairs[i][0] == x && pairs[i][1] == y){
+      console.log("TRUE")
+      return i
+    }
+  }
+  return undefined
+}
