@@ -159,18 +159,35 @@ export class Rectangle extends DrawableObject {
     gl.drawArrays(gl.TRIANGLE_FAN, 0, points.length / 2);
 
     if (withBorder) {
-      const borderPoints = this.convertPointToCoordinates(); 
-      const borderBuffer = gl.createBuffer(); 
-      gl.bindBuffer(gl.ARRAY_BUFFER, borderBuffer); 
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(borderPoints), gl.STATIC_DRAW); 
-      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0); 
+      const borderPoints = this.convertPointToCoordinates();
+      const borderBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, borderBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(borderPoints),
+        gl.STATIC_DRAW
+      );
+      gl.vertexAttribPointer(
+        positionAttributeLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
 
-      const borderColor = [1, 0, 0, 1]; 
-      const borderColors = Array(borderPoints.length / 2).fill(borderColor).flat(); 
-      const colorBuffer = gl.createBuffer(); 
-      gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer); 
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(borderColors), gl.STATIC_DRAW); 
-      gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0); 
+      const borderColor = [1, 0, 0, 1];
+      const borderColors = Array(borderPoints.length / 2)
+        .fill(borderColor)
+        .flat();
+      const colorBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(borderColors),
+        gl.STATIC_DRAW
+      );
+      gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
 
       gl.drawArrays(gl.LINE_LOOP, 0, borderPoints.length / 2);
 
@@ -178,32 +195,55 @@ export class Rectangle extends DrawableObject {
       const halfDotSize = dotSize / 2;
       const dotVertices = [];
       for (let i = 0; i < this.vertices.length; i++) {
-          const vertex = this.vertices[i];
-          dotVertices.push(
-              vertex.x - halfDotSize, vertex.y - halfDotSize,
-              vertex.x + halfDotSize, vertex.y - halfDotSize,
-              vertex.x + halfDotSize, vertex.y + halfDotSize,
-              vertex.x - halfDotSize, vertex.y - halfDotSize,
-              vertex.x + halfDotSize, vertex.y + halfDotSize,
-              vertex.x - halfDotSize, vertex.y + halfDotSize
-          );
+        const vertex = this.vertices[i];
+        dotVertices.push(
+          vertex.x - halfDotSize,
+          vertex.y - halfDotSize,
+          vertex.x + halfDotSize,
+          vertex.y - halfDotSize,
+          vertex.x + halfDotSize,
+          vertex.y + halfDotSize,
+          vertex.x - halfDotSize,
+          vertex.y - halfDotSize,
+          vertex.x + halfDotSize,
+          vertex.y + halfDotSize,
+          vertex.x - halfDotSize,
+          vertex.y + halfDotSize
+        );
       }
       const dotBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, dotBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotVertices), gl.STATIC_DRAW);
-      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(dotVertices),
+        gl.STATIC_DRAW
+      );
+      gl.vertexAttribPointer(
+        positionAttributeLocation,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
       gl.enableVertexAttribArray(positionAttributeLocation);
 
       const dotColor = [1, 0, 0, 1]; // Color of the dots
-      const dotColors = Array(dotVertices.length / 2 * 4).fill(dotColor).flat();
+      const dotColors = Array((dotVertices.length / 2) * 4)
+        .fill(dotColor)
+        .flat();
       const dotColorBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, dotColorBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dotColors), gl.STATIC_DRAW);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(dotColors),
+        gl.STATIC_DRAW
+      );
       gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(colorAttributeLocation);
 
       for (let i = 0; i < dotVertices.length / 2; i += 6) {
-          gl.drawArrays(gl.TRIANGLES, i, 6);
+        gl.drawArrays(gl.TRIANGLES, i, 6);
       }
     }
   }
@@ -307,7 +347,40 @@ export class Rectangle extends DrawableObject {
   getPoints() {
     return [this.p1, this.p2, this.p3, this.p4];
   }
+  animateRightAndBack() {
+    const moveAmount = 50; // Jumlah geser ke kanan dalam piksel
+    const duration = 3000; // Durasi animasi dalam milidetik
+    let startTime = null;
+    let progress = 0;
 
+    const animateStep = () => {
+      if (!startTime) startTime = Date.now();
+      const elapsed = Date.now() - startTime;
+
+      if (elapsed >= duration) {
+        console.log("Animation end");
+        return; // Hentikan animasi
+      }
+
+      progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama
+
+      // Hitung perubahan posisi. `Math.abs((progress % 2) - 1)` menciptakan siklus pergi-pulang
+      const currentMove = moveAmount * Math.abs((progress % 2) - 1);
+      // Aplikasikan perubahan relatif terhadap posisi awal
+      this.vertices.forEach((vertex) => {
+        vertex.x = vertex.initialX + currentMove * (progress <= 1 ? 1 : -1);
+      });
+      window.requestAnimationFrame(animateStep);
+    };
+
+    if (!this.vertices[0].initialX) {
+      this.vertices.forEach((vertex) => {
+        vertex.initialX = vertex.x;
+      });
+    }
+
+    window.requestAnimationFrame(animateStep); // Jadwalkan iterasi selanjutnya
+  }
   place(x, y) {
     var lenX = this.p4.x - this.p1.x;
     var lenY = this.p2.y - this.p1.y;

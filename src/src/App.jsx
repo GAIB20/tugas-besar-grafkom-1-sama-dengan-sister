@@ -21,7 +21,7 @@ import { downloadModel } from "./file/save";
 import { parseFile } from "./file/load";
 
 function App() {
-  const [workingTitle, setWorkingTitle] = useState("Untitled");
+  const [workingTitle, setWorkingTitle] = useState("Potosop");
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [originPoint, setOriginPoint] = useState();
@@ -137,7 +137,7 @@ function App() {
       }
     } else {
       setIsPropertiesOpen(false);
-      redrawCanvas()
+      redrawCanvas();
     }
   }, [selectedShapeId]);
 
@@ -150,7 +150,7 @@ function App() {
   useEffect(() => {
     if (shapes.length == 0) {
       setSelectedShapeId(null);
-      redrawCanvas()
+      redrawCanvas();
     } else {
       setSelectedShapeId(shapes.length - 1);
     }
@@ -216,7 +216,7 @@ function App() {
     if (shapes.length == 0) {
       if (!gl) {
         return;
-    }
+      }
       gl.clear(gl.COLOR_BUFFER_BIT);
     } else {
       for (let i = 0; i < shapes.length; i++) {
@@ -231,6 +231,7 @@ function App() {
         );
       }
     }
+    // window.requestAnimationFrame(redrawCanvas);
   };
 
   const getCanvasCenter = (canvas) => {
@@ -322,7 +323,6 @@ function App() {
             setSelectedShapeId(null);
           }
         }
-        
       } else {
         // Kasus kalau dia udah selesai gambar
         const finalPoint = new Point(
@@ -393,7 +393,7 @@ function App() {
         let x2 = canvasX(canvas, event.clientX);
         let y2 = canvasY(canvas, event.clientY);
         const finalPoint = new Point(x2, y2, currentColor);
-  
+
         switch (currentShapeType) {
           case Shape.Square: {
             const square = new Square({
@@ -402,16 +402,26 @@ function App() {
               color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
               fromFile: false,
             });
-            square.render(gl, positionAttributeLocation, colorAttributeLocation, false);
+            square.render(
+              gl,
+              positionAttributeLocation,
+              colorAttributeLocation,
+              false
+            );
             break;
           }
-  
+
           case Shape.Line: {
             const line = new Line({
               origin: originPoint,
               final: finalPoint,
             });
-            line.render(gl, positionAttributeLocation, colorAttributeLocation, false);
+            line.render(
+              gl,
+              positionAttributeLocation,
+              colorAttributeLocation,
+              false
+            );
             break;
           }
           case Shape.Rectangle: {
@@ -428,7 +438,7 @@ function App() {
             break;
           }
         }
-      }    
+      }
     } else {
       const canvas = document.querySelector("canvas");
       var x = canvasX(canvas, event.clientX);
@@ -452,29 +462,33 @@ function App() {
 
   const refreshChosenButton = () => {
     document.getElementById("lineButtonTitle").style.backgroundColor = "white";
-    document.getElementById("rectangleButtonTitle").style.backgroundColor = "white";
-    document.getElementById("squareButtonTitle").style.backgroundColor = "white";
-    document.getElementById("polygonButtonTitle").style.backgroundColor = "white";
-  }
+    document.getElementById("rectangleButtonTitle").style.backgroundColor =
+      "white";
+    document.getElementById("squareButtonTitle").style.backgroundColor =
+      "white";
+    document.getElementById("polygonButtonTitle").style.backgroundColor =
+      "white";
+  };
 
   const lineButtonClicked = (e) => {
-    refreshChosenButton()
+    refreshChosenButton();
     if (currentShapeType == Shape.Line) {
       setCurrentShapeType(null);
     } else {
       setCurrentShapeType(Shape.Line);
-      document.getElementById("lineButtonTitle").style.backgroundColor = "green";
+      document.getElementById("lineButtonTitle").style.backgroundColor =
+        "green";
     }
-    
   };
 
   const rectangleButtonClicked = () => {
-    refreshChosenButton()
+    refreshChosenButton();
     if (currentShapeType == Shape.Rectangle) {
       setCurrentShapeType(null);
     } else {
       setCurrentShapeType(Shape.Rectangle);
-      document.getElementById("rectangleButtonTitle").style.backgroundColor = "green";
+      document.getElementById("rectangleButtonTitle").style.backgroundColor =
+        "green";
     }
   };
 
@@ -500,17 +514,29 @@ function App() {
   };
 
   const squareButtonClicked = () => {
-    refreshChosenButton()
+    refreshChosenButton();
     if (currentShapeType == Shape.Square) {
       setCurrentShapeType(null);
     } else {
       setCurrentShapeType(Shape.Square);
-      document.getElementById("squareButtonTitle").style.backgroundColor = "green";
+      document.getElementById("squareButtonTitle").style.backgroundColor =
+        "green";
     }
   };
 
+  const handleAnimation = () => {
+    console.log("Halo");
+    // for (let i = 0; i < shapes.length; i++) {
+    //   const shape = shapes[i];
+    //   shape.animateRightAndBack(
+    //     gl,
+    //     positionAttributeLocation,
+    //     colorAttributeLocation
+    //   );
+    // }
+  };
   const handleKeyDown = (event) => {
-    if (event.key === 'Backspace' && selectedShapeId != null) {
+    if (event.key === "Backspace" && selectedShapeId != null) {
       shapes.splice(selectedShapeId, 1);
       if (shapes.length == 0) {
         setSelectedShapeId(null);
@@ -520,10 +546,9 @@ function App() {
         }
       }
       console.log(selectedShapeId, shapes.length);
-      redrawCanvas()
+      redrawCanvas();
     }
   };
-
 
   return (
     <div className="screen" tabIndex={0} onKeyDown={handleKeyDown}>
@@ -542,6 +567,7 @@ function App() {
           squareClick={squareButtonClicked}
           handleSaveModels={handleSaveModels}
           setFile={setFile}
+          handleAnimation={handleAnimation}
         />
         <div
           className="canvasContainer"

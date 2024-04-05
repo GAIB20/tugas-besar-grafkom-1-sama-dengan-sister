@@ -5,6 +5,7 @@ function Tool({
   squareClick,
   handleSaveModels,
   setFile,
+  handleAnimation
 }) {
   const setLineButtonTitle = (enter) => {
     let elm = document.getElementById("lineButtonTitle");
@@ -132,6 +133,9 @@ function Tool({
               }
             }}
           />
+          <button onClick={()=>handleAnimation()}>
+            Animate
+          </button>
         </div>
       </div>
     </div>
