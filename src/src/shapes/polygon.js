@@ -1,16 +1,13 @@
 import { Shape } from "../constant/shape";
-import { Color } from "../model/color";
-import { Point } from "../model/point";
 import Matrix, { multiplyMatrices } from "../utils/matrix";
 import { convertPointToPairs, getIdxXYFromPairArray } from "../utils/misc";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
 
 export class Polygon extends DrawableObject {
-  constructor(points, color, id, transformation, canvasCenter) {
-    super(id, Shape.Polygon, color);
+  constructor(points, id, transformation, canvasCenter) {
+    super(id, Shape.Polygon);
     this.points = points;
-    this.colorPoints = color;
     this.vertices = this.points;
 
     this.transformation = transformation;
@@ -33,14 +30,6 @@ export class Polygon extends DrawableObject {
     return this.points;
   };
 
-  setColorPoints = (colorPoints) => {
-    this.colorPoints = colorPoints;
-  };
-
-  getColorPoints = () => {
-    return this.colorPoints;
-  };
-
   getShapeType = () => {
     return Shape.Polygon;
   };
@@ -50,9 +39,9 @@ export class Polygon extends DrawableObject {
       // else is ignored
       var buffer = gl.createBuffer();
       const tempConvexHull = convertPointToPairs(this.points);
-      console.log("BEFORE SORTED", tempConvexHull)
+      // console.log("BEFORE SORTED", tempConvexHull)
       this.convexHull = this.sortConvexHullForWebGL(tempConvexHull);
-      console.log("CONVEX HULL", this.convexHull);
+      // console.log("CONVEX HULL", this.convexHull);
 
       // Search for color idx to be sorted too
       var colorIndexArr = []

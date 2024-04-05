@@ -54,7 +54,7 @@ function App() {
   console.log(polygonPoints);
 
   const handleSaveModels = () => {
-    downloadModel(shapes);
+    downloadModel(shapes, workingTitle);
   };
 
   useEffect(() => {
@@ -80,7 +80,6 @@ function App() {
       program,
       "u_resolution"
     );
-    var colorUniformLocation = gl.getUniformLocation(program, "u_color");
     var colorAttributeLocation = gl.getAttribLocation(program, "a_color");
 
     // Create a buffer to put three 2d clip space points in and bind it to ARRAY_BUFFER
@@ -120,10 +119,10 @@ function App() {
 
   // LISTENER TO CURRENT SELECTED SHAPE ID
   useEffect(() => {
-    console.log(selectedShapeId);
     if (selectedShapeId !== null) {
       const selectedShape = shapes[selectedShapeId];
       if (selectedShape != null) {
+        console.log("Ini selectedSHape : ", selectedShape);
         setIsPropertiesOpen(true);
 
         // Change the transformation to each shape's transform data
@@ -220,6 +219,12 @@ function App() {
       reader.onload = () => {
         const textContent = reader.result;
         const parsedShapes = parseFile(textContent, shapes.length);
+        for(let i = 0; i < parsedShapes.length; i++){
+          const currentShape = parsedShapes[i]
+          if(currentShape.getType() === Shape.Polygon){
+            setPolygonPoints(currentShape.getPoints())
+          }
+        }
         setShapes((oldShapes) => [...oldShapes, ...parsedShapes]);
         setSelectedShapeId(parsedShapes[0].id);
         redrawCanvas();
@@ -235,6 +240,7 @@ function App() {
       }
       gl.clear(gl.COLOR_BUFFER_BIT);
     } else {
+      console.log("Ini shapes di redraw : ", shapes)
       for (let i = 0; i < shapes.length; i++) {
         const currentShape = shapes[i];
         // console.log(currentShape);
@@ -378,7 +384,6 @@ function App() {
             const square = new Square({
               origin: originPoint,
               final: finalPoint,
-              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
               id: shapes.length,
               transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
               canvasCenter: canvasCenter,
@@ -406,7 +411,6 @@ function App() {
             const rectangle = new Rectangle({
               origin: originPoint,
               final: finalPoint,
-              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
               id: shapes.length,
               transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
               canvasCenter: canvasCenter,
@@ -439,7 +443,6 @@ function App() {
             const square = new Square({
               origin: originPoint,
               final: finalPoint,
-              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
               fromFile: false,
             });
             square.render(
@@ -468,7 +471,6 @@ function App() {
             const rectangle = new Rectangle({
               origin: originPoint,
               final: finalPoint,
-              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             });
             rectangle.render(
               gl,
@@ -496,7 +498,7 @@ function App() {
     }
   };
 
-  const handleMouseUp = (event) => {
+  const handleMouseUp = () => {
     setIsDragging(false);
     setIsDraggingVertex(false);
   };
@@ -549,7 +551,6 @@ function App() {
       var canvasCenter = getCanvasCenter(canvas);
       const polygon = new Polygon(
         [],
-        polygonColorPoints,
         shapes.length,
         new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
         canvasCenter

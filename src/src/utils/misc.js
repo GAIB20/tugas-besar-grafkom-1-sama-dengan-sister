@@ -1,4 +1,3 @@
-
 export const canvasX = (canvas, x) => {
   const rect = canvas.getBoundingClientRect();
   let newX = x - rect.left;
@@ -12,7 +11,6 @@ export const canvasY = (canvas, y) => {
   newY = (newY / (rect.bottom - rect.top)) * canvas.height;
   return newY;
 };
-
 
 // ========= CONVEX HULL ==============
 
@@ -30,11 +28,7 @@ export const makeConvexHull = (points) => {
   for (const point of points) {
     while (
       upper.length >= 2 &&
-      isNotRightTurn(
-        upper[upper.length - 2],
-        upper[upper.length - 1],
-        point
-      )
+      isNotRightTurn(upper[upper.length - 2], upper[upper.length - 1], point)
     ) {
       upper.pop();
     }
@@ -45,11 +39,7 @@ export const makeConvexHull = (points) => {
     const point = points[i];
     while (
       lower.length >= 2 &&
-      isNotRightTurn(
-        lower[lower.length - 2],
-        lower[lower.length - 1],
-        point
-      )
+      isNotRightTurn(lower[lower.length - 2], lower[lower.length - 1], point)
     ) {
       lower.pop();
     }
@@ -58,12 +48,12 @@ export const makeConvexHull = (points) => {
 
   const hull = new Set([...upper, ...lower]);
   return Array.from(hull);
-}
+};
 
 // Function to check the correct direction
 const isNotRightTurn = (a, b, c) => {
   return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) <= 0;
-}
+};
 
 // MANIPULATION TYPE OF ARRAY OF POINTS
 
@@ -109,7 +99,6 @@ const isPointPairTheSame = (point, pair) => {
 export const getIdxXYFromPairArray = (x, y, pairs) => {
   for (var i = 0; i < pairs.length ; i++){
     if (pairs[i][0] == x && pairs[i][1] == y){
-      console.log("TRUE")
       return i
     }
   }
