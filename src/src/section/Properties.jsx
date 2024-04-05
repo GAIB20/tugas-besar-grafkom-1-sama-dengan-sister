@@ -68,7 +68,7 @@ const Properties = ({
               <p className="sectionTitle"> Instances </p>
               <select
                 className="dropdown"
-                value={selectedShapeId}
+                value={selectedShapeId ? selectedShapeId : 0}
                 onChange={(e) => setSelectedShapeId(Number(e.target.value))}
               >
                 {" "}
@@ -87,11 +87,11 @@ const Properties = ({
               <p className="sectionTitle"> Color </p>
               <select
                 className="dropdown"
-                value={selectedPointId}
+                value={selectedPointId ? selectedPointId : 0}
                 onChange={(e) => setSelectedPointId(Number(e.target.value))}
               >
                 {" "}
-                {shapes[selectedShapeId].vertices?.map((point) => {
+                {shapes[selectedShapeId]?.vertices?.map((point) => {
                   var idx = shapes[selectedShapeId].vertices?.indexOf(point);
                   return (
                     <option value={idx} key={idx}>
@@ -331,7 +331,7 @@ const Properties = ({
                 />
               </div>
               <div className="slidecontainer">
-                {shapes[selectedShapeId].getType() === Shape.Square && (
+                {shapes[selectedShapeId]?.getType() === Shape.Square && (
                   <>
                     <b>
                       {" "}
@@ -354,7 +354,7 @@ const Properties = ({
                     />
                   </>
                 )}
-                {shapes[selectedShapeId].getType() === Shape.Rectangle && (
+                {shapes[selectedShapeId]?.getType() === Shape.Rectangle && (
                   <>
                     <b>
                       {" "}

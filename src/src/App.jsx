@@ -32,7 +32,7 @@ function App() {
   const [colorAttributeLocation, setColorAttribLocation] = useState();
   const [currentShapeType, setCurrentShapeType] = useState();
   const [shapes, setShapes] = useState([]);
-  const [selectedShapeId, setSelectedShapeId] = useState();
+  const [selectedShapeId, setSelectedShapeId] = useState(null);
   const [selectedPointId, setSelectedPointId] = useState(null);
   const [transformation, setTransformation] = useState(null);
   const [squareSide, setSquareSide] = useState();
@@ -124,7 +124,7 @@ function App() {
         setCurrentColor(shapes[selectedShapeId].vertices[0].color);
 
         // Adjust
-        setCurrentShapeType(selectedShape.getShapeType());
+        // setCurrentShapeType(selectedShape.getShapeType());
 
         // If a polygon is selected, change polygonPoints too
         if (selectedShape.getShapeType() == Shape.Polygon) {
@@ -134,6 +134,7 @@ function App() {
       }
     } else {
       setIsPropertiesOpen(false);
+      redrawCanvas()
     }
   }, [selectedShapeId]);
 
@@ -207,10 +208,12 @@ function App() {
     for (let i = 0; i < shapes.length; i++) {
       const currentShape = shapes[i];
       // console.log(currentShape);
+      const currentObj = i == selectedShapeId;
       currentShape.render(
         gl,
         positionAttributeLocation,
-        colorAttributeLocation
+        colorAttributeLocation,
+        currentObj
       );
     }
   };
@@ -271,18 +274,34 @@ function App() {
     } else {
       if (!isDrawing) {
         // Kasus kalau dia baru mulai gambar
-        setIsDrawing(true);
-        const originPoint = new Point(
-          x,
-          y,
-          new Color(
-            currentColor.r,
-            currentColor.g,
-            currentColor.b,
-            currentColor.a
-          )
-        );
-        setOriginPoint(originPoint);
+        console.log(currentShapeType);
+        if (currentShapeType != null) {
+          setIsDrawing(true);
+          const originPoint = new Point(
+            x,
+            y,
+            new Color(
+              currentColor.r,
+              currentColor.g,
+              currentColor.b,
+              currentColor.a
+            )
+          );
+          setOriginPoint(originPoint);
+        } else {
+          var isObject = false;
+          for (let i = shapes.length - 1; i >= 0; i--) {
+            if (shapes[i].isInside(x, y)) {
+              setSelectedShapeId(i);
+              isObject = true;
+              break;
+            }
+          }
+          if (!isObject) {
+            setSelectedShapeId(null);
+          }
+        }
+        
       } else {
         // Kasus kalau dia udah selesai gambar
         const finalPoint = new Point(
@@ -333,10 +352,7 @@ function App() {
               transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
               canvasCenter: canvasCenter,
             });
-
             setShapes((oldShapes) => [...oldShapes, rectangle]);
-            setSelectedShapeId(shapes.length);
-            redrawCanvas();
             break;
           }
           default:
@@ -364,7 +380,7 @@ function App() {
             color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
             fromFile: false,
           });
-          square.render(gl, positionAttributeLocation, colorAttributeLocation);
+          square.render(gl, positionAttributeLocation, colorAttributeLocation, false);
           break;
         }
 
@@ -373,7 +389,7 @@ function App() {
             origin: originPoint,
             final: finalPoint,
           });
-          line.render(gl, positionAttributeLocation, colorAttributeLocation);
+          line.render(gl, positionAttributeLocation, colorAttributeLocation, false);
           break;
         }
         case Shape.Rectangle: {
@@ -393,12 +409,32 @@ function App() {
     }
   };
 
-  const lineButtonClicked = () => {
-    setCurrentShapeType(Shape.Line);
+  const refreshChosenButton = () => {
+    document.getElementById("lineButtonTitle").style.backgroundColor = "white";
+    document.getElementById("rectangleButtonTitle").style.backgroundColor = "white";
+    document.getElementById("squareButtonTitle").style.backgroundColor = "white";
+    document.getElementById("polygonButtonTitle").style.backgroundColor = "white";
+  }
+
+  const lineButtonClicked = (e) => {
+    refreshChosenButton()
+    if (currentShapeType == Shape.Line) {
+      setCurrentShapeType(null);
+    } else {
+      setCurrentShapeType(Shape.Line);
+      document.getElementById("lineButtonTitle").style.backgroundColor = "green";
+    }
+    
   };
 
   const rectangleButtonClicked = () => {
-    setCurrentShapeType(Shape.Rectangle);
+    refreshChosenButton()
+    if (currentShapeType == Shape.Rectangle) {
+      setCurrentShapeType(null);
+    } else {
+      setCurrentShapeType(Shape.Rectangle);
+      document.getElementById("rectangleButtonTitle").style.backgroundColor = "green";
+    }
   };
 
   const polygonButtonClicked = () => {
@@ -423,7 +459,13 @@ function App() {
   };
 
   const squareButtonClicked = () => {
-    setCurrentShapeType(Shape.Square);
+    refreshChosenButton()
+    if (currentShapeType == Shape.Square) {
+      setCurrentShapeType(null);
+    } else {
+      setCurrentShapeType(Shape.Square);
+      document.getElementById("squareButtonTitle").style.backgroundColor = "green";
+    }
   };
 
   return (
