@@ -94,7 +94,7 @@ const Properties = ({
                 })}
               </select>
               <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"space-between", alignItems:"center"}}>
-                  <div style={{ minHeight:"20px", minWidth: "45%", backgroundColor:"rgba("+currentColor.r+", "+currentColor.g+", "+currentColor.b+", "+currentColor.a+")", borderRadius: "5px"}}>
+                  <div style={{ minHeight:"20px", minWidth: "45%", backgroundColor:"rgba("+currentColor.r+", "+currentColor.g+", "+currentColor.b+", 1)", borderRadius: "5px"}}>
                   </div>
                   <input
                     type="text"

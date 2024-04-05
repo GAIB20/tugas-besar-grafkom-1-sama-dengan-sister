@@ -3,6 +3,7 @@ import { Point } from "../model/point";
 import Matrix, { multiplyMatrices } from "../utils/matrix";
 import Transformation from "../utils/transformation";
 import { DrawableObject } from "./object";
+import { Color } from "../model/color";
 
 export class Rectangle extends DrawableObject {
   //  p1 --------- p2
@@ -21,8 +22,8 @@ export class Rectangle extends DrawableObject {
   }) {
     super(id, Shape.Rectangle, color);
     if (!fromFile) {
-      const p2 = new Point(origin.x, final.y);
-      const p4 = new Point(final.x, origin.y);
+      const p2 = new Point(origin.x, final.y, new Color(origin.color.r, origin.color.g, origin.color.b, origin.color.a));
+      const p4 = new Point(final.x, origin.y, new Color(final.color.r, final.color.g, final.color.b, final.color.a));
       this.p1 = origin;
       this.p2 = p2;
       this.p3 = final;
@@ -111,11 +112,16 @@ export class Rectangle extends DrawableObject {
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionAttributeLocation);
 
+    var renderedcolor = []
+    for (let i = 0; i < this.vertices.length; i++) {
+      renderedcolor.push(...(this.vertices[i].color.toArray()));
+    }
+
     var colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(
       gl.ARRAY_BUFFER,
-      new Float32Array(this.color),
+      new Float32Array(renderedcolor),
       gl.STATIC_DRAW
     );
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
@@ -134,10 +140,10 @@ export class Rectangle extends DrawableObject {
     const halfNewWidth = newWidth / 2;
     const halfNewLength = newLength / 2;
     // Tetapkan ulang titik sudut berdasarkan titik tengah dan setengah dari width dan length baru
-    this.p1 = new Point(centerX - halfNewLength, centerY - halfNewWidth);
-    this.p2 = new Point(centerX + halfNewLength, centerY - halfNewWidth);
-    this.p3 = new Point(centerX + halfNewLength, centerY + halfNewWidth);
-    this.p4 = new Point(centerX - halfNewLength, centerY + halfNewWidth);
+    this.p1 = new Point(centerX - halfNewLength, centerY - halfNewWidth, new Color(this.p1.color.r, this.p1.color.g, this.p1.color.b, this.p1.color.a));
+    this.p2 = new Point(centerX + halfNewLength, centerY - halfNewWidth, new Color(this.p2.color.r, this.p2.color.g, this.p2.color.b, this.p2.color.a));
+    this.p3 = new Point(centerX + halfNewLength, centerY + halfNewWidth, new Color(this.p3.color.r, this.p3.color.g, this.p3.color.b, this.p3.color.a));
+    this.p4 = new Point(centerX - halfNewLength, centerY + halfNewWidth, new Color(this.p4.color.r, this.p4.color.g, this.p4.color.b, this.p4.color.a));
 
     this.vertices = [this.p1, this.p2, this.p3, this.p4];
 

@@ -86,11 +86,16 @@ export class Line extends DrawableObject {
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(positionAttributeLocation);
 
+    var renderedcolor = []
+    for (let i = 0; i < this.vertices.length; i++) {
+      renderedcolor.push(...(this.vertices[i].color.toArray()));
+    }
+
     var colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(
       gl.ARRAY_BUFFER,
-      new Float32Array(this.color),
+      new Float32Array(renderedcolor),
       gl.STATIC_DRAW
     );
     gl.vertexAttribPointer(colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
