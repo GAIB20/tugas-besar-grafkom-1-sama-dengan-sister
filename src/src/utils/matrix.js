@@ -32,7 +32,11 @@ class Matrix {
   insertMatrix = (m) => {
     // Ini dipakai kalau tipe bentukan m adalah Array of Array
     this.rows = m.length;
-    this.cols = m[0].length;
+    if (m[0]) {
+      this.cols = m[0].length;
+    } else {
+      this.cols = 0;
+    }
 
     this.mat = [];
     for (let i = 0; i < this.rows; i++) {

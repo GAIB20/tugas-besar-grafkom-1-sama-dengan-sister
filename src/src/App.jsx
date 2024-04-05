@@ -16,6 +16,7 @@ import { Line } from "./shapes/line";
 import Transformation from "./utils/transformation";
 import { Rectangle } from "./shapes/rectangle";
 import { Color } from "./model/color";
+import { Polygon } from "./shapes/polygon";
 import { downloadModel, saveModels } from "./file/save";
 import { parseFile } from "./file/load";
 
@@ -40,6 +41,8 @@ function App() {
     width: 0,
     length: 0,
   });
+  const [polygonPoints, setPolygonPoints] = useState([]);
+  const [polygonColorPoints, setPolygonColorPoints] = useState([]);
   const [file, setFile] = useState();
 
   const handleSaveModels = () => {
@@ -115,6 +118,8 @@ function App() {
       const selectedShape = shapes[selectedShapeId];
       if (selectedShape != null) {
         setIsPropertiesOpen(true);
+
+        // Change the transformation to each shape's transform data
         var transformationConfig = selectedShape
           .getTransformation()
           .getAllData();
@@ -122,6 +127,15 @@ function App() {
         setSelectedPointId(0)
         setCurrentColor(shapes[selectedShapeId].vertices[0].color);
         setInput("#"+shapes[selectedShapeId].vertices[0].color.toHex());
+
+        // Adjust
+        setCurrentShapeType(selectedShape.getShapeType());
+
+        // If a polygon is selected, change polygonPoints too
+        if (selectedShape.getShapeType() == Shape.Polygon) {
+          var tempPoints = selectedShape.getPoints();
+          setPolygonPoints(tempPoints);
+        }
       }
     } else {
       setIsPropertiesOpen(false);
@@ -175,10 +189,9 @@ function App() {
 
   useEffect(() => {
     const selectedShape = shapes[selectedShapeId];
-    console.log("Ini selected shape : ", selectedShape);
-    if(selectedShape){
-      selectedShape.updateShapes(rectangleSize)
-      redrawCanvas()
+    if (selectedShape) {
+      selectedShape.updateShapes(rectangleSize);
+      redrawCanvas();
     }
   }, [rectangleSize]);
 
@@ -208,75 +221,117 @@ function App() {
     }
   };
 
-  const handleMouseDown = (event) => {
-    const canvas = document.querySelector("canvas");
-    var x = canvasX(canvas, event.clientX);
-    var y = canvasY(canvas, event.clientY);
-
+  const getCanvasCenter = (canvas) => {
+    // Get Canvas Center
     var rect = canvas.getBoundingClientRect();
     const canvasCenter = [
       (rect.right - rect.left) / 2,
       (rect.bottom - rect.top) / 2,
     ];
+    return canvasCenter;
+  };
 
-    if (!isDrawing) {
-      // Kasus kalau dia baru mulai gambar
-      setIsDrawing(true);
-      const originPoint = new Point(x, y, new Color(currentColor.r, currentColor.g, currentColor.b, currentColor.a));
-      setOriginPoint(originPoint);
+  const handleMouseDown = (event) => {
+    const canvas = document.querySelector("canvas");
+    var x = canvasX(canvas, event.clientX);
+    var y = canvasY(canvas, event.clientY);
+    // console.log(x, y);
+
+    var canvasCenter = getCanvasCenter(canvas);
+
+    // Special Case for Polygons
+    if (currentShapeType == Shape.Polygon) {
+      var point = new Point(x, y);
+
+      // // Check if it is to erase
+      // var idx = undefined
+      // for (var i = 0; i < polygonPoints.length; i++){
+      //   var distance =  Math.sqrt(Math.pow((polygonPoints[i].x - x),2) + Math.pow((polygonPoints[i].y - y),2))
+      //   if (distance < 10){
+      //     idx = i;
+      //     break
+      //   }
+      // }
+
+      // // If found, then erase
+      // if (idx){
+      //   polygonPoints.splice(idx, 1);
+      //   polygonColorPoints.splice(idx,1);
+      // } else {
+      //   polygonPoints.push(point);
+      //   polygonColorPoints.push(...colorRgb);
+      //   // console.log(polygonPoints)
+      // }
+
+      polygonPoints.push(point);
+      polygonColorPoints.push(...colorRgb);
+
+      const selectedPolygon = shapes[selectedShapeId];
+      selectedPolygon.setPoints(polygonPoints);
+      selectedPolygon.setColorPoints(polygonColorPoints);
+
+      // Redraw Canvas
+      redrawCanvas();
+      setPolygonPoints(selectedPolygon.getPoints());
+      console.log(polygonPoints);
     } else {
-      // Kasus kalau dia udah selesai gambar
-      const finalPoint = new Point(x, y, new Color(currentColor.r, currentColor.g, currentColor.b, currentColor.a));
-      switch (currentShapeType) {
-        case Shape.Square: {
-          const square = new Square({
-            origin: originPoint,
-            final: finalPoint,
-            color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            id: shapes.length,
-            transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
-            canvasCenter: canvasCenter,
-            fromFile: false,
-          });
-          // setSquareSide(Math.floor(square.distance));
-          setShapes((oldShapes) => [...oldShapes, square]);
-          break;
-        }
-        case Shape.Line: {
-          const line = new Line(
-            originPoint,
-            finalPoint,
-            [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            shapes.length,
-            new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
-            canvasCenter
-          );
-          setShapes((oldShapes) => [...oldShapes, line]);
-          setSelectedShapeId(shapes.length);
+      if (!isDrawing) {
+        // Kasus kalau dia baru mulai gambar
+        setIsDrawing(true);
+        const originPoint = new Point(x, y, new Color(currentColor.r, currentColor.g, currentColor.b, currentColor.a));
+        setOriginPoint(originPoint);
+      } else {
+        // Kasus kalau dia udah selesai gambar
+        const finalPoint = new Point(x, y, new Color(currentColor.r, currentColor.g, currentColor.b, currentColor.a));
+        switch (currentShapeType) {
+          case Shape.Square: {
+            const square = new Square({
+              origin: originPoint,
+              final: finalPoint,
+              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+              id: shapes.length,
+              transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+              canvasCenter: canvasCenter,
+              fromFile: false,
+            });
+            // setSquareSide(Math.floor(square.distance));
+            setShapes((oldShapes) => [...oldShapes, square]);
+            break;
+          }
+          case Shape.Line: {
+            const line = new Line(
+              originPoint,
+              finalPoint,
+              [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+              shapes.length,
+              new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+              canvasCenter
+            );
+            setShapes((oldShapes) => [...oldShapes, line]);
+            setSelectedShapeId(shapes.length);
+            break;
+          }
+          case Shape.Rectangle: {
+            const rectangle = new Rectangle({
+              origin: originPoint,
+              final: finalPoint,
+              color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
+              id: shapes.length,
+              transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+              canvasCenter: canvasCenter,
+            });
 
-          break;
+            setShapes((oldShapes) => [...oldShapes, rectangle]);
+            setSelectedShapeId(shapes.length);
+            redrawCanvas();
+            break;
+          }
+          default:
+            break;
         }
-        case Shape.Rectangle: {
-          const rectangle = new Rectangle({
-            origin: originPoint,
-            final: finalPoint,
-            color: [...colorRgb, ...colorRgb, ...colorRgb, ...colorRgb],
-            id: shapes.length,
-            transformation: new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
-            canvasCenter: canvasCenter,
-          });
-
-          setShapes((oldShapes) => [...oldShapes, rectangle]);
-          setSelectedShapeId(shapes.length);
-          redrawCanvas();
-          break;
-        }
-        default:
-          break;
+        setOriginPoint(undefined);
+        setIsDrawing(false);
       }
-      setOriginPoint(undefined);
-      // redrawCanvas();
-      setIsDrawing(false);
     }
   };
 
@@ -324,8 +379,6 @@ function App() {
           );
           break;
         }
-        default:
-          break;
       }
     }
   };
@@ -340,6 +393,23 @@ function App() {
 
   const polygonButtonClicked = () => {
     setCurrentShapeType(Shape.Polygon);
+
+    // Reset Polygon Points
+    setPolygonPoints([]);
+    setPolygonColorPoints([]);
+
+    // For Polygon, on Button Clicked, a new Polygon is Constructed
+    const canvas = document.querySelector("canvas");
+    var canvasCenter = getCanvasCenter(canvas);
+    const polygon = new Polygon(
+      polygonPoints,
+      polygonColorPoints,
+      shapes.length,
+      new Transformation(0, 0, 0, 0, 0, 0, 0, 0),
+      canvasCenter
+    );
+    setShapes((oldShapes) => [...oldShapes, polygon]);
+    setSelectedShapeId(shapes.length);
   };
 
   const squareButtonClicked = () => {

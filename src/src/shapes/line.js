@@ -21,6 +21,10 @@ export class Line extends DrawableObject {
     return this.transformation;
   };
 
+  getShapeType = () => {
+    return Shape.Line
+  }
+
   convertPointToCoordinates = () => {
     const results = [];
     for (let i = 0; i < this.vertices.length; i++) {

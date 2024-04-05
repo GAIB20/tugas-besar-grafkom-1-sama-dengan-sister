@@ -63,6 +63,10 @@ export class Square extends DrawableObject {
     return this.transformation;
   };
 
+  getShapeType = () => {
+    return Shape.Square
+  }
+
   convertPointToCoordinates = () => {
     const results = [];
     for (let i = 0; i < this.vertices.length; i++) {
