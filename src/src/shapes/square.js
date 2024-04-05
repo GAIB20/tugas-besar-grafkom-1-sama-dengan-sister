@@ -247,6 +247,26 @@ export class Square extends DrawableObject {
     this.p4.y = y + (this.distance - this.pivotY);
   }
 
+  isCorner(x, y) {
+    if (x <= this.p1.x + 10 && x >= this.p1.x - 10 && y <= this.p1.y + 10 && y >= this.p1.y - 10) {
+      return 0;
+    } else if (x <= this.p2.x + 10 && x >= this.p2.x - 10 && y <= this.p2.y + 10 && y >= this.p2.y - 10) {
+      return 1;
+    } else if (x <= this.p3.x + 10 && x >= this.p3.x - 10 && y <= this.p3.y + 10 && y >= this.p3.y - 10) {
+      return 2;
+    } else if (x <= this.p4.x + 10 && x >= this.p4.x - 10 && y <= this.p4.y + 10 && y >= this.p4.y - 10) {
+      return 3;
+    } else {
+      return null;
+    }
+  }
+
+  changeVertex(x, y, id) {
+    this.vertices[id].x = x;
+    this.vertices[id].y = y;
+  }
+
+
   updateShapes(newSize) {
     // Hitung titik tengah
     const centerX = (this.p4.x + this.p1.x) / 2;
@@ -314,9 +334,19 @@ export class Square extends DrawableObject {
   }
 
   isInside(x, y) {
-    if (x <= this.p3.x && x >= this.p1.x && y >= this.p1.y && y <= this.p2.y) {
-      return true;
+    let crossings = 0;
+    const vertices = this.vertices;
+
+    for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+        const xi = vertices[i == 2 ? 3 : i == 3 ? 2 : i].x, yi = vertices[i == 2 ? 3 : i == 3 ? 2 : i].y;
+        const xj = vertices[j == 2 ? 3 : j == 3 ? 2 : j].x, yj = vertices[j == 2 ? 3 : j == 3 ? 2 : j].y;
+
+        const intersect = ((yi > y) != (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+        if (intersect) crossings++;
     }
-    return false;
+
+    return crossings % 2 !== 0;
   }
 }

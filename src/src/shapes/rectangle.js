@@ -285,6 +285,25 @@ export class Rectangle extends DrawableObject {
     this.pivotY = y - this.p1.y;
   }
 
+  isCorner(x, y) {
+    if (x <= this.p1.x + 10 && x >= this.p1.x - 10 && y <= this.p1.y + 10 && y >= this.p1.y - 10) {
+      return 0;
+    } else if (x <= this.p2.x + 10 && x >= this.p2.x - 10 && y <= this.p2.y + 10 && y >= this.p2.y - 10) {
+      return 1;
+    } else if (x <= this.p3.x + 10 && x >= this.p3.x - 10 && y <= this.p3.y + 10 && y >= this.p3.y - 10) {
+      return 2;
+    } else if (x <= this.p4.x + 10 && x >= this.p4.x - 10 && y <= this.p4.y + 10 && y >= this.p4.y - 10) {
+      return 3;
+    } else {
+      return null;
+    }
+  }
+
+  changeVertex(x, y, id) {
+    this.vertices[id].x = x;
+    this.vertices[id].y = y;
+  }
+
   getPoints() {
     return [this.p1, this.p2, this.p3, this.p4];
   }
@@ -303,9 +322,19 @@ export class Rectangle extends DrawableObject {
   }
 
   isInside(x, y) {
-    if (x <= this.p3.x && x >= this.p1.x && y >= this.p1.y && y <= this.p3.y) {
-      return true;
+    let crossings = 0;
+    const vertices = this.vertices;
+
+    for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+        const xi = vertices[i].x, yi = vertices[i].y;
+        const xj = vertices[j].x, yj = vertices[j].y;
+
+        const intersect = ((yi > y) != (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+        if (intersect) crossings++;
     }
-    return false;
+
+    return crossings % 2 !== 0;
   }
 }

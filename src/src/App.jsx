@@ -133,6 +133,7 @@ function App() {
           var tempPoints = selectedShape.getPoints();
           setPolygonPoints(tempPoints);
         }
+        redrawCanvas();
       }
     } else {
       setIsPropertiesOpen(false);
@@ -309,6 +310,10 @@ function App() {
             if (shapes[i].isInside(x, y)) {
               setSelectedShapeId(i);
               shapes[i].setPivot(x, y);
+              var isCorner = shapes[i].isCorner(x, y);
+              if (isCorner) {
+                setSelectedPointId(isCorner);
+              } 
               isObject = true;
               break;
             }
@@ -426,12 +431,18 @@ function App() {
       }    
     } else {
       const canvas = document.querySelector("canvas");
-      var width = canvas.width;
-      var height = canvas.height;
       var x = canvasX(canvas, event.clientX);
       var y = canvasY(canvas, event.clientY);
-      shapes[selectedShapeId].place(x, y);
-      redrawCanvas();
+      
+      if (selectedShapeId != null) {
+        if (selectedPointId == null) {
+          shapes[selectedShapeId].place(x, y);
+        } else {
+          shapes[selectedShapeId].changeVertex(x, y, selectedPointId);
+        }
+        redrawCanvas();
+      }
+      
     }
   };
 
