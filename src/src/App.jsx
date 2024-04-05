@@ -134,7 +134,7 @@ function App() {
         if (selectedShape.getShapeType() == Shape.Polygon) {
           var tempPoints = selectedShape.getPoints();
           setPolygonPoints(tempPoints);
-          setCurrentShapeType(Shape.Polygon);
+          // setCurrentShapeType(Shape.Polygon);
         }
         redrawCanvas();
       }
@@ -416,11 +416,10 @@ function App() {
           default:
             break;
         }
+        setOriginPoint(undefined);
+        setIsDrawing(false);
+        setCurrentShapeType(null);
       }
-
-      setOriginPoint(undefined);
-      setIsDrawing(false);
-      setCurrentShapeType(null);
     }
   };
 
