@@ -259,4 +259,51 @@ export class Line extends DrawableObject {
     const epsilon = 1;
     return Math.abs(distance1 + distance2 - lineLength) < epsilon;
   }
+  animateRightAndBack() {
+    const moveAmount = 100; // Jumlah geser ke kanan dalam piksel
+    const duration = 3000; // Durasi animasi dalam milidetik
+    let startTime = null;
+    let progress = 0;
+
+    var rz_rand = Math.random()   
+    var decider = Math.floor(rz_rand*4)
+
+    const animateStep = () => {
+      if (!startTime) startTime = Date.now();
+      const elapsed = Date.now() - startTime;
+
+      if (elapsed >= duration) {
+        console.log("Animation end");
+        return; // Hentikan animasi
+      }
+      progress = (elapsed / duration) * 2; // *2 karena kita pergi dan kembali dalam durasi yang sama
+      const currentMove = moveAmount * Math.abs((progress % 2) - 1);
+
+
+      // Aplikasikan perubahan relatif terhadap posisi awal
+      this.vertices.forEach((vertex) => {
+        if (decider % 2 == 0){
+          vertex.x =  vertex.initialX + currentMove * (progress <= 1 ? 1 : -1); 
+        } else {
+          vertex.x =  vertex.initialX - currentMove * (progress <= 1 ? 1 : -1); 
+        }
+        if (decider <= 2) {
+          vertex.y =  vertex.initialY + currentMove * (progress <= 1 ? 1 : -1);
+        } else {
+          vertex.y =  vertex.initialY - currentMove * (progress <= 1 ? 1 : -1);
+        }
+      });
+
+      window.requestAnimationFrame(animateStep);
+    };
+
+    if (!this.vertices[0].initialX) {
+      this.vertices.forEach((vertex) => {
+        vertex.initialX = vertex.x;
+        vertex.initialY = vertex.y;
+      });
+    }
+
+    window.requestAnimationFrame(animateStep); // Jadwalkan iterasi selanjutnya
+  }
 }
